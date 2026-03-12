@@ -2,7 +2,8 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$PROJECT_DIR$/01_tables.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
-    <file url="file://$PROJECT_DIR$/02_constraints.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
+    <file url="file://$PROJECT_DIR$/02_constraints/02_constraints_CHECK.sql.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
+    <file url="file://$PROJECT_DIR$/02_constraints/02_constraints_FK.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
     <file url="file://$PROJECT_DIR$/03_triggers.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
   </component>
 </project>
