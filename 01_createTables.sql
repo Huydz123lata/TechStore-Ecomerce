@@ -286,9 +286,3 @@ CREATE TABLE LOYALTY_POINT (
 
 
 
-
-
-
-
-
-
