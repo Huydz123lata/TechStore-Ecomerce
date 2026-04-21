@@ -179,7 +179,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JLabel" name="jLabel6">
+        <Component class="javax.swing.JLabel" name="signInText">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="&lt;html&gt;&#x110;&#xe3; c&#xf3; t&#xe0;i kho&#x1ea3;n? &lt;font color=&apos;#001CBA&apos;&gt;&lt;b&gt;&#x110;&#x103;ng nh&#x1ead;p ngay&lt;/b&gt;&lt;/font&gt;&lt;/html&gt;"/>
@@ -187,6 +187,9 @@
               <Dimension value="[400, 25]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="signInTextMouseClicked"/>
+          </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
               <AbsoluteConstraints x="540" y="50" width="-1" height="-1"/>

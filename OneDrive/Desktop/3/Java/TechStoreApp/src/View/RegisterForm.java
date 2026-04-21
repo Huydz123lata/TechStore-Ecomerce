@@ -96,7 +96,7 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         passwordField = new Custom_Component.MyPasswordField();
         btnSignUp = new Custom_Component.MyButton();
-        jLabel6 = new javax.swing.JLabel();
+        signInText = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         nameField = new Custom_Component.MyTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -169,10 +169,15 @@ public class RegisterForm extends javax.swing.JFrame {
         btnSignUp.addActionListener(this::btnSignUpActionPerformed);
         roundPanel1.add(btnSignUp, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 520, 400, -1));
 
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("<html>Đã có tài khoản? <font color='#001CBA'><b>Đăng nhập ngay</b></font></html>");
-        jLabel6.setPreferredSize(new java.awt.Dimension(400, 25));
-        roundPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 50, -1, -1));
+        signInText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        signInText.setText("<html>Đã có tài khoản? <font color='#001CBA'><b>Đăng nhập ngay</b></font></html>");
+        signInText.setPreferredSize(new java.awt.Dimension(400, 25));
+        signInText.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signInTextMouseClicked(evt);
+            }
+        });
+        roundPanel1.add(signInText, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 50, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel7.setText("Họ và tên");
@@ -293,6 +298,12 @@ public class RegisterForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_rbNamActionPerformed
 
+    private void signInTextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signInTextMouseClicked
+        LoginForm login = new LoginForm();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_signInTextMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -332,7 +343,6 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -343,6 +353,7 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JRadioButton rbNam;
     private javax.swing.JRadioButton rbNu;
     private Custom_Component.RoundPanel roundPanel1;
+    private javax.swing.JLabel signInText;
     private Custom_Component.MyTextField userNameField;
     // End of variables declaration//GEN-END:variables
 }

@@ -154,6 +154,11 @@ public class LoginForm extends javax.swing.JFrame {
         signUpText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         signUpText.setText("<html>Chưa có tài khoản? <font color='#001CBA'><b>Đăng ký ngay</b></font></html>");
         signUpText.setPreferredSize(new java.awt.Dimension(400, 25));
+        signUpText.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                signUpTextMouseClicked(evt);
+            }
+        });
         roundPanel1.add(signUpText, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 475, -1, -1));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -192,6 +197,12 @@ public class LoginForm extends javax.swing.JFrame {
             dialog.setVisible(true);
         }
     }//GEN-LAST:event_btnSignInActionPerformed
+
+    private void signUpTextMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signUpTextMouseClicked
+        RegisterForm register = new RegisterForm();
+        register.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_signUpTextMouseClicked
 
     /**
      * @param args the command line arguments
