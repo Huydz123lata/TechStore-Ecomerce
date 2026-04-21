@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/../../../../BTTH_UIT/BaiLam.sql" value="6ddd1ba7-3c53-41e7-ab81-aad9ade2de35" />
     <file url="file://$PROJECT_DIR$/01_createTables.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
     <file url="file://$PROJECT_DIR$/03.1_trigger_audit.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />
     <file url="file://$PROJECT_DIR$/03_triggers.sql" value="d97bc0df-cd55-43f3-b2d5-4d922c6120f4" />

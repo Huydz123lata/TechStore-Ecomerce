@@ -3,6 +3,7 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/../../../../BTTH_UIT/24520684_NguyenQuocHuy_BTTH1.sql" dialect="Oracle" />
     <file url="file://$PROJECT_DIR$/../../../../BTTH_UIT/BTTH1_DB.sql" dialect="Oracle" />
+    <file url="file://$PROJECT_DIR$/../../../../BTTH_UIT/BaiLam.sql" dialect="Oracle" />
     <file url="file://$PROJECT_DIR$/01_createTables.sql" dialect="Oracle" />
     <file url="file://$PROJECT_DIR$/02_constraints_FK.sql" dialect="Oracle" />
     <file url="file://$PROJECT_DIR$/03.1_trigger_audit.sql" dialect="Oracle" />
