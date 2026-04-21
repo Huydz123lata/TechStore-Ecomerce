@@ -15,12 +15,12 @@ import Model.User;
 public class RegisterProcess {
 
     // Thêm sdt, gioiTinh, ngay, thang, nam vào tham số
-    public boolean execute(String fullname, String mail, String sdt, String gioiTinh,
+    public boolean execute(String fullname, String sdt, String gioiTinh,
             String ngay, String thang, String nam,
             String userName, String pass) {
 
         // 1. Tạo User với Constructor mới (4 tham số)
-        User u = new User(fullname, mail, sdt, gioiTinh);
+        User u = new User(fullname, sdt, gioiTinh);
 
         // 2. Ép ngày sinh bằng hàm mình vừa viết trong Model
         u.setNgaySinhFromPicker(ngay, thang, nam);

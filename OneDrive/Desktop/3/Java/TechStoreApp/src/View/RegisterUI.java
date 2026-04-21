@@ -452,7 +452,7 @@ public class RegisterUI extends javax.swing.JFrame {
 
         // 5. Gọi Process xử lý với ĐẦY ĐỦ 9 THAM SỐ mới
         RegisterProcess register_process = new RegisterProcess();
-        boolean isSuccess = register_process.execute(name, mail, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
+        boolean isSuccess = register_process.execute(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
 
         // 6. Xử lý kết quả trả về
         if (isSuccess) {

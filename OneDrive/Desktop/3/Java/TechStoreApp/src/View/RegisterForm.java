@@ -4,6 +4,8 @@
  */
 package View;
 
+import Business.Main.RegisterProcess;
+import Common.Util.HashUtil;
 import java.awt.Color;
 import javax.swing.JFrame;
 
@@ -105,9 +107,9 @@ public class RegisterForm extends javax.swing.JFrame {
         cboNam = new Custom_Component.MyComboBox();
         cboNgay = new Custom_Component.MyComboBox();
         cboThang = new Custom_Component.MyComboBox();
-        rNu = new javax.swing.JRadioButton();
+        rbNu = new javax.swing.JRadioButton();
         jLabel10 = new javax.swing.JLabel();
-        rNam = new javax.swing.JRadioButton();
+        rbNam = new javax.swing.JRadioButton();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
 
@@ -205,21 +207,21 @@ public class RegisterForm extends javax.swing.JFrame {
 
         roundPanel1.add(cboThang, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 440, 90, 40));
 
-        rNu.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroup1.add(rNu);
-        rNu.setText("Nữ");
-        rNu.addActionListener(this::rNuActionPerformed);
-        roundPanel1.add(rNu, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 490, 60, -1));
+        rbNu.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(rbNu);
+        rbNu.setText("Nữ");
+        rbNu.addActionListener(this::rbNuActionPerformed);
+        roundPanel1.add(rbNu, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 490, 60, -1));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel10.setText("Năm sinh");
         roundPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 420, 90, 20));
 
-        rNam.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroup1.add(rNam);
-        rNam.setText("Nam");
-        rNam.addActionListener(this::rNamActionPerformed);
-        roundPanel1.add(rNam, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 490, 60, -1));
+        rbNam.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(rbNam);
+        rbNam.setText("Nam");
+        rbNam.addActionListener(this::rbNamActionPerformed);
+        roundPanel1.add(rbNam, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 490, 60, -1));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel11.setText("Ngày sinh");
@@ -243,20 +245,53 @@ public class RegisterForm extends javax.swing.JFrame {
     }//GEN-LAST:event_passwordFieldActionPerformed
 
     private void btnSignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignUpActionPerformed
-        // TODO add your handling code here:
+
+        String name = nameField.getText();
+        String user = userNameField.getText();
+        String pass = passwordField.getText();
+        String sdt = phoneNumberField.getText();
+
+        String gioiTinh = "Nam";
+        if (rbNu.isSelected()) {
+            gioiTinh = "Nu";
+        }
+
+        String ngay = cboNgay.getSelectedItem().toString();
+        String thang = cboThang.getSelectedItem().toString();
+        String nam = cboNam.getSelectedItem().toString();
+
+        if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || sdt.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+
+        String passwordHash = HashUtil.hashPassword(pass);
+
+        RegisterProcess register_process = new RegisterProcess();
+        boolean isSuccess = register_process.execute(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
+
+        if (isSuccess) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Đăng ký tài khoản thành công!");
+
+            LoginForm login = new LoginForm();
+            login.setVisible(true);
+            this.dispose();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Đăng ký thất bại! Số điện thoại/Email có thể đã tồn tại, hoặc do lỗi hệ thống.");
+        }
     }//GEN-LAST:event_btnSignUpActionPerformed
 
     private void password2FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_password2FieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_password2FieldActionPerformed
 
-    private void rNuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rNuActionPerformed
+    private void rbNuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNuActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_rNuActionPerformed
+    }//GEN-LAST:event_rbNuActionPerformed
 
-    private void rNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rNamActionPerformed
+    private void rbNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNamActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_rNamActionPerformed
+    }//GEN-LAST:event_rbNamActionPerformed
 
     /**
      * @param args the command line arguments
@@ -305,8 +340,8 @@ public class RegisterForm extends javax.swing.JFrame {
     private Custom_Component.MyPasswordField password2Field;
     private Custom_Component.MyPasswordField passwordField;
     private Custom_Component.MyTextField phoneNumberField;
-    private javax.swing.JRadioButton rNam;
-    private javax.swing.JRadioButton rNu;
+    private javax.swing.JRadioButton rbNam;
+    private javax.swing.JRadioButton rbNu;
     private Custom_Component.RoundPanel roundPanel1;
     private Custom_Component.MyTextField userNameField;
     // End of variables declaration//GEN-END:variables

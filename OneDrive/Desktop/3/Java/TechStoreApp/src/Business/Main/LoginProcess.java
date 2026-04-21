@@ -21,7 +21,7 @@ public class LoginProcess {
     private AccountSql accountSql = new AccountSql();
 
     public Account executeLogin(String user, String pass) {
-        if (user.trim().isEmpty() || pass.trim().isEmpty()) {
+        if (user.isEmpty() || pass.isEmpty()) {
             return null;
         }
 

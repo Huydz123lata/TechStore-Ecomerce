@@ -15,19 +15,16 @@ public class User {
 
     private int userId;
     private String fullName;
-    private String email;
     private String SDT;
-    private Date ngaySinh;   // Đã thêm Ngày sinh
-    private String gioiTinh; // Đã thêm Giới tính
+    private Date ngaySinh;
+    private String gioiTinh;
 
-    // Constructor mặc định (trống)
     public User() {
     }
 
     // Constructor cho đăng ký 
-    public User(String fullName, String email, String SDT, String gioiTinh) {
+    public User(String fullName, String SDT, String gioiTinh) {
         this.fullName = fullName;
-        this.email = email;
         this.SDT = SDT;
         this.gioiTinh = gioiTinh;
     }
@@ -36,7 +33,6 @@ public class User {
     public User(int userId, String fullName, String email, String SDT) {
         this.userId = userId;
         this.fullName = fullName;
-        this.email = email;
         this.SDT = SDT;
     }
 
@@ -68,14 +64,6 @@ public class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getSDT() {

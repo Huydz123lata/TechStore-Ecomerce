@@ -11,7 +11,6 @@ import java.sql.*;
 public class AccountSql {
 
     public Account checkLogin(String user, String pass) {
-        // Chỉ lấy những cột quan trọng
         String SQL = "SELECT ACCOUNT_ID, USER_ID, USERNAME, STATUS "
                 + "FROM ACCOUNT "
                 + "WHERE USERNAME = ? AND PASSWORD_HASH = ? AND IS_DELETED = 0";
@@ -43,22 +42,20 @@ public class AccountSql {
             con = ConnectionUtils.getMyConnection();
             con.setAutoCommit(false);
 
-            String sqlUser = "INSERT INTO \"USER\" (FULL_NAME, EMAIL, SDT, NGAY_SINH, GIOI_TINH) VALUES (?, ?, ?, ?, ?)";
+            String sqlUser = "INSERT INTO \"USER\" (FULL_NAME, SDT, NGAY_SINH, GIOI_TINH) VALUES (?, ?, ?, ?)";
             PreparedStatement ps1 = con.prepareStatement(sqlUser, new String[]{"USER_ID"});
 
-            // Sửa lại đúng thứ tự 1, 2, 3, 4, 5
             ps1.setString(1, acc.getUserInfo().getFullName());
-            ps1.setString(2, acc.getUserInfo().getEmail());
-            ps1.setString(3, acc.getUserInfo().getSDT()); // Đã sửa thành số 3
+            ps1.setString(2, acc.getUserInfo().getSDT());
 
             // Xử lý ngày sinh (đề phòng bị null nếu ngày không hợp lệ)
             if (acc.getUserInfo().getNgaySinh() != null) {
-                ps1.setDate(4, acc.getUserInfo().getNgaySinh());
+                ps1.setDate(3, acc.getUserInfo().getNgaySinh());
             } else {
-                ps1.setNull(4, java.sql.Types.DATE);
+                ps1.setNull(3, java.sql.Types.DATE);
             }
 
-            ps1.setString(5, acc.getUserInfo().getGioiTinh()); // Thêm số 5
+            ps1.setString(4, acc.getUserInfo().getGioiTinh());
 
             ps1.executeUpdate();
 

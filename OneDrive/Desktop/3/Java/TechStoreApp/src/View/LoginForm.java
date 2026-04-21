@@ -4,8 +4,13 @@
  */
 package View;
 
+import Business.Main.LoginProcess;
+import Common.Util.HashUtil;
+import Model.Account;
 import java.awt.Color;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -165,7 +170,27 @@ public class LoginForm extends javax.swing.JFrame {
     }//GEN-LAST:event_passwordFieldActionPerformed
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
-        // TODO add your handling code here:
+
+        String username = userNameField.getText();
+        String password = passwordField.getText();
+
+        String passwordHash = HashUtil.hashPassword(password);
+        LoginProcess loginProcess = new LoginProcess();
+
+        Account acc = loginProcess.executeLogin(username, passwordHash);
+
+        if (acc != null) {
+            JOptionPane optionPane = new JOptionPane("Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
+            JDialog dialog = optionPane.createDialog("Thành công");
+            dialog.setAlwaysOnTop(true);
+            dialog.setVisible(true);
+
+        } else {
+            JOptionPane optionPane = new JOptionPane("Đăng nhập thất bại", JOptionPane.ERROR_MESSAGE);
+            JDialog dialog = optionPane.createDialog("Thất Bại");
+            dialog.setAlwaysOnTop(true);
+            dialog.setVisible(true);
+        }
     }//GEN-LAST:event_btnSignInActionPerformed
 
     /**
