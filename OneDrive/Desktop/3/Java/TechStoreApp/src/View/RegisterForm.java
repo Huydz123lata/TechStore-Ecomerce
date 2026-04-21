@@ -198,6 +198,7 @@ public class RegisterForm extends javax.swing.JFrame {
         roundPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 280, 400, 20));
 
         password2Field.setPreferredSize(new java.awt.Dimension(400, 40));
+        password2Field.addCaretListener(this::password2FieldCaretUpdate);
         password2Field.addActionListener(this::password2FieldActionPerformed);
         roundPanel1.add(password2Field, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, -1, -1));
 
@@ -308,6 +309,20 @@ public class RegisterForm extends javax.swing.JFrame {
         login.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_signInTextMouseClicked
+
+    private void password2FieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_password2FieldCaretUpdate
+
+        String pass = new String(passwordField.getPassword());
+        String pass2 = new String(password2Field.getPassword());
+
+        if (pass2.isEmpty()) {
+            password2Field.setBackground(java.awt.Color.WHITE);
+        } else if (pass2.equals(pass)) {
+            password2Field.setBackground(new java.awt.Color(230, 255, 230));
+        } else {
+            password2Field.setBackground(new java.awt.Color(255, 235, 235));
+        }
+    }//GEN-LAST:event_password2FieldCaretUpdate
 
     /**
      * @param args the command line arguments
