@@ -254,6 +254,7 @@ public class RegisterForm extends javax.swing.JFrame {
         String name = nameField.getText();
         String user = userNameField.getText();
         String pass = passwordField.getText();
+        String pass2 = password2Field.getText();
         String sdt = phoneNumberField.getText();
 
         String gioiTinh = "Nam";
@@ -269,6 +270,10 @@ public class RegisterForm extends javax.swing.JFrame {
             javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
+        if (!(pass2.equals(pass))) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không khớp");
+            return;
+        }
 
         String passwordHash = HashUtil.hashPassword(pass);
 
@@ -282,7 +287,7 @@ public class RegisterForm extends javax.swing.JFrame {
             login.setVisible(true);
             this.dispose();
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Đăng ký thất bại! Số điện thoại/Email có thể đã tồn tại, hoặc do lỗi hệ thống.");
+            javax.swing.JOptionPane.showMessageDialog(this, "Đăng ký thất bại! Số điện thoại có thể đã tồn tại, hoặc do lỗi hệ thống.");
         }
     }//GEN-LAST:event_btnSignUpActionPerformed
 
