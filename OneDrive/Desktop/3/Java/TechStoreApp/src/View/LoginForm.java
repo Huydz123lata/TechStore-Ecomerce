@@ -67,14 +67,14 @@ public class LoginForm extends javax.swing.JFrame {
         imagePanel2 = new Custom_Component.ImagePanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        myTextField1 = new Custom_Component.MyTextField();
+        passText = new javax.swing.JLabel();
+        userNameField = new Custom_Component.MyTextField();
         jLabel4 = new javax.swing.JLabel();
-        myPasswordField1 = new Custom_Component.MyPasswordField();
+        passwordField = new Custom_Component.MyPasswordField();
         jCheckBox1 = new javax.swing.JCheckBox();
-        jLabel5 = new javax.swing.JLabel();
-        myButton1 = new Custom_Component.MyButton();
-        jLabel6 = new javax.swing.JLabel();
+        forgetPassText = new javax.swing.JLabel();
+        btnSignIn = new Custom_Component.MyButton();
+        signUpText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 153, 153));
@@ -113,43 +113,43 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel2.setText("Vui lòng nhập thông tin tài khoản của bạn");
         roundPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 100, 300, 30));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setText("Mật khẩu");
-        roundPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 265, 310, 30));
+        passText.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        passText.setText("Mật khẩu");
+        roundPanel1.add(passText, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 265, 310, 30));
 
-        myTextField1.setPreferredSize(new java.awt.Dimension(400, 45));
-        roundPanel1.add(myTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 200, -1, -1));
+        userNameField.setPreferredSize(new java.awt.Dimension(400, 45));
+        roundPanel1.add(userNameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 200, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Tên đăng nhập");
         roundPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 170, 310, 30));
 
-        myPasswordField1.setPreferredSize(new java.awt.Dimension(400, 45));
-        myPasswordField1.addActionListener(this::myPasswordField1ActionPerformed);
-        roundPanel1.add(myPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 295, -1, -1));
+        passwordField.setPreferredSize(new java.awt.Dimension(400, 45));
+        passwordField.addActionListener(this::passwordFieldActionPerformed);
+        roundPanel1.add(passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 295, -1, -1));
 
         jCheckBox1.setText("Ghi nhớ đăng nhập");
         roundPanel1.add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 355, -1, -1));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 51, 255));
-        jLabel5.setText("Quên mật khẩu?");
-        roundPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 355, 90, -1));
+        forgetPassText.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        forgetPassText.setForeground(new java.awt.Color(0, 51, 255));
+        forgetPassText.setText("Quên mật khẩu?");
+        roundPanel1.add(forgetPassText, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 355, 90, -1));
 
-        myButton1.setBackground(new java.awt.Color(255, 107, 53));
-        myButton1.setForeground(new java.awt.Color(255, 255, 255));
-        myButton1.setColorClick(new java.awt.Color(227, 85, 32));
-        myButton1.setColorHover(new java.awt.Color(255, 133, 86));
-        myButton1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        myButton1.setLabel("ĐĂNG NHẬP");
-        myButton1.setPreferredSize(new java.awt.Dimension(400, 45));
-        myButton1.addActionListener(this::myButton1ActionPerformed);
-        roundPanel1.add(myButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 410, 400, -1));
+        btnSignIn.setBackground(new java.awt.Color(255, 107, 53));
+        btnSignIn.setForeground(new java.awt.Color(255, 255, 255));
+        btnSignIn.setColorClick(new java.awt.Color(227, 85, 32));
+        btnSignIn.setColorHover(new java.awt.Color(255, 133, 86));
+        btnSignIn.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        btnSignIn.setLabel("ĐĂNG NHẬP");
+        btnSignIn.setPreferredSize(new java.awt.Dimension(400, 45));
+        btnSignIn.addActionListener(this::btnSignInActionPerformed);
+        roundPanel1.add(btnSignIn, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 410, 400, -1));
 
-        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel6.setText("<html>Chưa có tài khoản? <font color='#001CBA'><b>Đăng ký ngay</b></font></html>");
-        jLabel6.setPreferredSize(new java.awt.Dimension(400, 25));
-        roundPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 475, -1, -1));
+        signUpText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        signUpText.setText("<html>Chưa có tài khoản? <font color='#001CBA'><b>Đăng ký ngay</b></font></html>");
+        signUpText.setPreferredSize(new java.awt.Dimension(400, 25));
+        roundPanel1.add(signUpText, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 475, -1, -1));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -160,13 +160,13 @@ public class LoginForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void myPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myPasswordField1ActionPerformed
+    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_myPasswordField1ActionPerformed
+    }//GEN-LAST:event_passwordFieldActionPerformed
 
-    private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
+    private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_myButton1ActionPerformed
+    }//GEN-LAST:event_btnSignInActionPerformed
 
     /**
      * @param args the command line arguments
@@ -194,17 +194,17 @@ public class LoginForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Custom_Component.MyButton btnSignIn;
+    private javax.swing.JLabel forgetPassText;
     private Custom_Component.ImagePanel imagePanel2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private Custom_Component.MyButton myButton1;
-    private Custom_Component.MyPasswordField myPasswordField1;
-    private Custom_Component.MyTextField myTextField1;
+    private javax.swing.JLabel passText;
+    private Custom_Component.MyPasswordField passwordField;
     private Custom_Component.RoundPanel roundPanel1;
+    private javax.swing.JLabel signUpText;
+    private Custom_Component.MyTextField userNameField;
     // End of variables declaration//GEN-END:variables
 }

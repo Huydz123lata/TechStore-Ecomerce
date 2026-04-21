@@ -90,24 +90,24 @@ public class RegisterForm extends javax.swing.JFrame {
         imagePanel2 = new Custom_Component.ImagePanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        myTextField1 = new Custom_Component.MyTextField();
+        userNameField = new Custom_Component.MyTextField();
         jLabel4 = new javax.swing.JLabel();
-        myPasswordField1 = new Custom_Component.MyPasswordField();
-        myButton1 = new Custom_Component.MyButton();
+        passwordField = new Custom_Component.MyPasswordField();
+        btnSignUp = new Custom_Component.MyButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        myTextField2 = new Custom_Component.MyTextField();
+        nameField = new Custom_Component.MyTextField();
         jLabel8 = new javax.swing.JLabel();
-        myTextField3 = new Custom_Component.MyTextField();
+        phoneNumberField = new Custom_Component.MyTextField();
         jLabel5 = new javax.swing.JLabel();
-        myPasswordField2 = new Custom_Component.MyPasswordField();
+        password2Field = new Custom_Component.MyPasswordField();
         jLabel9 = new javax.swing.JLabel();
         cboNam = new Custom_Component.MyComboBox();
         cboNgay = new Custom_Component.MyComboBox();
         cboThang = new Custom_Component.MyComboBox();
-        jRadioButton1 = new javax.swing.JRadioButton();
+        rNu = new javax.swing.JRadioButton();
         jLabel10 = new javax.swing.JLabel();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        rNam = new javax.swing.JRadioButton();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
 
@@ -146,26 +146,26 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabel3.setText("Mật khẩu");
         roundPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 210, 400, 20));
 
-        myTextField1.setPreferredSize(new java.awt.Dimension(400, 40));
-        roundPanel1.add(myTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 160, -1, -1));
+        userNameField.setPreferredSize(new java.awt.Dimension(400, 40));
+        roundPanel1.add(userNameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 160, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel4.setText("Tên đăng nhập");
         roundPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 140, 400, 21));
 
-        myPasswordField1.setPreferredSize(new java.awt.Dimension(400, 40));
-        myPasswordField1.addActionListener(this::myPasswordField1ActionPerformed);
-        roundPanel1.add(myPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 230, -1, -1));
+        passwordField.setPreferredSize(new java.awt.Dimension(400, 40));
+        passwordField.addActionListener(this::passwordFieldActionPerformed);
+        roundPanel1.add(passwordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 230, -1, -1));
 
-        myButton1.setBackground(new java.awt.Color(255, 107, 53));
-        myButton1.setForeground(new java.awt.Color(255, 255, 255));
-        myButton1.setText("ĐĂNG KÝ");
-        myButton1.setColorClick(new java.awt.Color(227, 85, 32));
-        myButton1.setColorHover(new java.awt.Color(255, 133, 86));
-        myButton1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        myButton1.setPreferredSize(new java.awt.Dimension(400, 45));
-        myButton1.addActionListener(this::myButton1ActionPerformed);
-        roundPanel1.add(myButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 520, 400, -1));
+        btnSignUp.setBackground(new java.awt.Color(255, 107, 53));
+        btnSignUp.setForeground(new java.awt.Color(255, 255, 255));
+        btnSignUp.setText("ĐĂNG KÝ");
+        btnSignUp.setColorClick(new java.awt.Color(227, 85, 32));
+        btnSignUp.setColorHover(new java.awt.Color(255, 133, 86));
+        btnSignUp.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        btnSignUp.setPreferredSize(new java.awt.Dimension(400, 45));
+        btnSignUp.addActionListener(this::btnSignUpActionPerformed);
+        roundPanel1.add(btnSignUp, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 520, 400, -1));
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("<html>Đã có tài khoản? <font color='#001CBA'><b>Đăng nhập ngay</b></font></html>");
@@ -176,23 +176,23 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabel7.setText("Họ và tên");
         roundPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 400, 20));
 
-        myTextField2.setPreferredSize(new java.awt.Dimension(400, 40));
-        roundPanel1.add(myTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, -1, -1));
+        nameField.setPreferredSize(new java.awt.Dimension(400, 40));
+        roundPanel1.add(nameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, -1, -1));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel8.setText("Giới tính");
         roundPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 490, 90, 20));
 
-        myTextField3.setPreferredSize(new java.awt.Dimension(400, 40));
-        roundPanel1.add(myTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, -1, -1));
+        phoneNumberField.setPreferredSize(new java.awt.Dimension(400, 40));
+        roundPanel1.add(phoneNumberField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel5.setText("Nhập lại mật khẩu");
         roundPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 280, 400, 20));
 
-        myPasswordField2.setPreferredSize(new java.awt.Dimension(400, 40));
-        myPasswordField2.addActionListener(this::myPasswordField2ActionPerformed);
-        roundPanel1.add(myPasswordField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, -1, -1));
+        password2Field.setPreferredSize(new java.awt.Dimension(400, 40));
+        password2Field.addActionListener(this::password2FieldActionPerformed);
+        roundPanel1.add(password2Field, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, -1, -1));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel9.setText("Số điện thoại");
@@ -205,21 +205,21 @@ public class RegisterForm extends javax.swing.JFrame {
 
         roundPanel1.add(cboThang, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 440, 90, 40));
 
-        jRadioButton1.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("Nữ");
-        jRadioButton1.addActionListener(this::jRadioButton1ActionPerformed);
-        roundPanel1.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 490, 60, -1));
+        rNu.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(rNu);
+        rNu.setText("Nữ");
+        rNu.addActionListener(this::rNuActionPerformed);
+        roundPanel1.add(rNu, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 490, 60, -1));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel10.setText("Năm sinh");
         roundPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 420, 90, 20));
 
-        jRadioButton2.setBackground(new java.awt.Color(255, 255, 255));
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Nam");
-        jRadioButton2.addActionListener(this::jRadioButton2ActionPerformed);
-        roundPanel1.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 490, 60, -1));
+        rNam.setBackground(new java.awt.Color(255, 255, 255));
+        buttonGroup1.add(rNam);
+        rNam.setText("Nam");
+        rNam.addActionListener(this::rNamActionPerformed);
+        roundPanel1.add(rNam, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 490, 60, -1));
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel11.setText("Ngày sinh");
@@ -238,25 +238,25 @@ public class RegisterForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void myPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myPasswordField1ActionPerformed
+    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_myPasswordField1ActionPerformed
+    }//GEN-LAST:event_passwordFieldActionPerformed
 
-    private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
+    private void btnSignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignUpActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_myButton1ActionPerformed
+    }//GEN-LAST:event_btnSignUpActionPerformed
 
-    private void myPasswordField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myPasswordField2ActionPerformed
+    private void password2FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_password2FieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_myPasswordField2ActionPerformed
+    }//GEN-LAST:event_password2FieldActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    private void rNuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rNuActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }//GEN-LAST:event_rNuActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void rNamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rNamActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    }//GEN-LAST:event_rNamActionPerformed
 
     /**
      * @param args the command line arguments
@@ -284,6 +284,7 @@ public class RegisterForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Custom_Component.MyButton btnSignUp;
     private javax.swing.ButtonGroup buttonGroup1;
     private Custom_Component.MyComboBox cboNam;
     private Custom_Component.MyComboBox cboNgay;
@@ -300,14 +301,13 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private Custom_Component.MyButton myButton1;
-    private Custom_Component.MyPasswordField myPasswordField1;
-    private Custom_Component.MyPasswordField myPasswordField2;
-    private Custom_Component.MyTextField myTextField1;
-    private Custom_Component.MyTextField myTextField2;
-    private Custom_Component.MyTextField myTextField3;
+    private Custom_Component.MyTextField nameField;
+    private Custom_Component.MyPasswordField password2Field;
+    private Custom_Component.MyPasswordField passwordField;
+    private Custom_Component.MyTextField phoneNumberField;
+    private javax.swing.JRadioButton rNam;
+    private javax.swing.JRadioButton rNu;
     private Custom_Component.RoundPanel roundPanel1;
+    private Custom_Component.MyTextField userNameField;
     // End of variables declaration//GEN-END:variables
 }
