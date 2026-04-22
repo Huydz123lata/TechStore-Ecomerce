@@ -30,9 +30,8 @@ public class LoginForm extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         // TẠO MÀU BACKGROUND
         java.awt.Container oldContentPane = this.getContentPane();
-        if (oldContentPane instanceof javax.swing.JPanel) {
-            // Làm cho Panel gốc trong suốt để nhìn xuyên thấu xuống dưới
-            ((javax.swing.JPanel) oldContentPane).setOpaque(false);
+        if (oldContentPane instanceof javax.swing.JPanel jPanel) {
+            jPanel.setOpaque(false);
         }
 
         javax.swing.JPanel backgroundLayer = new javax.swing.JPanel(new java.awt.BorderLayout()) {
@@ -49,9 +48,7 @@ public class LoginForm extends javax.swing.JFrame {
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
         };
-
         backgroundLayer.add(oldContentPane);
-
         this.setContentPane(backgroundLayer);
     }
 
