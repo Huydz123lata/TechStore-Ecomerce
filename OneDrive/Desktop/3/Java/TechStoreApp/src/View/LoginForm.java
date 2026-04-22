@@ -28,14 +28,13 @@ public class LoginForm extends javax.swing.JFrame {
         this.setSize(1100, 650);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
-        // 1. Lấy lại Panel gốc chứa giao diện do NetBeans tự sinh
+        // TẠO MÀU BACKGROUND
         java.awt.Container oldContentPane = this.getContentPane();
         if (oldContentPane instanceof javax.swing.JPanel) {
             // Làm cho Panel gốc trong suốt để nhìn xuyên thấu xuống dưới
             ((javax.swing.JPanel) oldContentPane).setOpaque(false);
         }
 
-        // 2. Tạo một Panel mới để vẽ màu nền Gradient (dùng BorderLayout để chứa mâm cũ vừa khít)
         javax.swing.JPanel backgroundLayer = new javax.swing.JPanel(new java.awt.BorderLayout()) {
             @Override
             protected void paintComponent(java.awt.Graphics g) {
@@ -51,10 +50,8 @@ public class LoginForm extends javax.swing.JFrame {
             }
         };
 
-        // 3. Đặt toàn bộ giao diện cũ vào đè lên trên cái nền Gradient
         backgroundLayer.add(oldContentPane);
 
-        // 4. Set lại Content Pane mới
         this.setContentPane(backgroundLayer);
     }
 
