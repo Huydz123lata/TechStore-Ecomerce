@@ -8,6 +8,7 @@ import Business.Main.RegisterProcess;
 import Common.Util.HashUtil;
 import java.awt.Color;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -191,6 +192,11 @@ public class RegisterForm extends javax.swing.JFrame {
         roundPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 490, 90, 20));
 
         phoneNumberField.setPreferredSize(new java.awt.Dimension(400, 40));
+        phoneNumberField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                phoneNumberFieldKeyTyped(evt);
+            }
+        });
         roundPanel1.add(phoneNumberField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -277,18 +283,21 @@ public class RegisterForm extends javax.swing.JFrame {
         }
 
         String passwordHash = HashUtil.hashPassword(pass);
+        try {
+            RegisterProcess process = new RegisterProcess();
+            process.execute(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
 
-        RegisterProcess register_process = new RegisterProcess();
-        boolean isSuccess = register_process.execute(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
+            JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
 
-        if (isSuccess) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Đăng ký tài khoản thành công!");
-
-            LoginForm login = new LoginForm();
-            login.setVisible(true);
-            this.dispose();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Đăng ký thất bại! Số điện thoại có thể đã tồn tại, hoặc do lỗi hệ thống.");
+        } catch (java.sql.SQLException e) {
+            if (e.getErrorCode() == 1) {
+                JOptionPane.showMessageDialog(this, "Số điện thoại này đã tồn tại trong hệ thống!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Lỗi Database: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            // Các lỗi code khác
+            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + e.getMessage());
         }
     }//GEN-LAST:event_btnSignUpActionPerformed
 
@@ -323,6 +332,18 @@ public class RegisterForm extends javax.swing.JFrame {
             password2Field.setBackground(new java.awt.Color(255, 235, 235));
         }
     }//GEN-LAST:event_password2FieldCaretUpdate
+
+    private void phoneNumberFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_phoneNumberFieldKeyTyped
+        char c = evt.getKeyChar();
+
+        if (!Character.isDigit(c)) {
+            evt.consume();
+        }
+
+        if (phoneNumberField.getText().length() >= 10) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_phoneNumberFieldKeyTyped
 
     /**
      * @param args the command line arguments

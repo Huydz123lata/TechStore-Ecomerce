@@ -17,7 +17,7 @@ public class RegisterProcess {
     // Thêm sdt, gioiTinh, ngay, thang, nam vào tham số
     public boolean execute(String fullname, String sdt, String gioiTinh,
             String ngay, String thang, String nam,
-            String userName, String pass) {
+            String userName, String pass) throws Exception {
 
         // 1. Tạo User với Constructor mới (4 tham số)
         User u = new User(fullname, sdt, gioiTinh);

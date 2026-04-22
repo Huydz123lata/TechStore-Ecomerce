@@ -10,6 +10,7 @@ import java.sql.*;
 
 public class AccountSql {
 
+    //xử lý đăng nhập
     public Account checkLogin(String user, String pass) {
         String SQL = "SELECT ACCOUNT_ID, USER_ID, USERNAME, STATUS "
                 + "FROM ACCOUNT "
@@ -36,7 +37,8 @@ public class AccountSql {
         return null;
     }
 
-    public boolean register(Account acc) {
+    // xử lý đăng ký
+    public boolean register(Account acc) throws Exception {
         Connection con = null;
         try {
             con = ConnectionUtils.getMyConnection();
@@ -74,22 +76,20 @@ public class AccountSql {
 
             con.commit();
             return true;
-
         } catch (Exception e) {
-            try {
-                if (con != null) {
+            if (con != null) {
+                try {
                     con.rollback();
+                } catch (Exception ex) {
                 }
-            } catch (Exception ex) {
             }
-            e.printStackTrace();
-            return false;
+            throw e;
         } finally {
-            try {
-                if (con != null) {
+            if (con != null) {
+                try {
                     con.close();
+                } catch (Exception e) {
                 }
-            } catch (Exception e) {
             }
         }
     }
