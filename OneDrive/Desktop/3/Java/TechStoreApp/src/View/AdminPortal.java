@@ -41,6 +41,7 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard4 = new Custom_Component.MyButton();
         btnDashboard5 = new Custom_Component.MyButton();
         btnDashboard6 = new Custom_Component.MyButton();
+        btnDashboard7 = new Custom_Component.MyButton();
         pnlRightWorkspace = new javax.swing.JPanel();
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -139,6 +140,20 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard6.setPreferredSize(new java.awt.Dimension(200, 50));
         btnDashboard6.addActionListener(this::btnDashboard6ActionPerformed);
         pnlSideBar.add(btnDashboard6);
+
+        btnDashboard7.setBackground(new java.awt.Color(30, 41, 59));
+        btnDashboard7.setForeground(new java.awt.Color(255, 0, 0));
+        btnDashboard7.setText("Log out");
+        btnDashboard7.setBorderPainted(false);
+        btnDashboard7.setColorClick(new java.awt.Color(37, 99, 235));
+        btnDashboard7.setColorHover(new java.awt.Color(71, 85, 105));
+        btnDashboard7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDashboard7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnDashboard7.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnDashboard7.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnDashboard7.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnDashboard7.addActionListener(this::btnDashboard7ActionPerformed);
+        pnlSideBar.add(btnDashboard7);
 
         getContentPane().add(pnlSideBar, java.awt.BorderLayout.WEST);
 
@@ -259,7 +274,6 @@ public class AdminPortal extends javax.swing.JFrame {
     private void btnDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboard4MouseClicked
         // 1. Khởi tạo Panel mới
         RolePnl role = new RolePnl();
-
         // 2. Xóa hết nội dung cũ trong vùng hiển thị chính của Dashboard
         pnlRightWorkspace.removeAll();
 
@@ -274,6 +288,12 @@ public class AdminPortal extends javax.swing.JFrame {
     private void btnDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDashboardMouseClicked
+
+    private void btnDashboard7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard7ActionPerformed
+        LoginForm login = new LoginForm();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnDashboard7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -306,6 +326,7 @@ public class AdminPortal extends javax.swing.JFrame {
     private Custom_Component.MyButton btnDashboard4;
     private Custom_Component.MyButton btnDashboard5;
     private Custom_Component.MyButton btnDashboard6;
+    private Custom_Component.MyButton btnDashboard7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
