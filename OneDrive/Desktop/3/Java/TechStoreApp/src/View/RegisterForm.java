@@ -288,6 +288,9 @@ public class RegisterForm extends javax.swing.JFrame {
             process.execute(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
 
             JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
+            LoginForm login = new LoginForm();
+            login.setVisible(true);
+            this.dispose();
 
         } catch (java.sql.SQLException e) {
             if (e.getErrorCode() == 1) {

@@ -183,6 +183,9 @@ public class LoginForm extends javax.swing.JFrame {
             JDialog dialog = optionPane.createDialog("Thành công");
             dialog.setAlwaysOnTop(true);
             dialog.setVisible(true);
+            AdminPortal admin = new AdminPortal();
+            admin.setVisible(true);
+            this.dispose();
 
         } else {
             JOptionPane optionPane = new JOptionPane("Đăng nhập thất bại", JOptionPane.ERROR_MESSAGE);

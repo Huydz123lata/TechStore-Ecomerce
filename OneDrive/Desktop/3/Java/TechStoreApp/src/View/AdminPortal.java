@@ -4,6 +4,8 @@
  */
 package View;
 
+import View.AdminPortalPanel.RolePnl;
+
 /**
  *
  * @author HUY0406
@@ -69,6 +71,11 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard.setMargin(new java.awt.Insets(2, 20, 3, 14));
         btnDashboard.setMaximumSize(new java.awt.Dimension(200, 50));
         btnDashboard.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDashboardMouseClicked(evt);
+            }
+        });
         btnDashboard.addActionListener(this::btnDashboardActionPerformed);
         pnlSideBar.add(btnDashboard);
 
@@ -97,6 +104,11 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard4.setMargin(new java.awt.Insets(2, 20, 3, 14));
         btnDashboard4.setMaximumSize(new java.awt.Dimension(200, 50));
         btnDashboard4.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnDashboard4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDashboard4MouseClicked(evt);
+            }
+        });
         btnDashboard4.addActionListener(this::btnDashboard4ActionPerformed);
         pnlSideBar.add(btnDashboard4);
 
@@ -173,12 +185,13 @@ public class AdminPortal extends javax.swing.JFrame {
         pnlContent.setLayout(new java.awt.GridBagLayout());
 
         pnlAccountList.setBackground(new java.awt.Color(255, 255, 255));
+        pnlAccountList.setPreferredSize(new java.awt.Dimension(670, 571));
 
         javax.swing.GroupLayout pnlAccountListLayout = new javax.swing.GroupLayout(pnlAccountList);
         pnlAccountList.setLayout(pnlAccountListLayout);
         pnlAccountListLayout.setHorizontalGroup(
             pnlAccountListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 870, Short.MAX_VALUE)
+            .addGap(0, 565, Short.MAX_VALUE)
         );
         pnlAccountListLayout.setVerticalGroup(
             pnlAccountListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,6 +208,7 @@ public class AdminPortal extends javax.swing.JFrame {
         pnlContent.add(pnlAccountList, gridBagConstraints);
 
         pnlAssignRole.setBackground(new java.awt.Color(255, 255, 255));
+        pnlAssignRole.setPreferredSize(new java.awt.Dimension(300, 0));
 
         javax.swing.GroupLayout pnlAssignRoleLayout = new javax.swing.GroupLayout(pnlAssignRole);
         pnlAssignRole.setLayout(pnlAssignRoleLayout);
@@ -241,6 +255,25 @@ public class AdminPortal extends javax.swing.JFrame {
     private void btnDashboard6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard6ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDashboard6ActionPerformed
+
+    private void btnDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboard4MouseClicked
+        // 1. Khởi tạo Panel mới
+        RolePnl role = new RolePnl();
+
+        // 2. Xóa hết nội dung cũ trong vùng hiển thị chính của Dashboard
+        pnlRightWorkspace.removeAll();
+
+        // 3. Thêm Panel mới vào
+        pnlRightWorkspace.add(role);
+
+        // 4. Vẽ lại giao diện
+        pnlRightWorkspace.revalidate();
+        pnlRightWorkspace.repaint();
+    }//GEN-LAST:event_btnDashboard4MouseClicked
+
+    private void btnDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDashboardMouseClicked
 
     /**
      * @param args the command line arguments
