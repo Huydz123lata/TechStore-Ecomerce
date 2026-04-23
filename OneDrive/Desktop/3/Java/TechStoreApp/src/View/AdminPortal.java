@@ -27,7 +27,6 @@ public class AdminPortal extends javax.swing.JFrame {
 
     private void showPanel(javax.swing.JPanel panel) {
         pnlRightWorkspace.removeAll();
-        pnlRightWorkspace.setLayout(new java.awt.BorderLayout());
         pnlRightWorkspace.add(panel);
         pnlRightWorkspace.revalidate();
         pnlRightWorkspace.repaint();
