@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="23fde932-9d8b-49fa-bbd7-b4b7e276b4be">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="MADOIBONG" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT *
+FROM DOIBONG
+WHERE MAD = $P{MADOIBONG}]]>
+	</queryString>
+	<field name="MAD" class="java.lang.String"/>
+	<field name="TENDOI" class="java.lang.String"/>
+	<field name="QUOCGIA" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="84" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="27" uuid="9c9b0663-0e65-41ca-bfa8-c9d4afd9726f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="18"/>
+				</textElement>
+				<text><![CDATA[QUẢN LÝ ĐỘI BÓNG]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="104" y="27" width="100" height="20" uuid="e2468ccf-62d4-4a25-aabf-72117963a88e"/>
+				<textFieldExpression><![CDATA[$P{MADOIBONG}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="27" width="104" height="20" uuid="895cefea-b83a-4a7b-9741-57e7233e7b14"/>
+				<text><![CDATA[MÃ ĐỘI BÓNG]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="36" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="caaa919c-b455-43fc-90a1-d08b8d88d6ca"/>
+				<textFieldExpression><![CDATA[$F{MAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="20" uuid="98f596ef-1572-480d-b261-d20f075212c1"/>
+				<textFieldExpression><![CDATA[$F{TENDOI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20" uuid="aa127642-e56a-4d9a-abaa-6284ff4acd7a"/>
+				<textFieldExpression><![CDATA[$F{QUOCGIA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
