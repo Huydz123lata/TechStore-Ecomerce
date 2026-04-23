@@ -4,6 +4,7 @@
  */
 package View;
 
+import View.AdminPortalPanel.DashBoardPnl;
 import View.AdminPortalPanel.RolePnl;
 
 /**
@@ -22,6 +23,14 @@ public class AdminPortal extends javax.swing.JFrame {
         this.setSize(1100, 650);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
+    }
+
+    private void showPanel(javax.swing.JPanel panel) {
+        pnlRightWorkspace.removeAll();
+        pnlRightWorkspace.setLayout(new java.awt.BorderLayout());
+        pnlRightWorkspace.add(panel);
+        pnlRightWorkspace.revalidate();
+        pnlRightWorkspace.repaint();
     }
 
     /**
@@ -252,7 +261,7 @@ public class AdminPortal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
-        // TODO add your handling code here:
+        showPanel(new DashBoardPnl());
     }//GEN-LAST:event_btnDashboardActionPerformed
 
     private void btnDashboard1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard1ActionPerformed
@@ -260,7 +269,7 @@ public class AdminPortal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDashboard1ActionPerformed
 
     private void btnDashboard4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard4ActionPerformed
-        // TODO add your handling code here:
+        showPanel(new RolePnl());
     }//GEN-LAST:event_btnDashboard4ActionPerformed
 
     private void btnDashboard5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard5ActionPerformed
@@ -272,17 +281,7 @@ public class AdminPortal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDashboard6ActionPerformed
 
     private void btnDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboard4MouseClicked
-        // 1. Khởi tạo Panel mới
-        RolePnl role = new RolePnl();
-        // 2. Xóa hết nội dung cũ trong vùng hiển thị chính của Dashboard
-        pnlRightWorkspace.removeAll();
 
-        // 3. Thêm Panel mới vào
-        pnlRightWorkspace.add(role);
-
-        // 4. Vẽ lại giao diện
-        pnlRightWorkspace.revalidate();
-        pnlRightWorkspace.repaint();
     }//GEN-LAST:event_btnDashboard4MouseClicked
 
     private void btnDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseClicked

@@ -35,8 +35,6 @@ public class RolePnl extends javax.swing.JPanel {
         pnlAccountList = new Custom_Component.RoundPanel();
         pnlAssignRole = new Custom_Component.RoundPanel();
 
-        setPreferredSize(new java.awt.Dimension(1000, 100));
-
         pnlRightWorkspace.setBackground(new java.awt.Color(240, 240, 240));
         pnlRightWorkspace.setLayout(new java.awt.BorderLayout());
 
@@ -44,7 +42,7 @@ public class RolePnl extends javax.swing.JPanel {
         pnlHeader.setPreferredSize(new java.awt.Dimension(1000, 100));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Role permission");
+        jLabel1.setText("Role & Permission");
 
         jLabel2.setBackground(new java.awt.Color(204, 204, 204));
         jLabel2.setText("Assign or update role permissions for user accounts");
