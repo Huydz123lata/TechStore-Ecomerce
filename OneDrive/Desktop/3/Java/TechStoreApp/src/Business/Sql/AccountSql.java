@@ -93,22 +93,4 @@ public class AccountSql {
             }
         }
     }
-
-    public static void createToken(int maTaiKhoan, String token) {
-        String tmp = java.util.UUID.randomUUID().toString().replace("-", "");
-        String sql = "INSERT INTO ACCOUNT_TOKEN (ACCOUNT_ID, TOKEN_VALUE, EXPIRES_AT) VALUES (?, ?, ?)";
-
-        // Sử dụng kết nối từ package Common.DB của bạn
-        try (Connection con = Common.DB.ConnectionUtils.getMyConnection()) {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, maTaiKhoan);
-            ps.setString(2, tmp);
-            ps.setObject(3, java.time.LocalDate.now().plusDays(60));
-
-            ps.executeUpdate();
-            System.out.println("Đã tạo token trong AccountSql cho ID: " + maTaiKhoan);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }

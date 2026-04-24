@@ -4,6 +4,10 @@
  */
 package View;
 
+import Business.Sql.TokenSql;
+import Common.Util.TokenMonitorManager;
+import Common.Util.UserSession;
+import View.AdminPortalPanel.AccountPnl;
 import View.AdminPortalPanel.DashBoardPnl;
 import View.AdminPortalPanel.RolePnl;
 
@@ -45,11 +49,13 @@ public class AdminPortal extends javax.swing.JFrame {
         pnlSideBar = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         btnDashboard = new Custom_Component.MyButton();
-        btnDashboard1 = new Custom_Component.MyButton();
-        btnDashboard4 = new Custom_Component.MyButton();
-        btnDashboard5 = new Custom_Component.MyButton();
-        btnDashboard6 = new Custom_Component.MyButton();
-        btnDashboard7 = new Custom_Component.MyButton();
+        btnAccount = new Custom_Component.MyButton();
+        btnRole = new Custom_Component.MyButton();
+        btnPromotionMng = new Custom_Component.MyButton();
+        btnProductMng = new Custom_Component.MyButton();
+        btnHoaDonMng = new Custom_Component.MyButton();
+        btnSetting = new Custom_Component.MyButton();
+        btnLogout = new Custom_Component.MyButton();
         pnlRightWorkspace = new javax.swing.JPanel();
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -88,80 +94,108 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard.addActionListener(this::btnDashboardActionPerformed);
         pnlSideBar.add(btnDashboard);
 
-        btnDashboard1.setBackground(new java.awt.Color(30, 41, 59));
-        btnDashboard1.setForeground(new java.awt.Color(255, 255, 255));
-        btnDashboard1.setText("Account Management");
-        btnDashboard1.setBorderPainted(false);
-        btnDashboard1.setColorClick(new java.awt.Color(37, 99, 235));
-        btnDashboard1.setColorHover(new java.awt.Color(71, 85, 105));
-        btnDashboard1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDashboard1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnDashboard1.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnDashboard1.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnDashboard1.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnDashboard1.addActionListener(this::btnDashboard1ActionPerformed);
-        pnlSideBar.add(btnDashboard1);
+        btnAccount.setBackground(new java.awt.Color(30, 41, 59));
+        btnAccount.setForeground(new java.awt.Color(255, 255, 255));
+        btnAccount.setText("Account Management");
+        btnAccount.setBorderPainted(false);
+        btnAccount.setColorClick(new java.awt.Color(37, 99, 235));
+        btnAccount.setColorHover(new java.awt.Color(71, 85, 105));
+        btnAccount.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnAccount.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnAccount.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnAccount.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnAccount.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnAccount.addActionListener(this::btnAccountActionPerformed);
+        pnlSideBar.add(btnAccount);
 
-        btnDashboard4.setBackground(new java.awt.Color(30, 41, 59));
-        btnDashboard4.setForeground(new java.awt.Color(255, 255, 255));
-        btnDashboard4.setText("Role & Permission");
-        btnDashboard4.setBorderPainted(false);
-        btnDashboard4.setColorClick(new java.awt.Color(37, 99, 235));
-        btnDashboard4.setColorHover(new java.awt.Color(71, 85, 105));
-        btnDashboard4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDashboard4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnDashboard4.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnDashboard4.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnDashboard4.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnDashboard4.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnRole.setBackground(new java.awt.Color(30, 41, 59));
+        btnRole.setForeground(new java.awt.Color(255, 255, 255));
+        btnRole.setText("Role & Permission");
+        btnRole.setBorderPainted(false);
+        btnRole.setColorClick(new java.awt.Color(37, 99, 235));
+        btnRole.setColorHover(new java.awt.Color(71, 85, 105));
+        btnRole.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnRole.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnRole.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnRole.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnRole.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnRole.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnDashboard4MouseClicked(evt);
+                btnRoleMouseClicked(evt);
             }
         });
-        btnDashboard4.addActionListener(this::btnDashboard4ActionPerformed);
-        pnlSideBar.add(btnDashboard4);
+        btnRole.addActionListener(this::btnRoleActionPerformed);
+        pnlSideBar.add(btnRole);
 
-        btnDashboard5.setBackground(new java.awt.Color(30, 41, 59));
-        btnDashboard5.setForeground(new java.awt.Color(255, 255, 255));
-        btnDashboard5.setText("Audit Logs");
-        btnDashboard5.setBorderPainted(false);
-        btnDashboard5.setColorClick(new java.awt.Color(37, 99, 235));
-        btnDashboard5.setColorHover(new java.awt.Color(71, 85, 105));
-        btnDashboard5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDashboard5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnDashboard5.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnDashboard5.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnDashboard5.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnDashboard5.addActionListener(this::btnDashboard5ActionPerformed);
-        pnlSideBar.add(btnDashboard5);
+        btnPromotionMng.setBackground(new java.awt.Color(30, 41, 59));
+        btnPromotionMng.setForeground(new java.awt.Color(255, 255, 255));
+        btnPromotionMng.setText("Quản lý khuyến mãi");
+        btnPromotionMng.setBorderPainted(false);
+        btnPromotionMng.setColorClick(new java.awt.Color(37, 99, 235));
+        btnPromotionMng.setColorHover(new java.awt.Color(71, 85, 105));
+        btnPromotionMng.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnPromotionMng.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnPromotionMng.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnPromotionMng.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnPromotionMng.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnPromotionMng.addActionListener(this::btnPromotionMngActionPerformed);
+        pnlSideBar.add(btnPromotionMng);
 
-        btnDashboard6.setBackground(new java.awt.Color(30, 41, 59));
-        btnDashboard6.setForeground(new java.awt.Color(255, 255, 255));
-        btnDashboard6.setText("Settings");
-        btnDashboard6.setBorderPainted(false);
-        btnDashboard6.setColorClick(new java.awt.Color(37, 99, 235));
-        btnDashboard6.setColorHover(new java.awt.Color(71, 85, 105));
-        btnDashboard6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDashboard6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnDashboard6.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnDashboard6.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnDashboard6.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnDashboard6.addActionListener(this::btnDashboard6ActionPerformed);
-        pnlSideBar.add(btnDashboard6);
+        btnProductMng.setBackground(new java.awt.Color(30, 41, 59));
+        btnProductMng.setForeground(new java.awt.Color(255, 255, 255));
+        btnProductMng.setText("Quản lý sản phẩm");
+        btnProductMng.setBorderPainted(false);
+        btnProductMng.setColorClick(new java.awt.Color(37, 99, 235));
+        btnProductMng.setColorHover(new java.awt.Color(71, 85, 105));
+        btnProductMng.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnProductMng.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnProductMng.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnProductMng.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnProductMng.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnProductMng.addActionListener(this::btnProductMngActionPerformed);
+        pnlSideBar.add(btnProductMng);
 
-        btnDashboard7.setBackground(new java.awt.Color(30, 41, 59));
-        btnDashboard7.setForeground(new java.awt.Color(255, 0, 0));
-        btnDashboard7.setText("Log out");
-        btnDashboard7.setBorderPainted(false);
-        btnDashboard7.setColorClick(new java.awt.Color(37, 99, 235));
-        btnDashboard7.setColorHover(new java.awt.Color(71, 85, 105));
-        btnDashboard7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDashboard7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnDashboard7.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnDashboard7.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnDashboard7.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnDashboard7.addActionListener(this::btnDashboard7ActionPerformed);
-        pnlSideBar.add(btnDashboard7);
+        btnHoaDonMng.setBackground(new java.awt.Color(30, 41, 59));
+        btnHoaDonMng.setForeground(new java.awt.Color(255, 255, 255));
+        btnHoaDonMng.setText("Quản lý hóa đơn");
+        btnHoaDonMng.setBorderPainted(false);
+        btnHoaDonMng.setColorClick(new java.awt.Color(37, 99, 235));
+        btnHoaDonMng.setColorHover(new java.awt.Color(71, 85, 105));
+        btnHoaDonMng.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnHoaDonMng.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnHoaDonMng.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnHoaDonMng.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnHoaDonMng.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnHoaDonMng.addActionListener(this::btnHoaDonMngActionPerformed);
+        pnlSideBar.add(btnHoaDonMng);
+
+        btnSetting.setBackground(new java.awt.Color(30, 41, 59));
+        btnSetting.setForeground(new java.awt.Color(255, 255, 255));
+        btnSetting.setText("Settings");
+        btnSetting.setBorderPainted(false);
+        btnSetting.setColorClick(new java.awt.Color(37, 99, 235));
+        btnSetting.setColorHover(new java.awt.Color(71, 85, 105));
+        btnSetting.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSetting.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnSetting.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnSetting.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnSetting.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnSetting.addActionListener(this::btnSettingActionPerformed);
+        pnlSideBar.add(btnSetting);
+
+        btnLogout.setBackground(new java.awt.Color(30, 41, 59));
+        btnLogout.setForeground(new java.awt.Color(255, 0, 0));
+        btnLogout.setText("Log out");
+        btnLogout.setBorderPainted(false);
+        btnLogout.setColorClick(new java.awt.Color(37, 99, 235));
+        btnLogout.setColorHover(new java.awt.Color(71, 85, 105));
+        btnLogout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnLogout.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnLogout.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnLogout.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnLogout.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnLogout.addActionListener(this::btnLogoutActionPerformed);
+        pnlSideBar.add(btnLogout);
 
         getContentPane().add(pnlSideBar, java.awt.BorderLayout.WEST);
 
@@ -263,35 +297,48 @@ public class AdminPortal extends javax.swing.JFrame {
         showPanel(new DashBoardPnl());
     }//GEN-LAST:event_btnDashboardActionPerformed
 
-    private void btnDashboard1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDashboard1ActionPerformed
+    private void btnAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAccountActionPerformed
+        showPanel(new AccountPnl());
+    }//GEN-LAST:event_btnAccountActionPerformed
 
-    private void btnDashboard4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard4ActionPerformed
+    private void btnRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRoleActionPerformed
         showPanel(new RolePnl());
-    }//GEN-LAST:event_btnDashboard4ActionPerformed
+    }//GEN-LAST:event_btnRoleActionPerformed
 
-    private void btnDashboard5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard5ActionPerformed
+    private void btnSettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnDashboard5ActionPerformed
+    }//GEN-LAST:event_btnSettingActionPerformed
 
-    private void btnDashboard6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDashboard6ActionPerformed
+    private void btnRoleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRoleMouseClicked
 
-    private void btnDashboard4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboard4MouseClicked
-
-    }//GEN-LAST:event_btnDashboard4MouseClicked
+    }//GEN-LAST:event_btnRoleMouseClicked
 
     private void btnDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDashboardMouseClicked
 
-    private void btnDashboard7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboard7ActionPerformed
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        TokenMonitorManager.stop();
+        String currentToken = UserSession.getCurrentTokenValue();
+        TokenSql tokenSql = new TokenSql();
+        tokenSql.revokeToken(currentToken);
+
         LoginForm login = new LoginForm();
         login.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_btnDashboard7ActionPerformed
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnPromotionMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPromotionMngActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPromotionMngActionPerformed
+
+    private void btnProductMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductMngActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnProductMngActionPerformed
+
+    private void btnHoaDonMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHoaDonMngActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnHoaDonMngActionPerformed
 
     /**
      * @param args the command line arguments
@@ -319,12 +366,14 @@ public class AdminPortal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Custom_Component.MyButton btnAccount;
     private Custom_Component.MyButton btnDashboard;
-    private Custom_Component.MyButton btnDashboard1;
-    private Custom_Component.MyButton btnDashboard4;
-    private Custom_Component.MyButton btnDashboard5;
-    private Custom_Component.MyButton btnDashboard6;
-    private Custom_Component.MyButton btnDashboard7;
+    private Custom_Component.MyButton btnHoaDonMng;
+    private Custom_Component.MyButton btnLogout;
+    private Custom_Component.MyButton btnProductMng;
+    private Custom_Component.MyButton btnPromotionMng;
+    private Custom_Component.MyButton btnRole;
+    private Custom_Component.MyButton btnSetting;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

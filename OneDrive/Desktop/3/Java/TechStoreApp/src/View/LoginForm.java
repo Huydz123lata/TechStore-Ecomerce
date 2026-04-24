@@ -6,10 +6,10 @@ package View;
 
 import Business.Main.LoginProcess;
 import Common.Util.HashUtil;
+import Common.Util.TokenMonitorManager;
+import Common.Util.UserSession;
 import Model.Account;
-import java.awt.Color;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -181,10 +181,14 @@ public class LoginForm extends javax.swing.JFrame {
         if (acc != null) {
             JOptionPane optionPane = new JOptionPane("Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
             JDialog dialog = optionPane.createDialog("Thành công");
+
             dialog.setAlwaysOnTop(true);
             dialog.setVisible(true);
+
             AdminPortal admin = new AdminPortal();
             admin.setVisible(true);
+
+            TokenMonitorManager.start();
             this.dispose();
 
         } else {

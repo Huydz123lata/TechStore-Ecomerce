@@ -13,23 +13,25 @@ import Model.Account;
 public class UserSession {
 
     private static Account currentAccount;
-    private static String sessionToken;
+    private static String currentTokenValue;
 
-    public static void init(Account acc, String token) {
-        currentAccount = acc;
-        sessionToken = token;
+    // 1. Lưu thông tin (Gọi lúc Login thành công)
+    public static void startSession(Account account, String tokenValue) {
+        currentAccount = account;
+        currentTokenValue = tokenValue;
     }
 
-    public static Account getCurrentAccount() {
-        return currentAccount;
-    }
-
-    public static String getSessionToken() {
-        return sessionToken;
-    }
-
-    public static void clear() {
+    // 2. Xóa thông tin (Gọi lúc Đăng xuất / Bị Kick)
+    public static void clearSession() {
         currentAccount = null;
-        sessionToken = null;
+        currentTokenValue = null;
+    }
+
+    public static String getCurrentTokenValue() {
+        return currentTokenValue;
+    }
+
+    public static int getCurrentAccountId() {
+        return currentAccount.getAccountId();
     }
 }
