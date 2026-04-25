@@ -1,30 +1,28 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Common.Util;
 
+import Model.Account;
+import Model.Permission;
+import java.util.List;
+
 /**
- *
  * @author HUY0406
  */
-import Model.Account;
-
 public class UserSession {
 
     private static Account currentAccount;
     private static String currentTokenValue;
+    private static List<Permission> currentPermissions;
 
-    // 1. Lưu thông tin (Gọi lúc Login thành công)
-    public static void startSession(Account account, String tokenValue) {
+    public static void startSession(Account account, String tokenValue, List<Permission> perm) {
         currentAccount = account;
         currentTokenValue = tokenValue;
+        currentPermissions = perm;
     }
 
-    // 2. Xóa thông tin (Gọi lúc Đăng xuất / Bị Kick)
     public static void clearSession() {
         currentAccount = null;
         currentTokenValue = null;
+        currentPermissions = null;
     }
 
     public static String getCurrentTokenValue() {
@@ -33,5 +31,28 @@ public class UserSession {
 
     public static int getCurrentAccountId() {
         return currentAccount.getAccountId();
+    }
+
+    public static int canDo(String functionName, String action) {
+        if (currentPermissions == null) {
+            return 0;
+        }
+        for (Permission p : currentPermissions) {
+            if (p.getFunctionName().equals(functionName)) {
+                switch (action) {
+                    case "ADD":
+                        return p.getCanAdd();
+                    case "EDIT":
+                        return p.getCanEdit();
+                    case "DELETE":
+                        return p.getCanDelete();
+                    case "VIEW":
+                        return p.getCanView();
+                    case "DOWNLOAD":
+                        return p.getCanDownload();
+                }
+            }
+        }
+        return 0;
     }
 }

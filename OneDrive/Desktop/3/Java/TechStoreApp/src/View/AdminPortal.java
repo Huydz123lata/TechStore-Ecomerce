@@ -8,7 +8,9 @@ import Business.Sql.TokenSql;
 import Common.Util.TokenMonitorManager;
 import Common.Util.UserSession;
 import View.AdminPortalPanel.AccountPnl;
+import View.AdminPortalPanel.AssignRolePnl;
 import View.AdminPortalPanel.DashBoardPnl;
+import View.AdminPortalPanel.RoleGroupPnl;
 import View.AdminPortalPanel.RolePnl;
 
 /**
@@ -51,10 +53,10 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard = new Custom_Component.MyButton();
         btnAccount = new Custom_Component.MyButton();
         btnRole = new Custom_Component.MyButton();
-        btnPromotionMng = new Custom_Component.MyButton();
+        Role_group_Mng = new Custom_Component.MyButton();
+        btnAssignRole = new Custom_Component.MyButton();
         btnProductMng = new Custom_Component.MyButton();
         btnHoaDonMng = new Custom_Component.MyButton();
-        btnSetting = new Custom_Component.MyButton();
         btnLogout = new Custom_Component.MyButton();
         pnlRightWorkspace = new javax.swing.JPanel();
         pnlHeader = new javax.swing.JPanel();
@@ -127,19 +129,33 @@ public class AdminPortal extends javax.swing.JFrame {
         btnRole.addActionListener(this::btnRoleActionPerformed);
         pnlSideBar.add(btnRole);
 
-        btnPromotionMng.setBackground(new java.awt.Color(30, 41, 59));
-        btnPromotionMng.setForeground(new java.awt.Color(255, 255, 255));
-        btnPromotionMng.setText("Quản lý khuyến mãi");
-        btnPromotionMng.setBorderPainted(false);
-        btnPromotionMng.setColorClick(new java.awt.Color(37, 99, 235));
-        btnPromotionMng.setColorHover(new java.awt.Color(71, 85, 105));
-        btnPromotionMng.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnPromotionMng.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnPromotionMng.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnPromotionMng.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnPromotionMng.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnPromotionMng.addActionListener(this::btnPromotionMngActionPerformed);
-        pnlSideBar.add(btnPromotionMng);
+        Role_group_Mng.setBackground(new java.awt.Color(30, 41, 59));
+        Role_group_Mng.setForeground(new java.awt.Color(255, 255, 255));
+        Role_group_Mng.setText("Assign Role Group");
+        Role_group_Mng.setBorderPainted(false);
+        Role_group_Mng.setColorClick(new java.awt.Color(37, 99, 235));
+        Role_group_Mng.setColorHover(new java.awt.Color(71, 85, 105));
+        Role_group_Mng.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Role_group_Mng.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        Role_group_Mng.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        Role_group_Mng.setMaximumSize(new java.awt.Dimension(200, 50));
+        Role_group_Mng.setPreferredSize(new java.awt.Dimension(200, 50));
+        Role_group_Mng.addActionListener(this::Role_group_MngActionPerformed);
+        pnlSideBar.add(Role_group_Mng);
+
+        btnAssignRole.setBackground(new java.awt.Color(30, 41, 59));
+        btnAssignRole.setForeground(new java.awt.Color(255, 255, 255));
+        btnAssignRole.setText("Assign Role");
+        btnAssignRole.setBorderPainted(false);
+        btnAssignRole.setColorClick(new java.awt.Color(37, 99, 235));
+        btnAssignRole.setColorHover(new java.awt.Color(71, 85, 105));
+        btnAssignRole.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnAssignRole.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnAssignRole.setMargin(new java.awt.Insets(2, 20, 3, 14));
+        btnAssignRole.setMaximumSize(new java.awt.Dimension(200, 50));
+        btnAssignRole.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnAssignRole.addActionListener(this::btnAssignRoleActionPerformed);
+        pnlSideBar.add(btnAssignRole);
 
         btnProductMng.setBackground(new java.awt.Color(30, 41, 59));
         btnProductMng.setForeground(new java.awt.Color(255, 255, 255));
@@ -168,20 +184,6 @@ public class AdminPortal extends javax.swing.JFrame {
         btnHoaDonMng.setPreferredSize(new java.awt.Dimension(200, 50));
         btnHoaDonMng.addActionListener(this::btnHoaDonMngActionPerformed);
         pnlSideBar.add(btnHoaDonMng);
-
-        btnSetting.setBackground(new java.awt.Color(30, 41, 59));
-        btnSetting.setForeground(new java.awt.Color(255, 255, 255));
-        btnSetting.setText("Settings");
-        btnSetting.setBorderPainted(false);
-        btnSetting.setColorClick(new java.awt.Color(37, 99, 235));
-        btnSetting.setColorHover(new java.awt.Color(71, 85, 105));
-        btnSetting.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnSetting.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnSetting.setMargin(new java.awt.Insets(2, 20, 3, 14));
-        btnSetting.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnSetting.setPreferredSize(new java.awt.Dimension(200, 50));
-        btnSetting.addActionListener(this::btnSettingActionPerformed);
-        pnlSideBar.add(btnSetting);
 
         btnLogout.setBackground(new java.awt.Color(30, 41, 59));
         btnLogout.setForeground(new java.awt.Color(255, 0, 0));
@@ -305,9 +307,9 @@ public class AdminPortal extends javax.swing.JFrame {
         showPanel(new RolePnl());
     }//GEN-LAST:event_btnRoleActionPerformed
 
-    private void btnSettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSettingActionPerformed
+    private void Role_group_MngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Role_group_MngActionPerformed
+        showPanel(new RoleGroupPnl());
+    }//GEN-LAST:event_Role_group_MngActionPerformed
 
     private void btnRoleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRoleMouseClicked
 
@@ -328,9 +330,9 @@ public class AdminPortal extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnLogoutActionPerformed
 
-    private void btnPromotionMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPromotionMngActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnPromotionMngActionPerformed
+    private void btnAssignRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAssignRoleActionPerformed
+        showPanel(new AssignRolePnl());
+    }//GEN-LAST:event_btnAssignRoleActionPerformed
 
     private void btnProductMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductMngActionPerformed
         // TODO add your handling code here:
@@ -366,14 +368,14 @@ public class AdminPortal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Custom_Component.MyButton Role_group_Mng;
     private Custom_Component.MyButton btnAccount;
+    private Custom_Component.MyButton btnAssignRole;
     private Custom_Component.MyButton btnDashboard;
     private Custom_Component.MyButton btnHoaDonMng;
     private Custom_Component.MyButton btnLogout;
     private Custom_Component.MyButton btnProductMng;
-    private Custom_Component.MyButton btnPromotionMng;
     private Custom_Component.MyButton btnRole;
-    private Custom_Component.MyButton btnSetting;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

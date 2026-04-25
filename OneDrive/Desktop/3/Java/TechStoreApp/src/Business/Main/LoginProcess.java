@@ -8,6 +8,8 @@ import Business.Sql.AccountSql;
 import Business.Sql.TokenSql;
 import Common.Util.UserSession;
 import Model.Account;
+import Model.Permission;
+import java.util.List;
 
 /**
  *
@@ -28,7 +30,8 @@ public class LoginProcess {
         if (acc != null && "ACTIVE".equalsIgnoreCase(acc.getStatus())) {
             String token = java.util.UUID.randomUUID().toString().replace("-", "");
             tokenSql.createToken(acc.getAccountId(), token);
-            UserSession.startSession(acc, token);
+            List<Permission> perms = accountSql.getPermissionsByAccountId(acc.getAccountId());
+            UserSession.startSession(acc, token, perms);
             return acc;
         }
         return null;
