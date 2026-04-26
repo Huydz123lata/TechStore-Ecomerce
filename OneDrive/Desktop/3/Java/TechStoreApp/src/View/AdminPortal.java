@@ -5,11 +5,13 @@
 package View;
 
 import Business.Sql.TokenSql;
+import Common.Util.AppConstants;
 import Common.Util.TokenMonitorManager;
 import Common.Util.UserSession;
 import View.AdminPortalPanel.AccountPnl;
 import View.AdminPortalPanel.AssignRolePnl;
 import View.AdminPortalPanel.DashBoardPnl;
+import View.AdminPortalPanel.Product_Mngt;
 import View.AdminPortalPanel.RoleGroupPnl;
 import View.AdminPortalPanel.RolePnl;
 
@@ -29,6 +31,14 @@ public class AdminPortal extends javax.swing.JFrame {
         this.setSize(1100, 650);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
+        applyMenuPermissions();
+    }
+
+    private void applyMenuPermissions() {
+
+        if (UserSession.canDo(AppConstants.FUNC_SAN_PHAM, "VIEW") == 0) {
+            btnProductMng.setVisible(false);
+        }
     }
 
     private void showPanel(javax.swing.JPanel panel) {
@@ -145,7 +155,7 @@ public class AdminPortal extends javax.swing.JFrame {
 
         btnAssignRole.setBackground(new java.awt.Color(30, 41, 59));
         btnAssignRole.setForeground(new java.awt.Color(255, 255, 255));
-        btnAssignRole.setText("Assign Role");
+        btnAssignRole.setText("Account Assign Role");
         btnAssignRole.setBorderPainted(false);
         btnAssignRole.setColorClick(new java.awt.Color(37, 99, 235));
         btnAssignRole.setColorHover(new java.awt.Color(71, 85, 105));
@@ -335,7 +345,7 @@ public class AdminPortal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAssignRoleActionPerformed
 
     private void btnProductMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductMngActionPerformed
-        // TODO add your handling code here:
+        showPanel(new Product_Mngt());
     }//GEN-LAST:event_btnProductMngActionPerformed
 
     private void btnHoaDonMngActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHoaDonMngActionPerformed

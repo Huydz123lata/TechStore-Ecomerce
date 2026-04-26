@@ -311,4 +311,58 @@ public class AccountSql {
         }
         return list;
     }
+
+    public int getGroupIdByName(String groupName) {
+        int id = -1;
+        String sql = "SELECT ROLE_GROUP_ID FROM ROLE_GROUP WHERE NAME_ROLE_GROUP = ?";
+
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, groupName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return id;
+    }
+
+    public void assignGroupToAccount(int accountId, int roleGroupId) {
+        String deleteSql = "DELETE FROM ACCOUNT_ASSIGN_ROLE_GROUP WHERE ACCOUNT_ID = ?";
+        String insertSql = "INSERT INTO ACCOUNT_ASSIGN_ROLE_GROUP (ACCOUNT_ID, ROLE_GROUP_ID) VALUES (?, ?)";
+
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement psDel = con.prepareStatement(deleteSql); PreparedStatement psIns = con.prepareStatement(insertSql)) {
+
+            psDel.setInt(1, accountId);
+            psDel.executeUpdate();
+
+            psIns.setInt(1, accountId);
+            psIns.setInt(2, roleGroupId);
+            psIns.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<Object[]> getAllAccounts() {
+        List<Object[]> list = new ArrayList<>();
+
+        String sql = "SELECT ACCOUNT_ID, USERNAME FROM ACCOUNT";
+
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+
+                // Đã đổi thành USERNAME
+                list.add(new Object[]{rs.getInt("ACCOUNT_ID"), rs.getString("USERNAME")});
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

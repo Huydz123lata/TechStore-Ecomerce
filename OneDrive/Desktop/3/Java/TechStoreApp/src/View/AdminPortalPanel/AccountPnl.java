@@ -4,6 +4,17 @@
  */
 package View.AdminPortalPanel;
 
+import Business.Sql.AccountSql;
+
+import java.awt.Component;
+import java.util.List;
+
+import javax.swing.JButton;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author HUY0406
@@ -15,6 +26,88 @@ public class AccountPnl extends javax.swing.JPanel {
      */
     public AccountPnl() {
         initComponents();
+        setupButtonColumn();
+        setupComboboxColumn();
+        loadAccountToTable();
+    }
+
+    private void loadAccountToTable() {
+        DefaultTableModel model = (DefaultTableModel) tblAccount.getModel();
+        model.setRowCount(0);
+
+        AccountSql account = new AccountSql();
+        // Lấy nguyên cái List chứa các cục Object (gồm ID và Name) về
+        List<Object[]> accounts = account.getAllAccounts();
+
+        // Lặp qua từng cục và đập lên bảng
+        for (Object[] acc : accounts) {
+            // acc[0] chính là Account_ID
+            // acc[1] chính là Account_Name
+            model.addRow(new Object[]{acc[0], acc[1], "--- Chọn Nhóm ---", "Lưu Quyền"});
+        }
+    }
+
+    private void setupComboboxColumn() {
+        javax.swing.JComboBox<String> cboGroup = new javax.swing.JComboBox<>();
+
+        // Gọi hàm cũ của bro để lấy danh sách tên
+        AccountSql account = new AccountSql();
+        java.util.List<String> listName = account.getRoleGroupName();
+
+        // Đổ vào Combobox
+        for (String name : listName) {
+            cboGroup.addItem(name);
+        }
+
+        // Nhét vào cột 2 của JTable
+        javax.swing.table.TableColumn groupColumn = tblAccount.getColumnModel().getColumn(2);
+        groupColumn.setCellEditor(new javax.swing.DefaultCellEditor(cboGroup));
+    }
+
+    private void setupButtonColumn() {
+        javax.swing.table.TableColumn actionColumn = tblAccount.getColumnModel().getColumn(3);
+
+        // 1. Hiển thị nút (Renderer)
+        actionColumn.setCellRenderer((table, value, isSelected, hasFocus, row, column) -> {
+            return new javax.swing.JButton("Lưu Quyền");
+        });
+
+        // 2. Xử lý khi bấm nút (Editor)
+        actionColumn.setCellEditor(new javax.swing.DefaultCellEditor(new javax.swing.JCheckBox()) {
+            private JButton button = new javax.swing.JButton("Lưu Quyền");
+            private int currentRow;
+
+            {
+                button.addActionListener(e -> {
+                    if (tblAccount.isEditing()) {
+                        tblAccount.getCellEditor().stopCellEditing();
+                    }
+
+                    int accId = Integer.parseInt(tblAccount.getValueAt(currentRow, 0).toString());
+
+                    String selectedGroupName = tblAccount.getValueAt(currentRow, 2).toString();
+
+                    AccountSql accountSql = new AccountSql();
+
+                    int groupId = accountSql.getGroupIdByName(selectedGroupName);
+
+                    if (groupId != -1) {
+                        System.out.println("Đang lưu Account " + accId + " vào Nhóm: " + selectedGroupName + " (ID: " + groupId + ")");
+
+                        accountSql.assignGroupToAccount(accId, groupId);
+                        JOptionPane.showMessageDialog(null, "Lưu thành công tài khoản vào nhóm " + selectedGroupName);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Lỗi: Không tìm thấy ID của nhóm " + selectedGroupName);
+                    }
+                });
+            }
+
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                currentRow = row;
+                return button;
+            }
+        });
     }
 
     /**
@@ -25,15 +118,14 @@ public class AccountPnl extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
 
         pnlRightWorkspace = new javax.swing.JPanel();
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         pnlContent = new javax.swing.JPanel();
-        pnlAccountList = new Custom_Component.RoundPanel();
-        pnlAssignRole = new Custom_Component.RoundPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAccount = new javax.swing.JTable();
 
         pnlRightWorkspace.setBackground(new java.awt.Color(240, 240, 240));
         pnlRightWorkspace.setLayout(new java.awt.BorderLayout());
@@ -42,7 +134,7 @@ public class AccountPnl extends javax.swing.JPanel {
         pnlHeader.setPreferredSize(new java.awt.Dimension(1000, 100));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Account Assign Role");
+        jLabel1.setText("Account Management");
 
         jLabel2.setBackground(new java.awt.Color(204, 204, 204));
         jLabel2.setText("Assign or update role permissions for user accounts");
@@ -75,52 +167,48 @@ public class AccountPnl extends javax.swing.JPanel {
 
         pnlContent.setBackground(new java.awt.Color(241, 245, 249));
         pnlContent.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        pnlContent.setLayout(new java.awt.GridBagLayout());
 
-        pnlAccountList.setBackground(new java.awt.Color(255, 255, 255));
-        pnlAccountList.setPreferredSize(new java.awt.Dimension(670, 571));
+        tblAccount.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Account_ID", "Account_Name", "Account_Role_Group", "SAVE"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true
+            };
 
-        javax.swing.GroupLayout pnlAccountListLayout = new javax.swing.GroupLayout(pnlAccountList);
-        pnlAccountList.setLayout(pnlAccountListLayout);
-        pnlAccountListLayout.setHorizontalGroup(
-            pnlAccountListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 565, Short.MAX_VALUE)
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tblAccount);
+
+        javax.swing.GroupLayout pnlContentLayout = new javax.swing.GroupLayout(pnlContent);
+        pnlContent.setLayout(pnlContentLayout);
+        pnlContentLayout.setHorizontalGroup(
+            pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlContentLayout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 829, Short.MAX_VALUE)
+                .addGap(21, 21, 21))
         );
-        pnlAccountListLayout.setVerticalGroup(
-            pnlAccountListLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 571, Short.MAX_VALUE)
+        pnlContentLayout.setVerticalGroup(
+            pnlContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
         );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.65;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
-        pnlContent.add(pnlAccountList, gridBagConstraints);
-
-        pnlAssignRole.setBackground(new java.awt.Color(255, 255, 255));
-        pnlAssignRole.setPreferredSize(new java.awt.Dimension(300, 0));
-
-        javax.swing.GroupLayout pnlAssignRoleLayout = new javax.swing.GroupLayout(pnlAssignRole);
-        pnlAssignRole.setLayout(pnlAssignRoleLayout);
-        pnlAssignRoleLayout.setHorizontalGroup(
-            pnlAssignRoleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        pnlAssignRoleLayout.setVerticalGroup(
-            pnlAssignRoleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.35;
-        gridBagConstraints.weighty = 1.0;
-        pnlContent.add(pnlAssignRole, gridBagConstraints);
 
         pnlRightWorkspace.add(pnlContent, java.awt.BorderLayout.CENTER);
 
@@ -137,7 +225,7 @@ public class AccountPnl extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 711, Short.MAX_VALUE)
+            .addGap(0, 657, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(0, 0, 0)
@@ -149,10 +237,10 @@ public class AccountPnl extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private Custom_Component.RoundPanel pnlAccountList;
-    private Custom_Component.RoundPanel pnlAssignRole;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnlContent;
     private javax.swing.JPanel pnlHeader;
     private javax.swing.JPanel pnlRightWorkspace;
+    private javax.swing.JTable tblAccount;
     // End of variables declaration//GEN-END:variables
 }

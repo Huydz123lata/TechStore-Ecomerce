@@ -26,7 +26,10 @@ public class TokenMonitorManager {
         timer = new Timer(5000, e -> {
             String token = UserSession.getCurrentTokenValue();
             if (token == null || "Y".equals(tokenSql.checkStatus(token))) {
-                timer.stop();
+
+                if (timer != null) {
+                    timer.stop();
+                }
                 handleKick();
             }
         });
@@ -34,7 +37,9 @@ public class TokenMonitorManager {
     }
 
     public static void stop() {
-        timer.stop();
+        if (timer != null) {
+            timer.stop();
+        }
     }
 
     private static void handleKick() {
