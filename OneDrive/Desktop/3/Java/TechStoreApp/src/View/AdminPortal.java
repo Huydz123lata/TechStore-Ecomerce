@@ -68,6 +68,7 @@ public class AdminPortal extends javax.swing.JFrame {
         btnProductMng = new Custom_Component.MyButton();
         btnHoaDonMng = new Custom_Component.MyButton();
         btnLogout = new Custom_Component.MyButton();
+        imagePanel1 = new Custom_Component.ImagePanel();
         pnlRightWorkspace = new javax.swing.JPanel();
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -80,12 +81,10 @@ public class AdminPortal extends javax.swing.JFrame {
 
         pnlSideBar.setBackground(new java.awt.Color(30, 41, 59));
         pnlSideBar.setPreferredSize(new java.awt.Dimension(220, 250));
-        pnlSideBar.setLayout(new javax.swing.BoxLayout(pnlSideBar, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Admin Portal");
-        pnlSideBar.add(jLabel3);
 
         btnDashboard.setBackground(new java.awt.Color(30, 41, 59));
         btnDashboard.setForeground(new java.awt.Color(255, 255, 255));
@@ -97,14 +96,13 @@ public class AdminPortal extends javax.swing.JFrame {
         btnDashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnDashboard.setMargin(new java.awt.Insets(2, 20, 3, 14));
         btnDashboard.setMaximumSize(new java.awt.Dimension(200, 50));
-        btnDashboard.setPreferredSize(new java.awt.Dimension(200, 50));
+        btnDashboard.setPreferredSize(new java.awt.Dimension(150, 50));
         btnDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnDashboardMouseClicked(evt);
             }
         });
         btnDashboard.addActionListener(this::btnDashboardActionPerformed);
-        pnlSideBar.add(btnDashboard);
 
         btnAccount.setBackground(new java.awt.Color(30, 41, 59));
         btnAccount.setForeground(new java.awt.Color(255, 255, 255));
@@ -118,7 +116,6 @@ public class AdminPortal extends javax.swing.JFrame {
         btnAccount.setMaximumSize(new java.awt.Dimension(200, 50));
         btnAccount.setPreferredSize(new java.awt.Dimension(200, 50));
         btnAccount.addActionListener(this::btnAccountActionPerformed);
-        pnlSideBar.add(btnAccount);
 
         btnRole.setBackground(new java.awt.Color(30, 41, 59));
         btnRole.setForeground(new java.awt.Color(255, 255, 255));
@@ -137,7 +134,6 @@ public class AdminPortal extends javax.swing.JFrame {
             }
         });
         btnRole.addActionListener(this::btnRoleActionPerformed);
-        pnlSideBar.add(btnRole);
 
         Role_group_Mng.setBackground(new java.awt.Color(30, 41, 59));
         Role_group_Mng.setForeground(new java.awt.Color(255, 255, 255));
@@ -151,7 +147,6 @@ public class AdminPortal extends javax.swing.JFrame {
         Role_group_Mng.setMaximumSize(new java.awt.Dimension(200, 50));
         Role_group_Mng.setPreferredSize(new java.awt.Dimension(200, 50));
         Role_group_Mng.addActionListener(this::Role_group_MngActionPerformed);
-        pnlSideBar.add(Role_group_Mng);
 
         btnAssignRole.setBackground(new java.awt.Color(30, 41, 59));
         btnAssignRole.setForeground(new java.awt.Color(255, 255, 255));
@@ -165,7 +160,6 @@ public class AdminPortal extends javax.swing.JFrame {
         btnAssignRole.setMaximumSize(new java.awt.Dimension(200, 50));
         btnAssignRole.setPreferredSize(new java.awt.Dimension(200, 50));
         btnAssignRole.addActionListener(this::btnAssignRoleActionPerformed);
-        pnlSideBar.add(btnAssignRole);
 
         btnProductMng.setBackground(new java.awt.Color(30, 41, 59));
         btnProductMng.setForeground(new java.awt.Color(255, 255, 255));
@@ -179,7 +173,6 @@ public class AdminPortal extends javax.swing.JFrame {
         btnProductMng.setMaximumSize(new java.awt.Dimension(200, 50));
         btnProductMng.setPreferredSize(new java.awt.Dimension(200, 50));
         btnProductMng.addActionListener(this::btnProductMngActionPerformed);
-        pnlSideBar.add(btnProductMng);
 
         btnHoaDonMng.setBackground(new java.awt.Color(30, 41, 59));
         btnHoaDonMng.setForeground(new java.awt.Color(255, 255, 255));
@@ -193,7 +186,6 @@ public class AdminPortal extends javax.swing.JFrame {
         btnHoaDonMng.setMaximumSize(new java.awt.Dimension(200, 50));
         btnHoaDonMng.setPreferredSize(new java.awt.Dimension(200, 50));
         btnHoaDonMng.addActionListener(this::btnHoaDonMngActionPerformed);
-        pnlSideBar.add(btnHoaDonMng);
 
         btnLogout.setBackground(new java.awt.Color(30, 41, 59));
         btnLogout.setForeground(new java.awt.Color(255, 0, 0));
@@ -207,7 +199,73 @@ public class AdminPortal extends javax.swing.JFrame {
         btnLogout.setMaximumSize(new java.awt.Dimension(200, 50));
         btnLogout.setPreferredSize(new java.awt.Dimension(200, 50));
         btnLogout.addActionListener(this::btnLogoutActionPerformed);
-        pnlSideBar.add(btnLogout);
+
+        imagePanel1.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/1.png"))); // NOI18N
+        imagePanel1.setPreferredSize(new java.awt.Dimension(50, 50));
+
+        javax.swing.GroupLayout imagePanel1Layout = new javax.swing.GroupLayout(imagePanel1);
+        imagePanel1.setLayout(imagePanel1Layout);
+        imagePanel1Layout.setHorizontalGroup(
+            imagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 25, Short.MAX_VALUE)
+        );
+        imagePanel1Layout.setVerticalGroup(
+            imagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 25, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout pnlSideBarLayout = new javax.swing.GroupLayout(pnlSideBar);
+        pnlSideBar.setLayout(pnlSideBarLayout);
+        pnlSideBarLayout.setHorizontalGroup(
+            pnlSideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSideBarLayout.createSequentialGroup()
+                .addGroup(pnlSideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addGroup(pnlSideBarLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(pnlSideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnHoaDonMng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnProductMng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAssignRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Role_group_Mng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(pnlSideBarLayout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addComponent(imagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(24, 24, 24)))))
+                .addGap(14, 14, 14))
+        );
+        pnlSideBarLayout.setVerticalGroup(
+            pnlSideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlSideBarLayout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addGroup(pnlSideBarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlSideBarLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(imagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlSideBarLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(127, 127, 127)
+                .addComponent(btnAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(61, 61, 61)
+                .addComponent(btnRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Role_group_Mng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAssignRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(btnProductMng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnHoaDonMng, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(15, 15, 15))
+        );
 
         getContentPane().add(pnlSideBar, java.awt.BorderLayout.WEST);
 
@@ -386,6 +444,7 @@ public class AdminPortal extends javax.swing.JFrame {
     private Custom_Component.MyButton btnLogout;
     private Custom_Component.MyButton btnProductMng;
     private Custom_Component.MyButton btnRole;
+    private Custom_Component.ImagePanel imagePanel1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

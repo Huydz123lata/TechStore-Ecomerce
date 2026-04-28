@@ -30,15 +30,14 @@ public class AdminForm extends javax.swing.JFrame {
 
     private void showPanel(JPanel panel) {
         panelView.removeAll();
-        panelView.setLayout(new java.awt.BorderLayout()); // Đảm bảo có dòng này
-        panelView.add(panel, java.awt.BorderLayout.CENTER); // Add vào vị trí trung tâm
+        panelView.setLayout(new java.awt.BorderLayout());
+        panelView.add(panel, java.awt.BorderLayout.CENTER);
 
-        panelView.revalidate(); // Tính toán lại layout
-        panelView.repaint();    // Vẽ lại giao diện
+        panelView.revalidate();
+        panelView.repaint();
     }
 
     private void resetMenuButtons(javax.swing.JLabel activeLabel) {
-        // Cập nhật nút đang được chọn vào biến dùng chung
         currentSelectedLabel = activeLabel;
         if (activeLabel == btnTrangchu) {
             btnArrowTrangchu.setOpaque(true);
@@ -46,7 +45,6 @@ public class AdminForm extends javax.swing.JFrame {
         } else {
             btnArrowTrangchu.setOpaque(false);
         }
-        // Danh sách đầy đủ các nút menu của bạn
         javax.swing.JLabel[] labels = {btnTrangchu, btnDoanhSo, btnThongke, btnBanhang, btnSanpham, btnHoadon, btnKhuyenmai, btnTaikhoan, btnRole, btnLogout};
 
         for (javax.swing.JLabel lbl : labels) {
@@ -121,7 +119,7 @@ public class AdminForm extends javax.swing.JFrame {
         Menu.setPreferredSize(new java.awt.Dimension(215, 452));
 
         title.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
-        title.setForeground(new java.awt.Color(255, 255, 255));
+        title.setForeground(new java.awt.Color(255, 102, 0));
         title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         title.setText("SMART HUB");
 
@@ -234,7 +232,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnHoadon.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnHoadon.setForeground(new java.awt.Color(153, 153, 153));
         btnHoadon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/7.png"))); // NOI18N
-        btnHoadon.setText("Quản lý Hoá đơn");
+        btnHoadon.setText("Quản lý Đơn Hàng");
         btnHoadon.setFocusable(false);
         btnHoadon.setIconTextGap(15);
         btnHoadon.setOpaque(true);
@@ -491,8 +489,8 @@ public class AdminForm extends javax.swing.JFrame {
 
     private void btnTrangchuMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTrangchuMouseExited
         if (btnTrangchu != currentSelectedLabel) {
-            btnTrangchu.setOpaque(false); // Trả về trong suốt
-            btnTrangchu.setForeground(new Color(153, 153, 153)); // Trả về chữ Xám
+            btnTrangchu.setOpaque(false);
+            btnTrangchu.setForeground(new Color(153, 153, 153));
 
             btnArrowTrangchu.setOpaque(false);
             btnTrangchu.repaint();
@@ -510,8 +508,8 @@ public class AdminForm extends javax.swing.JFrame {
 
     private void btnBanhangMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBanhangMouseExited
         if (btnBanhang != currentSelectedLabel) {
-            btnBanhang.setOpaque(false); // Trả về trong suốt
-            btnBanhang.setForeground(new Color(153, 153, 153)); // Trả về chữ Xám
+            btnBanhang.setOpaque(false);
+            btnBanhang.setForeground(new Color(153, 153, 153));
         }
     }//GEN-LAST:event_btnBanhangMouseExited
 
@@ -655,25 +653,24 @@ public class AdminForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKhuyenmaiMouseClicked
 
     private void btnTaikhoanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnTaikhoanMouseClicked
-        showPanel(new panelTaikhoan()); // Đảm bảo tên class Panel này đúng
+        showPanel(new panelTaikhoan());
         currentSelectedLabel = btnTaikhoan;
         resetMenuButtons(btnTaikhoan);
     }//GEN-LAST:event_btnTaikhoanMouseClicked
 
     private void btnDoanhSoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDoanhSoMouseClicked
-        showPanel(new panelGiaodich()); // Đảm bảo tên class Panel này đúng
+        showPanel(new panelGiaodich());
         currentSelectedLabel = btnDoanhSo;
         resetMenuButtons(btnDoanhSo);
     }//GEN-LAST:event_btnDoanhSoMouseClicked
 
     private void btnThongkeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThongkeMouseClicked
-        showPanel(new panelThongke()); // Đảm bảo tên class Panel này đúng
+        showPanel(new panelThongke());
         currentSelectedLabel = btnThongke;
         resetMenuButtons(btnThongke);
     }//GEN-LAST:event_btnThongkeMouseClicked
 
     private void btnLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogoutMouseClicked
-
         currentSelectedLabel = btnLogout;
         resetMenuButtons(btnLogout);
     }//GEN-LAST:event_btnLogoutMouseClicked
@@ -702,18 +699,15 @@ public class AdminForm extends javax.swing.JFrame {
     private void btnArrowTrangchuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnArrowTrangchuMouseClicked
         isTrangChuExpanded = !isTrangChuExpanded; // Đảo trạng thái
 
-        // Ẩn/Hiện 2 nút menu con
         btnDoanhSo.setVisible(isTrangChuExpanded);
         btnThongke.setVisible(isTrangChuExpanded);
 
-        // Đổi hướng mũi tên (Bạn có thể thay bằng setIcon nếu có ảnh)
         if (isTrangChuExpanded) {
             btnArrowTrangchu.setText("▲");
         } else {
             btnArrowTrangchu.setText("▼");
         }
 
-        // Cập nhật lại Layout để đẩy các nút phía dưới xuống
         Menu.revalidate();
         Menu.repaint();
     }//GEN-LAST:event_btnArrowTrangchuMouseClicked
@@ -735,7 +729,6 @@ public class AdminForm extends javax.swing.JFrame {
         try {
             javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
 
-            // (Tùy chọn) Chỉnh font chữ mặc định của toàn hệ thống cho đẹp hơn
             javax.swing.UIManager.put("defaultFont", new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 13));
         } catch (Exception ex) {
             System.err.println("Không thể khởi tạo FlatLaf");
@@ -744,7 +737,7 @@ public class AdminForm extends javax.swing.JFrame {
         // 2. Code gọi cửa sổ AdminForm hiện lên (Giữ nguyên code cũ của bạn ở phần này)
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new AdminForm().setVisible(true); // Thay MainFrame bằng tên class của bạn
+                new AdminForm().setVisible(true);
             }
         });
     }
