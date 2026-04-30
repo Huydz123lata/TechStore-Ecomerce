@@ -1,304 +1,466 @@
--- ==============================================================================
--- NHÓM 1: QUẢN LÝ ĐƠN HÀNG & THANH TOÁN
--- ==============================================================================
+/* =============================================================================
+   20 TRIGGER NGHIỆP VỤ TRỌNG TÂM
+   Hệ thống: E-Commerce (Oracle Database)
+   Cập nhật: TRG10 -> Huỷ CART sau đặt hàng thành công
+             TRG_ORDER_STATUS_TRANSITION -> Bonus trigger state machine
+=============================================================================
+   NHÓM 1 : Đơn hàng & Thanh toán  (TRG1  – TRG4)
+   NHÓM 2 : Tồn kho & Sản phẩm     (TRG5  – TRG8)
+   NHÓM 3 : Điểm thưởng & Đánh giá (TRG9  – TRG12)
+   NHÓM 4 : Mua chung – Group Buy   (TRG13 – TRG16)
+   NHÓM 5 : Bảo mật & Tài khoản    (TRG17 – TRG20)
+   BONUS  : State machine guard      (TRG_ORDER_STATUS_TRANSITION)
+============================================================================= */
 
--- 1. Tự động cộng/trừ tiền vào TOTAL của ORDERS khi thêm/xóa ORDER_DETAIL
--- (Xử lý thuật toán cộng dồn để tránh lỗi Mutating Table của Oracle)
-CREATE OR REPLACE TRIGGER TRG_ORDER_TOTAL_CALC
+
+/* =========================================================================
+   NHÓM 1 — ĐƠN HÀNG & THANH TOÁN
+   ========================================================================= */
+
+-- TRG1: Tự động tính lại TOTAL khi thêm / sửa / xoá ORDER_DETAIL
+CREATE OR REPLACE TRIGGER TRG_RECALC_ORDER_TOTAL
 AFTER INSERT OR UPDATE OR DELETE ON ORDER_DETAIL
 FOR EACH ROW
-BEGIN
-    IF INSERTING THEN
-        UPDATE ORDERS SET TOTAL = TOTAL + (:NEW.PRICE * :NEW.QUANTITY)
-        WHERE ORDER_ID = :NEW.ORDER_ID;
-    ELSIF UPDATING THEN
-        UPDATE ORDERS SET TOTAL = TOTAL - (:OLD.PRICE * :OLD.QUANTITY) + (:NEW.PRICE * :NEW.QUANTITY)
-        WHERE ORDER_ID = :NEW.ORDER_ID;
-    ELSIF DELETING THEN
-        UPDATE ORDERS SET TOTAL = TOTAL - (:OLD.PRICE * :OLD.QUANTITY)
-        WHERE ORDER_ID = :OLD.ORDER_ID;
-    END IF;
-END;
-/
-
--- 2. Đồng bộ trạng thái đơn hàng khi Thanh toán (PAYMENT) thành công
-CREATE OR REPLACE TRIGGER TRG_PAYMENT_ORDER_SYNC
-AFTER UPDATE OF PAYMENT_STATUS ON PAYMENT FOR EACH ROW
-WHEN (NEW.PAYMENT_STATUS = 'SUCCESS')
-BEGIN
-    UPDATE ORDERS SET STATUS = 'PROCESSING' WHERE ORDER_ID = :NEW.ORDER_ID;
-END;
-/
-
--- 3. Đảm bảo số tiền thanh toán không được nhỏ hơn tổng đơn hàng
-CREATE OR REPLACE TRIGGER TRG_VALIDATE_PAYMENT_AMOUNT
-BEFORE INSERT ON PAYMENT FOR EACH ROW
 DECLARE
-    v_total NUMBER;
+    v_order_id NUMBER;
 BEGIN
-    SELECT TOTAL INTO v_total FROM ORDERS WHERE ORDER_ID = :NEW.ORDER_ID;
-    IF :NEW.AMOUNT < v_total THEN
-        RAISE_APPLICATION_ERROR(-20020, 'Lỗi: Số tiền thanh toán không đủ để trả cho đơn hàng.');
+    v_order_id := CASE
+        WHEN DELETING THEN :OLD.ORDER_ID
+        ELSE :NEW.ORDER_ID
+    END;
+
+    UPDATE ORDERS
+    SET TOTAL      = (SELECT NVL(SUM(QUANTITY * PRICE), 0)
+                      FROM ORDER_DETAIL
+                      WHERE ORDER_ID = v_order_id),
+        UPDATED_AT = SYSDATE
+    WHERE ORDER_ID = v_order_id;
+END;
+/
+
+-- TRG2: Tự động CONFIRMED đơn hàng khi thanh toán thành công
+CREATE OR REPLACE TRIGGER TRG_CONFIRM_ORDER_ON_PAYMENT
+AFTER INSERT OR UPDATE OF PAYMENT_STATUS ON PAYMENT
+FOR EACH ROW
+BEGIN
+    IF :NEW.PAYMENT_STATUS = 'SUCCESS' THEN
+        UPDATE ORDERS
+        SET STATUS     = 'CONFIRMED',
+            UPDATED_AT = SYSDATE
+        WHERE ORDER_ID = :NEW.ORDER_ID
+          AND STATUS   = 'PENDING';
     END IF;
 END;
 /
 
--- 4. Ngăn chặn hủy đơn hàng đã hoặc đang giao đi
-CREATE OR REPLACE TRIGGER TRG_PREVENT_CANCEL_SHIPPED_ORDER
-BEFORE UPDATE OF STATUS ON ORDERS FOR EACH ROW
+-- TRG3: Áp mã giảm giá — trừ DISCOUNT_VALUE vào TOTAL khi gán coupon
+CREATE OR REPLACE TRIGGER TRG_APPLY_COUPON
+AFTER UPDATE OF COUPON_ID ON ORDERS
+FOR EACH ROW
+DECLARE
+    v_discount NUMBER(18,2);
+    v_now      DATE := SYSDATE;
 BEGIN
-    IF :NEW.STATUS = 'CANCELLED' AND :OLD.STATUS IN ('SHIPPING', 'DELIVERED') THEN
-        RAISE_APPLICATION_ERROR(-20032, 'Không thể hủy đơn hàng đang trên đường giao hoặc đã giao thành công.');
+    IF :NEW.COUPON_ID IS NOT NULL AND
+       (:OLD.COUPON_ID IS NULL OR :OLD.COUPON_ID != :NEW.COUPON_ID) THEN
+
+        SELECT DISCOUNT_VALUE INTO v_discount
+        FROM COUPON
+        WHERE COUPON_ID = :NEW.COUPON_ID
+          AND IS_ACTIVE  = 1
+          AND IS_DELETED = 0
+          AND v_now BETWEEN START_AT AND END_AT;
+
+        UPDATE ORDERS
+        SET TOTAL      = GREATEST(TOTAL - v_discount, 0),
+            UPDATED_AT = SYSDATE
+        WHERE ORDER_ID = :NEW.ORDER_ID;
+
+    END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20001,
+            'Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+END;
+/
+
+-- TRG4: Ghi nhận thời điểm thanh toán khi PAYMENT_STATUS chuyển SUCCESS
+CREATE OR REPLACE TRIGGER TRG_SET_PAID_AT
+BEFORE UPDATE OF PAYMENT_STATUS ON PAYMENT
+FOR EACH ROW
+BEGIN
+    IF :NEW.PAYMENT_STATUS = 'SUCCESS' AND :OLD.PAYMENT_STATUS != 'SUCCESS' THEN
+        :NEW.PAID_AT := SYSDATE;
     END IF;
 END;
 /
 
--- ==============================================================================
--- NHÓM 2: QUẢN LÝ KHO (INVENTORY) & SẢN PHẨM
--- ==============================================================================
 
--- 5. Khấu trừ tồn kho khi đặt hàng (Trừ đúng KHO được gán trong ORDERS)
+/* =========================================================================
+   NHÓM 2 — TỒN KHO & SẢN PHẨM
+   ========================================================================= */
+
+-- TRG5: Trừ tồn kho khi đơn hàng chuyển sang CONFIRMED
 CREATE OR REPLACE TRIGGER TRG_DEDUCT_INVENTORY
-AFTER INSERT ON ORDER_DETAIL FOR EACH ROW
-DECLARE
-    v_warehouse_id NUMBER;
+AFTER UPDATE OF STATUS ON ORDERS
+FOR EACH ROW
 BEGIN
-    -- Lấy ID kho xuất hàng từ bảng ORDERS
-    SELECT WAREHOUSE_ID INTO v_warehouse_id FROM ORDERS WHERE ORDER_ID = :NEW.ORDER_ID;
+    IF :NEW.STATUS = 'CONFIRMED' AND :OLD.STATUS = 'PENDING' THEN
+        FOR r IN (SELECT PRODUCT_ID, WAREHOUSE_ID, QUANTITY
+                  FROM ORDER_DETAIL
+                  WHERE ORDER_ID = :NEW.ORDER_ID) LOOP
 
-    -- Trừ kho chính xác
-    IF v_warehouse_id IS NOT NULL THEN
-        UPDATE INVENTORY SET QUANTITY = QUANTITY - :NEW.QUANTITY
-        WHERE PRODUCT_ID = :NEW.PRODUCT_ID AND WAREHOUSE_ID = v_warehouse_id;
-    END IF;
-END;
-/
+            UPDATE INVENTORY
+            SET QUANTITY   = QUANTITY - r.QUANTITY,
+                UPDATED_AT = SYSDATE
+            WHERE PRODUCT_ID  = r.PRODUCT_ID
+              AND WAREHOUSE_ID = r.WAREHOUSE_ID;
 
--- 6. Hoàn trả tồn kho khi đơn hàng bị HỦY (CANCELLED)
-CREATE OR REPLACE TRIGGER TRG_RESTORE_INVENTORY
-AFTER UPDATE OF STATUS ON ORDERS FOR EACH ROW
-WHEN (NEW.STATUS = 'CANCELLED')
-BEGIN
-    IF :OLD.WAREHOUSE_ID IS NOT NULL THEN
-        FOR r IN (SELECT PRODUCT_ID, QUANTITY FROM ORDER_DETAIL WHERE ORDER_ID = :NEW.ORDER_ID) LOOP
-            UPDATE INVENTORY SET QUANTITY = QUANTITY + r.QUANTITY
-            WHERE PRODUCT_ID = r.PRODUCT_ID AND WAREHOUSE_ID = :NEW.WAREHOUSE_ID;
+            IF SQL%ROWCOUNT = 0 THEN
+                RAISE_APPLICATION_ERROR(-20010,
+                    'Không tìm thấy tồn kho cho sản phẩm ID: ' || r.PRODUCT_ID);
+            END IF;
         END LOOP;
     END IF;
 END;
 /
 
--- ==============================================================================
--- NHÓM 3: KHÁCH HÀNG, ĐỐI TÁC & REVIEW
--- ==============================================================================
+-- TRG6: Hoàn trả tồn kho khi đơn hàng bị huỷ
+CREATE OR REPLACE TRIGGER TRG_RESTORE_INVENTORY_ON_CANCEL
+AFTER UPDATE OF STATUS ON ORDERS
+FOR EACH ROW
+BEGIN
+    IF :NEW.STATUS = 'CANCELLED' AND :OLD.STATUS NOT IN ('CANCELLED','PENDING') THEN
+        FOR r IN (SELECT PRODUCT_ID, WAREHOUSE_ID, QUANTITY
+                  FROM ORDER_DETAIL
+                  WHERE ORDER_ID = :NEW.ORDER_ID) LOOP
+            UPDATE INVENTORY
+            SET QUANTITY   = QUANTITY + r.QUANTITY,
+                UPDATED_AT = SYSDATE
+            WHERE PRODUCT_ID  = r.PRODUCT_ID
+              AND WAREHOUSE_ID = r.WAREHOUSE_ID;
+        END LOOP;
+    END IF;
+END;
+/
 
--- 7. Chỉ cho phép Review nếu khách đã thực sự mua và nhận hàng
-CREATE OR REPLACE TRIGGER TRG_REVIEW_VALIDATE_PURCHASE
-BEFORE INSERT ON REVIEW FOR EACH ROW
+-- TRG7: Ghi cảnh báo khi tồn kho xuống dưới ngưỡng 10
+-- Yêu cầu bảng: CREATE TABLE INVENTORY_ALERT (
+--   PRODUCT_ID NUMBER, WAREHOUSE_ID NUMBER, QUANTITY NUMBER, ALERT_AT DATE);
+CREATE OR REPLACE TRIGGER TRG_LOW_STOCK_ALERT
+AFTER UPDATE OF QUANTITY ON INVENTORY
+FOR EACH ROW
+BEGIN
+    IF :NEW.QUANTITY < 10 AND (:OLD.QUANTITY >= 10 OR :OLD.QUANTITY IS NULL) THEN
+        INSERT INTO INVENTORY_ALERT(PRODUCT_ID, WAREHOUSE_ID, QUANTITY, ALERT_AT)
+        VALUES (:NEW.PRODUCT_ID, :NEW.WAREHOUSE_ID, :NEW.QUANTITY, SYSDATE);
+    END IF;
+END;
+/
+
+-- TRG8: Chặn thêm ORDER_DETAIL khi sản phẩm không đủ tồn kho
+CREATE OR REPLACE TRIGGER TRG_BLOCK_OUT_OF_STOCK
+BEFORE INSERT ON ORDER_DETAIL
+FOR EACH ROW
+DECLARE
+    v_available NUMBER;
+BEGIN
+    SELECT NVL(SUM(QUANTITY), 0) INTO v_available
+    FROM INVENTORY
+    WHERE PRODUCT_ID   = :NEW.PRODUCT_ID
+      AND (WAREHOUSE_ID = :NEW.WAREHOUSE_ID OR :NEW.WAREHOUSE_ID IS NULL);
+
+    IF v_available < :NEW.QUANTITY THEN
+        RAISE_APPLICATION_ERROR(-20020,
+            'Sản phẩm ID ' || :NEW.PRODUCT_ID ||
+            ' không đủ tồn kho (còn ' || v_available || ').');
+    END IF;
+END;
+/
+
+
+/* =========================================================================
+   NHÓM 3 — ĐIỂM THƯỞNG & ĐÁNH GIÁ
+   ========================================================================= */
+
+-- TRG9: Tích điểm khi đơn hàng chuyển sang DELIVERED
+--       Quy tắc: 1 điểm / 10,000 VNĐ
+CREATE OR REPLACE TRIGGER TRG_EARN_LOYALTY_POINTS
+AFTER UPDATE OF STATUS ON ORDERS
+FOR EACH ROW
+DECLARE
+    v_points NUMBER;
+BEGIN
+    IF :NEW.STATUS = 'DELIVERED' AND :OLD.STATUS != 'DELIVERED' THEN
+        v_points := TRUNC(:NEW.TOTAL / 10000);
+
+        MERGE INTO LOYALTY_POINT lp
+        USING (SELECT :NEW.USER_ID AS uid FROM DUAL) src
+        ON (lp.USER_ID = src.uid)
+        WHEN MATCHED THEN
+            UPDATE SET TOTAL_POINTS = TOTAL_POINTS + v_points,
+                       UPDATED_AT   = SYSDATE
+        WHEN NOT MATCHED THEN
+            INSERT (USER_ID, TOTAL_POINTS, UPDATED_AT)
+            VALUES (src.uid, v_points, SYSDATE);
+    END IF;
+END;
+/
+
+-- TRG10: Tự động huỷ CART khi đơn hàng chuyển sang CONFIRMED
+CREATE OR REPLACE TRIGGER TRG_CANCEL_CART_ON_ORDER_CONFIRMED
+AFTER UPDATE OF STATUS ON ORDERS
+FOR EACH ROW
+BEGIN
+    IF :NEW.STATUS = 'CONFIRMED' AND :OLD.STATUS = 'PENDING' THEN
+        UPDATE CART
+        SET STATUS = 'CANCELLED'
+        WHERE USER_ID = :NEW.USER_ID
+          AND STATUS  = 'ACTIVE';
+    END IF;
+END;
+/
+
+-- TRG11: Chặn đánh giá trùng (1 user – 1 sản phẩm – 1 review)
+CREATE OR REPLACE TRIGGER TRG_PREVENT_DUPLICATE_REVIEW
+BEFORE INSERT ON REVIEW
+FOR EACH ROW
+DECLARE
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count
+    FROM REVIEW
+    WHERE USER_ID    = :NEW.USER_ID
+      AND PRODUCT_ID = :NEW.PRODUCT_ID
+      AND IS_DELETED = 0;
+
+    IF v_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20030,
+            'Người dùng đã đánh giá sản phẩm này rồi.');
+    END IF;
+END;
+/
+
+-- TRG12: Chỉ cho phép đánh giá nếu đã mua và nhận sản phẩm (DELIVERED)
+CREATE OR REPLACE TRIGGER TRG_REVIEW_REQUIRES_PURCHASE
+BEFORE INSERT ON REVIEW
+FOR EACH ROW
 DECLARE
     v_count NUMBER;
 BEGIN
     SELECT COUNT(*) INTO v_count
     FROM ORDERS o
-    JOIN ORDER_DETAIL od ON o.ORDER_ID = od.ORDER_ID
-    WHERE o.CUSTOMER_ID = :NEW.CUSTOMER_ID
+    JOIN ORDER_DETAIL od ON od.ORDER_ID = o.ORDER_ID
+    WHERE o.USER_ID    = :NEW.USER_ID
       AND od.PRODUCT_ID = :NEW.PRODUCT_ID
-      AND o.STATUS = 'DELIVERED';
+      AND o.STATUS      = 'DELIVERED'
+      AND o.IS_DELETED  = 0;
 
     IF v_count = 0 THEN
-        RAISE_APPLICATION_ERROR(-20010, 'Khách hàng phải nhận hàng thành công mới được đánh giá.');
+        RAISE_APPLICATION_ERROR(-20031,
+            'Bạn phải mua và nhận sản phẩm trước khi đánh giá.');
     END IF;
 END;
 /
 
--- 8. Tích điểm cho khách khi đơn hàng giao thành công (1% giá trị)
-CREATE OR REPLACE TRIGGER TRG_LOYALTY_POINTS_ADD
-AFTER UPDATE OF STATUS ON ORDERS FOR EACH ROW
-WHEN (NEW.STATUS = 'DELIVERED')
-BEGIN
-    -- Cập nhật nếu khách đã có ví điểm
-    UPDATE LOYALTY_POINT SET TOTAL_POINTS = TOTAL_POINTS + (:NEW.TOTAL * 0.01)
-    WHERE CUSTOMER_ID = :NEW.CUSTOMER_ID;
-END;
-/
 
--- 9. Chia hoa hồng Affiliate (Thông qua COUPON mà khách dùng)
-CREATE OR REPLACE TRIGGER TRG_AFFILIATE_COMMISSION
-AFTER UPDATE OF STATUS ON ORDERS FOR EACH ROW
-WHEN (NEW.STATUS = 'DELIVERED' AND NEW.COUPON_ID IS NOT NULL)
-DECLARE
-    v_affiliate_id NUMBER;
-    v_rate NUMBER;
-BEGIN
-    -- Tìm xem mã coupon này có thuộc về Affiliate nào không
-    SELECT AFFILIATE_ID INTO v_affiliate_id FROM COUPON WHERE COUPON_ID = :NEW.COUPON_ID;
+/* =========================================================================
+   NHÓM 4 — MUA CHUNG (GROUP BUY)
+   ========================================================================= */
 
-    IF v_affiliate_id IS NOT NULL THEN
-        -- Lấy tỷ lệ hoa hồng
-        SELECT COMMISSION_RATE INTO v_rate FROM AFFILIATE WHERE AFFILIATE_ID = v_affiliate_id;
-
-        -- Cộng tiền cho Affiliate
-        UPDATE AFFILIATE
-        SET TOTAL_EARNED = TOTAL_EARNED + (:NEW.TOTAL * (v_rate / 100))
-        WHERE AFFILIATE_ID = v_affiliate_id;
-    END IF;
-END;
-/
-
--- ==============================================================================
--- NHÓM 4: KHUYẾN MÃI (PROMOTION) & MUA CHUNG (GROUP BUY)
--- ==============================================================================
-
--- 10. Chặn cấu hình mã giảm giá (PROMOTION_PRODUCT) sai quy tắc
-CREATE OR REPLACE TRIGGER TRG_CHECK_DISCOUNT_LIMIT
-BEFORE INSERT OR UPDATE ON PROMOTION_PRODUCT FOR EACH ROW
-BEGIN
-    IF :NEW.DISCOUNT_TYPE = 'PERCENT' AND :NEW.DISCOUNT_VALUE > 100 THEN
-        RAISE_APPLICATION_ERROR(-20033, 'Lỗi: Mức giảm giá theo phần trăm không được vượt quá 100%.');
-    END IF;
-END;
-/
-
--- 11. Tự động tăng số người tham gia Mua chung (GROUP_BUY)
-CREATE OR REPLACE TRIGGER TRG_GROUP_BUY_PARTICIPANT_INC
-AFTER INSERT ON GROUP_MEMBER FOR EACH ROW
+-- TRG13: Cập nhật CURRENT_MEMBER khi có người tham gia nhóm
+CREATE OR REPLACE TRIGGER TRG_UPDATE_GROUP_MEMBER_COUNT
+AFTER INSERT ON GROUP_BUY_PARTICIPANT
+FOR EACH ROW
 BEGIN
     UPDATE GROUP_BUY
-    SET CUR_PARTICIPANTS = CUR_PARTICIPANTS + 1
-    WHERE GROUP_ID = :NEW.GROUP_ID;
+    SET CURRENT_MEMBER = CURRENT_MEMBER + 1
+    WHERE GROUP_BUY_ID = :NEW.GROUP_BUY_ID;
 END;
 /
 
--- 12. Chốt trạng thái Mua chung khi đủ người (Dựa trên số vừa được tăng ở Trigger 11)
-CREATE OR REPLACE TRIGGER TRG_GROUP_BUY_SUCCESS_CHECK
-AFTER UPDATE OF CUR_PARTICIPANTS ON GROUP_BUY FOR EACH ROW
+-- TRG14: Kích hoạt SUCCESS khi CURRENT_MEMBER đạt TARGET_MEMBER
+CREATE OR REPLACE TRIGGER TRG_GROUPBUY_SUCCESS_ON_FULL
+AFTER UPDATE OF CURRENT_MEMBER ON GROUP_BUY
+FOR EACH ROW
 BEGIN
-    IF :NEW.CUR_PARTICIPANTS >= :NEW.MIN_PARTICIPANTS AND :NEW.STATUS = 'WAITING' THEN
-        -- Không dùng UPDATE trực tiếp ở đây để tránh Mutating, ta gán trực tiếp giá trị vào :NEW
-        :NEW.STATUS := 'SUCCESS';
+    IF :NEW.CURRENT_MEMBER >= :NEW.TARGET_MEMBER
+       AND :OLD.STATUS = 'PROCESSING' THEN
+        UPDATE GROUP_BUY
+        SET STATUS = 'SUCCESS'
+        WHERE GROUP_BUY_ID = :NEW.GROUP_BUY_ID;
     END IF;
 END;
 /
 
--- 13. Ngăn chặn chèn sản phẩm vào chương trình khuyến mãi đã hết hạn
-CREATE OR REPLACE TRIGGER TRG_PROMOTION_DATE_VALIDATE
-BEFORE INSERT ON PROMOTION_PRODUCT FOR EACH ROW
-DECLARE
-    v_end DATE;
+-- TRG15: Tự động đánh dấu FAILED khi nhóm đã hết hạn lúc insert/update
+CREATE OR REPLACE TRIGGER TRG_GROUPBUY_EXPIRE_CHECK
+BEFORE INSERT OR UPDATE ON GROUP_BUY
+FOR EACH ROW
 BEGIN
-    SELECT END_AT INTO v_end FROM PROMOTION WHERE PROMOTION_ID = :NEW.PROMOTION_ID;
-    IF v_end < SYSDATE THEN
-        RAISE_APPLICATION_ERROR(-20015, 'Chương trình khuyến mãi này đã kết thúc, không thể thêm sản phẩm.');
+    IF SYSDATE > :NEW.EXPIRES_AT AND :NEW.STATUS = 'PROCESSING' THEN
+        :NEW.STATUS := 'FAILED';
     END IF;
 END;
 /
 
--- ==============================================================================
--- NHÓM 5: GIỎ HÀNG, SẢN PHẨM & TÀI KHOẢN (BỔ SUNG)
--- ==============================================================================
-
--- 14. Chặn đặt mua sản phẩm đã ngừng kinh doanh
-CREATE OR REPLACE TRIGGER TRG_PREVENT_INACTIVE_PRODUCT_ORDER
-BEFORE INSERT ON ORDER_DETAIL FOR EACH ROW
+-- TRG16: Chặn tham gia nhóm mua đã đóng hoặc hết hạn
+CREATE OR REPLACE TRIGGER TRG_BLOCK_JOIN_CLOSED_GROUP
+BEFORE INSERT ON GROUP_BUY_PARTICIPANT
+FOR EACH ROW
 DECLARE
-    v_status NUMBER;
+    v_status  VARCHAR2(20);
+    v_expires DATE;
 BEGIN
-    SELECT STATUS INTO v_status FROM PRODUCT WHERE PRODUCT_ID = :NEW.PRODUCT_ID;
-    IF v_status = 0 THEN
-        RAISE_APPLICATION_ERROR(-20040, 'Lỗi: Sản phẩm này đã ngừng kinh doanh, không thể đặt hàng.');
-    END IF;
-END;
-/
-
--- 15. Kiểm tra tổng tồn kho trước khi thêm vào giỏ hàng
-CREATE OR REPLACE TRIGGER TRG_CHECK_CART_ITEM_STOCK
-BEFORE INSERT OR UPDATE ON CART_ITEM FOR EACH ROW
-DECLARE
-    v_total_stock NUMBER;
-BEGIN
-    -- Tính tổng tồn kho của sản phẩm ở tất cả các kho
-    SELECT NVL(SUM(QUANTITY), 0) INTO v_total_stock
-    FROM INVENTORY
-    WHERE PRODUCT_ID = :NEW.PRODUCT_ID AND IS_DELETED = 0;
-
-    IF :NEW.QUANTITY > v_total_stock THEN
-        RAISE_APPLICATION_ERROR(-20041, 'Lỗi: Số lượng thêm vào giỏ vượt quá tổng tồn kho hiện có.');
-    END IF;
-END;
-/
-
--- 16. Kích hoạt bảo hành điện tử khi đơn hàng giao thành công
-CREATE OR REPLACE TRIGGER TRG_WARRANTY_ACTIVATION
-AFTER UPDATE OF STATUS ON ORDERS FOR EACH ROW
-WHEN (NEW.STATUS = 'DELIVERED')
-BEGIN
-    -- Chuyển trạng thái bảo hành sang 1 (Active) và ghi nhận ngày bán (SOLD_AT)
-    -- Dựa trên liên kết ORDER_DETAIL_ID
-    UPDATE WARRANTY
-    SET STATUS = 1, SOLD_AT = SYSDATE
-    WHERE ORDER_DETAIL_ID IN (SELECT ORDER_DETAIL_ID FROM ORDER_DETAIL WHERE ORDER_ID = :NEW.ORDER_ID);
-END;
-/
-
--- 17. Chặn tham gia nhóm mua chung đã chốt hoặc hết hạn
-CREATE OR REPLACE TRIGGER TRG_VALIDATE_GROUP_JOIN
-BEFORE INSERT ON GROUP_MEMBER FOR EACH ROW
-DECLARE
-    v_status VARCHAR2(20);
-    v_expiry DATE;
-BEGIN
-    SELECT STATUS, EXPIRY_TIME INTO v_status, v_expiry
+    SELECT STATUS, EXPIRES_AT INTO v_status, v_expires
     FROM GROUP_BUY
-    WHERE GROUP_ID = :NEW.GROUP_ID;
+    WHERE GROUP_BUY_ID = :NEW.GROUP_BUY_ID;
 
-    IF v_status != 'WAITING' THEN
-        RAISE_APPLICATION_ERROR(-20042, 'Lỗi: Nhóm mua chung này đã chốt hoặc đã bị hủy.');
+    IF v_status != 'PROCESSING' THEN
+        RAISE_APPLICATION_ERROR(-20040,
+            'Nhóm mua chung này đã ' || v_status || ', không thể tham gia.');
     END IF;
 
-    IF v_expiry < SYSDATE THEN
-        RAISE_APPLICATION_ERROR(-20043, 'Lỗi: Thời gian gom đơn của nhóm này đã kết thúc.');
+    IF SYSDATE > v_expires THEN
+        RAISE_APPLICATION_ERROR(-20041,
+            'Nhóm mua chung đã hết hạn.');
     END IF;
 END;
 /
 
--- 18. Tự động khóa tài khoản khi bị xóa mềm (Soft Delete)
-CREATE OR REPLACE TRIGGER TRG_LOCK_DELETED_ACCOUNT
-BEFORE UPDATE OF IS_DELETED ON ACCOUNT FOR EACH ROW
-WHEN (NEW.IS_DELETED = 1)
+
+/* =========================================================================
+   NHÓM 5 — BẢO MẬT & TÀI KHOẢN
+   ========================================================================= */
+
+-- TRG17: Thu hồi toàn bộ token khi tài khoản đổi mật khẩu
+CREATE OR REPLACE TRIGGER TRG_REVOKE_TOKENS_ON_PWD_CHANGE
+AFTER UPDATE OF PASSWORD_HASH ON ACCOUNT
+FOR EACH ROW
 BEGIN
-    -- Khi Admin đánh dấu xóa tài khoản, tự động đổi trạng thái sang INACTIVE để chặn đăng nhập
-    :NEW.STATUS := 'INACTIVE';
+    IF :NEW.PASSWORD_HASH != :OLD.PASSWORD_HASH THEN
+        UPDATE ACCOUNT_TOKEN
+        SET IS_REVOKED = 'Y'
+        WHERE ACCOUNT_ID = :NEW.ACCOUNT_ID
+          AND IS_REVOKED  = 'N';
+    END IF;
 END;
 /
 
--- 19. Kiểm tra tính hợp lệ của mã giảm giá khi áp dụng vào đơn hàng
-CREATE OR REPLACE TRIGGER TRG_VALIDATE_ORDER_COUPON
-BEFORE INSERT OR UPDATE ON ORDERS FOR EACH ROW
+-- TRG18: Tự động thu hồi token hết hạn khi đăng nhập mới (tạo token mới)
+CREATE OR REPLACE TRIGGER TRG_REVOKE_EXPIRED_TOKENS
+BEFORE INSERT ON ACCOUNT_TOKEN
+FOR EACH ROW
+BEGIN
+    UPDATE ACCOUNT_TOKEN
+    SET IS_REVOKED = 'Y'
+    WHERE ACCOUNT_ID = :NEW.ACCOUNT_ID
+      AND IS_REVOKED  = 'N'
+      AND EXPIRES_AT  < SYSDATE;
+END;
+/
+
+-- TRG19: Tự động cập nhật UPDATED_AT cho USER và ACCOUNT
+CREATE OR REPLACE TRIGGER TRG_USER_UPDATED_AT
+BEFORE UPDATE ON "USER"
+FOR EACH ROW
+BEGIN
+    :NEW.UPDATED_AT := SYSDATE;
+END;
+/
+
+CREATE OR REPLACE TRIGGER TRG_ACCOUNT_UPDATED_AT
+BEFORE UPDATE ON ACCOUNT
+FOR EACH ROW
+BEGIN
+    :NEW.UPDATED_AT := SYSDATE;
+END;
+/
+
+-- TRG20: Soft delete cascade — vô hiệu hoá ACCOUNT, token, CART khi xoá USER
+CREATE OR REPLACE TRIGGER TRG_CASCADE_SOFT_DELETE_USER
+AFTER UPDATE OF IS_DELETED ON "USER"
+FOR EACH ROW
+BEGIN
+    IF :NEW.IS_DELETED = 1 AND :OLD.IS_DELETED = 0 THEN
+
+        UPDATE ACCOUNT
+        SET IS_DELETED = 1,
+            STATUS     = 'INACTIVE',
+            UPDATED_AT = SYSDATE
+        WHERE USER_ID = :OLD.USER_ID;
+
+        UPDATE ACCOUNT_TOKEN
+        SET IS_REVOKED = 'Y'
+        WHERE ACCOUNT_ID IN (
+            SELECT ACCOUNT_ID FROM ACCOUNT WHERE USER_ID = :OLD.USER_ID
+        );
+
+        UPDATE CART
+        SET STATUS = 'CANCELLED'
+        WHERE USER_ID = :OLD.USER_ID AND STATUS = 'ACTIVE';
+
+    END IF;
+END;
+/
+
+
+/* =========================================================================
+   BONUS — STATE MACHINE GUARD
+   Chặn các transition trạng thái đơn hàng không hợp lệ
+   DELIVERED và CANCELLED là trạng thái cuối (terminal)
+   ========================================================================= */
+
+CREATE OR REPLACE TRIGGER TRG_ORDER_STATUS_TRANSITION
+BEFORE UPDATE OF STATUS ON ORDERS
+FOR EACH ROW
 DECLARE
-    v_active NUMBER;
-    v_end_at DATE;
+    v_ok NUMBER := 0;
 BEGIN
-    IF :NEW.COUPON_ID IS NOT NULL THEN
-        SELECT IS_ACTIVE, END_AT INTO v_active, v_end_at
-        FROM COUPON
-        WHERE COUPON_ID = :NEW.COUPON_ID AND IS_DELETED = 0;
+    SELECT COUNT(*) INTO v_ok
+    FROM (
+        SELECT 'PENDING'    AS s, 'CONFIRMED'   AS t FROM DUAL UNION ALL
+        SELECT 'PENDING',         'CANCELLED'         FROM DUAL UNION ALL
+        SELECT 'CONFIRMED',       'PROCESSING'        FROM DUAL UNION ALL
+        SELECT 'CONFIRMED',       'CANCELLED'         FROM DUAL UNION ALL
+        SELECT 'PROCESSING',      'SHIPPING'          FROM DUAL UNION ALL
+        SELECT 'PROCESSING',      'CANCELLED'         FROM DUAL UNION ALL
+        SELECT 'SHIPPING',        'DELIVERED'         FROM DUAL UNION ALL
+        SELECT 'SHIPPING',        'CANCELLED'         FROM DUAL
+    )
+    WHERE s = :OLD.STATUS AND t = :NEW.STATUS;
 
-        IF v_active = 0 THEN
-            RAISE_APPLICATION_ERROR(-20044, 'Lỗi: Mã giảm giá này đã bị vô hiệu hóa.');
-        ELSIF v_end_at < SYSDATE THEN
-            RAISE_APPLICATION_ERROR(-20045, 'Lỗi: Mã giảm giá này đã hết hạn sử dụng.');
-        END IF;
+    IF v_ok = 0 AND :OLD.STATUS != :NEW.STATUS THEN
+        RAISE_APPLICATION_ERROR(-20050,
+            'Không thể chuyển trạng thái từ ' || :OLD.STATUS ||
+            ' sang ' || :NEW.STATUS);
     END IF;
 END;
 /
 
--- 20. Đưa ra thông báo thân thiện khi nhân viên kho xuất âm hàng
-CREATE OR REPLACE TRIGGER TRG_PREVENT_NEGATIVE_INVENTORY
-BEFORE UPDATE ON INVENTORY FOR EACH ROW
+
+/* =========================================================================
+   BONUS — SCHEDULED JOB dọn token hết hạn (chạy 2:00 AM hàng ngày)
+   ========================================================================= */
+
 BEGIN
-    -- Mặc dù Schema có CHECK (QUANTITY >= 0), dùng Trigger sẽ trả về Error Message có ý nghĩa hơn cho Frontend
-    IF :NEW.QUANTITY < 0 THEN
-        RAISE_APPLICATION_ERROR(-20046, 'Lỗi nghiệp vụ: Số lượng xuất kho vượt quá số lượng tồn thực tế trong kho này.');
-    END IF;
+    DBMS_SCHEDULER.CREATE_JOB(
+        job_name        => 'JOB_CLEANUP_EXPIRED_TOKENS',
+        job_type        => 'PLSQL_BLOCK',
+        job_action      => 'DELETE FROM ACCOUNT_TOKEN
+                            WHERE EXPIRES_AT < SYSDATE
+                               OR IS_REVOKED = ''Y'';',
+        start_date      => SYSTIMESTAMP,
+        repeat_interval => 'FREQ=DAILY; BYHOUR=2; BYMINUTE=0',
+        enabled         => TRUE
+    );
 END;
 /
+
+
+/* =========================================================================
+   INDEX KHUYẾN NGHỊ (hiệu năng)
+   ========================================================================= */
+
+CREATE INDEX IDX_TOKEN_VALUE   ON ACCOUNT_TOKEN(TOKEN_VALUE);
+CREATE INDEX IDX_TOKEN_ACCOUNT ON ACCOUNT_TOKEN(ACCOUNT_ID, IS_REVOKED, EXPIRES_AT);
