@@ -1,5 +1,3 @@
--- Oracle SQL: 20 Business Triggers for E-commerce System
--- Part 1/initial structure
 
 -- 1. TRG_ORDER_TOTAL_CALC
 CREATE OR REPLACE TRIGGER TRG_ORDER_TOTAL_CALC
