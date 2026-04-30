@@ -112,9 +112,9 @@ public class AdminForm extends javax.swing.JFrame {
         btnDoanhSo = new javax.swing.JLabel();
         btnThongke = new javax.swing.JLabel();
         btnRole = new javax.swing.JLabel();
-        myButton1 = new Custom_Component.MyButton();
         btnDanhMuc = new javax.swing.JLabel();
         btnKho = new javax.swing.JLabel();
+        myButton1 = new Custom_Component.MyButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -161,7 +161,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnTrangchu.setBackground(new java.awt.Color(0, 0, 51));
         btnTrangchu.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnTrangchu.setForeground(new java.awt.Color(153, 153, 153));
-        btnTrangchu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/1.png"))); // NOI18N
+        btnTrangchu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/1.png"))); // NOI18N
         btnTrangchu.setText("Trang chủ");
         btnTrangchu.setFocusable(false);
         btnTrangchu.setIconTextGap(15);
@@ -198,7 +198,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnBanhang.setBackground(new java.awt.Color(0, 0, 51));
         btnBanhang.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnBanhang.setForeground(new java.awt.Color(153, 153, 153));
-        btnBanhang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/2.png"))); // NOI18N
+        btnBanhang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/2.png"))); // NOI18N
         btnBanhang.setText("Bán hàng tại quầy");
         btnBanhang.setFocusable(false);
         btnBanhang.setIconTextGap(15);
@@ -219,7 +219,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnSanpham.setBackground(new java.awt.Color(0, 0, 51));
         btnSanpham.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnSanpham.setForeground(new java.awt.Color(153, 153, 153));
-        btnSanpham.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/5.png"))); // NOI18N
+        btnSanpham.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/5.png"))); // NOI18N
         btnSanpham.setText("Quản lý Sản Phẩm");
         btnSanpham.setFocusable(false);
         btnSanpham.setIconTextGap(15);
@@ -240,7 +240,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnHoadon.setBackground(new java.awt.Color(0, 0, 51));
         btnHoadon.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnHoadon.setForeground(new java.awt.Color(153, 153, 153));
-        btnHoadon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/7.png"))); // NOI18N
+        btnHoadon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/7.png"))); // NOI18N
         btnHoadon.setText("Quản lý Đơn Hàng");
         btnHoadon.setFocusable(false);
         btnHoadon.setIconTextGap(15);
@@ -261,7 +261,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnKhuyenmai.setBackground(new java.awt.Color(0, 0, 51));
         btnKhuyenmai.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKhuyenmai.setForeground(new java.awt.Color(153, 153, 153));
-        btnKhuyenmai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/3.png"))); // NOI18N
+        btnKhuyenmai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/3.png"))); // NOI18N
         btnKhuyenmai.setText("Quản lý Khuyến mãi");
         btnKhuyenmai.setFocusable(false);
         btnKhuyenmai.setIconTextGap(15);
@@ -282,7 +282,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnTaikhoan.setBackground(new java.awt.Color(0, 0, 51));
         btnTaikhoan.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnTaikhoan.setForeground(new java.awt.Color(153, 153, 153));
-        btnTaikhoan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/8.png"))); // NOI18N
+        btnTaikhoan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
         btnTaikhoan.setText("Quản lý Tài khoản");
         btnTaikhoan.setFocusable(false);
         btnTaikhoan.setIconTextGap(15);
@@ -303,7 +303,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnDoanhSo.setBackground(new java.awt.Color(0, 0, 51));
         btnDoanhSo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnDoanhSo.setForeground(new java.awt.Color(153, 153, 153));
-        btnDoanhSo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/6.png"))); // NOI18N
+        btnDoanhSo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/6.png"))); // NOI18N
         btnDoanhSo.setText("Doanh Số");
         btnDoanhSo.setFocusable(false);
         btnDoanhSo.setIconTextGap(15);
@@ -324,7 +324,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnThongke.setBackground(new java.awt.Color(255, 255, 255));
         btnThongke.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnThongke.setForeground(new java.awt.Color(153, 153, 153));
-        btnThongke.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/4.png"))); // NOI18N
+        btnThongke.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/4.png"))); // NOI18N
         btnThongke.setText("Thống kê");
         btnThongke.setFocusable(false);
         btnThongke.setIconTextGap(15);
@@ -346,7 +346,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnRole.setBackground(new java.awt.Color(0, 0, 51));
         btnRole.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnRole.setForeground(new java.awt.Color(153, 153, 153));
-        btnRole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/8.png"))); // NOI18N
+        btnRole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
         btnRole.setText("Phân quyền");
         btnRole.setFocusable(false);
         btnRole.setIconTextGap(15);
@@ -364,17 +364,10 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        myButton1.setBackground(new java.awt.Color(0, 0, 51));
-        myButton1.setForeground(new java.awt.Color(255, 0, 51));
-        myButton1.setText("LogOut");
-        myButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        myButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/1.png"))); // NOI18N
-        myButton1.addActionListener(this::myButton1ActionPerformed);
-
         btnDanhMuc.setBackground(new java.awt.Color(0, 0, 51));
         btnDanhMuc.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnDanhMuc.setForeground(new java.awt.Color(153, 153, 153));
-        btnDanhMuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/menu.png"))); // NOI18N
+        btnDanhMuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/6.png"))); // NOI18N
         btnDanhMuc.setText("Quản lý Danh Mục");
         btnDanhMuc.setFocusable(false);
         btnDanhMuc.setIconTextGap(15);
@@ -395,7 +388,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnKho.setBackground(new java.awt.Color(0, 0, 51));
         btnKho.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKho.setForeground(new java.awt.Color(153, 153, 153));
-        btnKho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/stock.png"))); // NOI18N
+        btnKho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/stock.png"))); // NOI18N
         btnKho.setText("Quản lý Kho Hàng");
         btnKho.setFocusable(false);
         btnKho.setIconTextGap(15);
@@ -412,6 +405,9 @@ public class AdminForm extends javax.swing.JFrame {
                 btnKhoMouseExited(evt);
             }
         });
+
+        myButton1.setText("Log out");
+        myButton1.addActionListener(this::myButton1ActionPerformed);
 
         javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
         Menu.setLayout(MenuLayout);
@@ -438,12 +434,12 @@ public class AdminForm extends javax.swing.JFrame {
                                 .addComponent(btnArrowTrangchu, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE))
                             .addComponent(btnThongke, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
-                    .addGroup(MenuLayout.createSequentialGroup()
-                        .addGap(58, 58, 58)
-                        .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(btnDanhMuc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnKho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addGap(69, 69, 69)
+                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         MenuLayout.setVerticalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -480,7 +476,7 @@ public class AdminForm extends javax.swing.JFrame {
                 .addComponent(btnRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
 
         javax.swing.GroupLayout LayoutLayout = new javax.swing.GroupLayout(Layout);
@@ -654,9 +650,9 @@ public class AdminForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBanhangMouseClicked
 
     private void btnSanphamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSanphamMouseClicked
-        showPanel(new panelSanpham()); // Đảm bảo tên class Panel này đúng
+        showPanel(new panelSanpham());
         currentSelectedLabel = btnSanpham;
-        resetMenuButtons(btnSanpham);        // TODO add your handling code here:
+        resetMenuButtons(btnSanpham);
     }//GEN-LAST:event_btnSanphamMouseClicked
 
     private void btnHoadonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHoadonMouseClicked
@@ -734,21 +730,10 @@ public class AdminForm extends javax.swing.JFrame {
         btnTrangchuMouseExited(evt);
     }//GEN-LAST:event_btnArrowTrangchuMouseExited
 
-    private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
-        TokenMonitorManager.stop();
-        String currentToken = UserSession.getCurrentTokenValue();
-        TokenDAO tokenDAO = new TokenDAO();
-        tokenDAO.revokeToken(currentToken);
-
-        LoginForm login = new LoginForm();
-        login.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_myButton1ActionPerformed
-
     private void btnDanhMucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseClicked
         showPanel(new panelDanhmuc()); // Đảm bảo tên class Panel này đúng
         currentSelectedLabel = btnDanhMuc;
-        resetMenuButtons(btnDanhMuc); 
+        resetMenuButtons(btnDanhMuc);
     }//GEN-LAST:event_btnDanhMucMouseClicked
 
     private void btnDanhMucMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseEntered
@@ -769,7 +754,7 @@ public class AdminForm extends javax.swing.JFrame {
     private void btnKhoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhoMouseClicked
         showPanel(new panelKho()); // Đảm bảo tên class Panel này đúng
         currentSelectedLabel = btnKho;
-        resetMenuButtons(btnKho); 
+        resetMenuButtons(btnKho);
     }//GEN-LAST:event_btnKhoMouseClicked
 
     private void btnKhoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhoMouseEntered
@@ -786,6 +771,12 @@ public class AdminForm extends javax.swing.JFrame {
             btnKho.setForeground(new Color(153, 153, 153));
         }
     }//GEN-LAST:event_btnKhoMouseExited
+
+    private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
+        LoginForm login = new LoginForm();
+        login.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_myButton1ActionPerformed
 
     /**
      * @param args the command line arguments

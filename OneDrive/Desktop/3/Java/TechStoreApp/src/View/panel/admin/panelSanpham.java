@@ -5,77 +5,83 @@
 package View.panel.admin;
 
 public class panelSanpham extends javax.swing.JPanel {
+
     private javax.swing.table.TableRowSorter<javax.swing.table.TableModel> rowSorter;
     // Danh sách chứa TẤT CẢ dữ liệu (Thay thế cho Database thật sau này)
     private java.util.List<Object[]> allData = new java.util.ArrayList<>();
-    
+
 // Các biến điều khiển phân trang
     private int currentPage = 1;
     private int rowsPerPage = 10; // Muốn 1 trang có bao nhiêu dòng thì đổi ở đây
     private int totalPages = 1;
+
     public panelSanpham() {
         initComponents();
         // 1. Ép toàn bộ nền thành màu Trắng
-this.setBackground(java.awt.Color.WHITE);
-tblSanPham.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        this.setBackground(java.awt.Color.WHITE);
+        tblSanPham.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
 // 2. Tùy chỉnh Bảng (Table) giống hệt Web
-tblSanPham.setBackground(java.awt.Color.WHITE);
-tblSanPham.setRowHeight(50); // Cực kỳ quan trọng: Kéo giãn khoảng cách các hàng cho thoáng
-tblSanPham.setShowVerticalLines(false); // Ẩn đường kẻ dọc
-tblSanPham.setShowHorizontalLines(true); // Hiện đường kẻ ngang
-tblSanPham.setGridColor(new java.awt.Color(235, 235, 235)); // Đường kẻ ngang màu xám rất nhạt
+        tblSanPham.setBackground(java.awt.Color.WHITE);
+        tblSanPham.setRowHeight(50); // Cực kỳ quan trọng: Kéo giãn khoảng cách các hàng cho thoáng
+        tblSanPham.setShowVerticalLines(false); // Ẩn đường kẻ dọc
+        tblSanPham.setShowHorizontalLines(true); // Hiện đường kẻ ngang
+        tblSanPham.setGridColor(new java.awt.Color(235, 235, 235)); // Đường kẻ ngang màu xám rất nhạt
 
 // 3. Tùy chỉnh Tiêu đề của Bảng (Header)
-tblSanPham.getTableHeader().setBackground(java.awt.Color.WHITE);
-tblSanPham.getTableHeader().setForeground(new java.awt.Color(100, 100, 100)); // Chữ màu xám
-tblSanPham.getTableHeader().setFont(new java.awt.Font("Sansserif", java.awt.Font.BOLD, 15));
-tblSanPham.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(235, 235, 235))); // Chỉ để lại 1 viền mỏng ở dưới header
+        tblSanPham.getTableHeader().setBackground(java.awt.Color.WHITE);
+        tblSanPham.getTableHeader().setForeground(new java.awt.Color(100, 100, 100)); // Chữ màu xám
+        tblSanPham.getTableHeader().setFont(new java.awt.Font("Sansserif", java.awt.Font.BOLD, 15));
+        tblSanPham.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(235, 235, 235))); // Chỉ để lại 1 viền mỏng ở dưới header
 
 // 4. Phủ trắng vùng trống bên dưới bảng
-tblSanPham.setFillsViewportHeight(true);
-if (tblSanPham.getParent() instanceof javax.swing.JViewport) {
-    tblSanPham.getParent().setBackground(java.awt.Color.WHITE);
-}
-    // Khởi tạo bộ lọc và gắn nó vào bảng
-    rowSorter = new javax.swing.table.TableRowSorter<>(tblSanPham.getModel());
-    tblSanPham.setRowSorter(rowSorter);
-    loadDummyData();
+        tblSanPham.setFillsViewportHeight(true);
+        if (tblSanPham.getParent() instanceof javax.swing.JViewport) {
+            tblSanPham.getParent().setBackground(java.awt.Color.WHITE);
+        }
+        // Khởi tạo bộ lọc và gắn nó vào bảng
+        rowSorter = new javax.swing.table.TableRowSorter<>(tblSanPham.getModel());
+        tblSanPham.setRowSorter(rowSorter);
+        loadDummyData();
     }
     // Bỏ đoạn này vào dưới cùng của class panelSanpham (trước dấu } cuối cùng)
     // Hàm 1: Nạp dữ liệu vào "Kho" (allData)
-public void loadDummyData() {
-    allData.clear();
-    
-    // Tự động tạo ra 35 sản phẩm mẫu để test phân trang
-    for (int i = 1; i <= 35; i++) {
-        allData.add(new Object[]{null, "SP20260" + i, "Sản phẩm test số " + i, 1500000.0, 50, 10, "Sẵn sàng"});
+
+    public void loadDummyData() {
+        allData.clear();
+
+        // Tự động tạo ra 35 sản phẩm mẫu để test phân trang
+        for (int i = 1; i <= 35; i++) {
+            allData.add(new Object[]{null, "SP20260" + i, "Sản phẩm test số " + i, 1500000.0, 50, 10, "Sẵn sàng"});
+        }
+
+        // Tính toán tổng số trang (Ví dụ: 35 dòng / 10 = 3.5 -> Làm tròn lên là 4 trang)
+        totalPages = (int) Math.ceil((double) allData.size() / rowsPerPage);
+        if (totalPages == 0) {
+            totalPages = 1;
+        }
+
+        currentPage = 1; // Reset về trang 1
+        renderPage();    // Gọi hàm vẽ bảng
     }
-    
-    // Tính toán tổng số trang (Ví dụ: 35 dòng / 10 = 3.5 -> Làm tròn lên là 4 trang)
-    totalPages = (int) Math.ceil((double) allData.size() / rowsPerPage);
-    if (totalPages == 0) totalPages = 1;
-    
-    currentPage = 1; // Reset về trang 1
-    renderPage();    // Gọi hàm vẽ bảng
-}
 
 // Hàm 2: Cắt dữ liệu từ "Kho" đem lên Bảng tùy theo Trang hiện tại
     public void renderPage() {
-    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblSanPham.getModel();
-    model.setRowCount(0); // Xóa trắng bảng
-    
-    // Tính toán vị trí bắt đầu và kết thúc để cắt dữ liệu
-    int start = (currentPage - 1) * rowsPerPage;
-    int end = Math.min(start + rowsPerPage, allData.size());
-    
-    // Đổ dữ liệu đã cắt lên bảng
-    for (int i = start; i < end; i++) {
-        model.addRow(allData.get(i));
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblSanPham.getModel();
+        model.setRowCount(0); // Xóa trắng bảng
+
+        // Tính toán vị trí bắt đầu và kết thúc để cắt dữ liệu
+        int start = (currentPage - 1) * rowsPerPage;
+        int end = Math.min(start + rowsPerPage, allData.size());
+
+        // Đổ dữ liệu đã cắt lên bảng
+        for (int i = start; i < end; i++) {
+            model.addRow(allData.get(i));
+        }
+
+        // Cập nhật con số trên Label
+        lblPage.setText("Trang " + currentPage + " / " + totalPages);
     }
-    
-    // Cập nhật con số trên Label
-    lblPage.setText("Trang " + currentPage + " / " + totalPages);
-}
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -114,7 +120,7 @@ public void loadDummyData() {
         });
         btnThemSP.addActionListener(this::btnThemSPActionPerformed);
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/search.png"))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/search.png"))); // NOI18N
 
         jScrollPane1.setBorder(null);
 
@@ -223,8 +229,8 @@ public void loadDummyData() {
                         .addGap(344, 344, 344)
                         .addComponent(btnXoaSP, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, Short.MAX_VALUE)
-                        .addGap(317, 317, 317)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnThemSP))))
         );
 
@@ -263,43 +269,43 @@ public void loadDummyData() {
     }//GEN-LAST:event_btnThemSPActionPerformed
 
     private void btnThemSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThemSPMouseClicked
-       // 1. Khởi tạo Dialog
+        // 1. Khởi tạo Dialog
 // (Dùng JFrame làm chủ, true để chặn tương tác màn hình dưới cho đến khi đóng dialog)
-dialogThemSP diag = new dialogThemSP(new javax.swing.JFrame(), true);
-diag.setLocationRelativeTo(null); // Hiện ra giữa màn hình
-diag.setVisible(true);
+        dialogThemSP diag = new dialogThemSP(new javax.swing.JFrame(), true);
+        diag.setLocationRelativeTo(null); // Hiện ra giữa màn hình
+        diag.setVisible(true);
 
 // 2. Sau khi Dialog đóng, kiểm tra xem người dùng có bấm Lưu không
-if (diag.isConfirmed()) {
-    // Lấy mảng dữ liệu từ dialog gửi về
-    Object[] newRow = diag.getRowData();
-    
-    // Thêm vào "Kho dữ liệu tổng" (allData) ở vị trí đầu tiên
-    allData.add(0, newRow);
-    
-    // Tính toán lại tổng số trang (vì thêm dòng mới có thể làm tăng số trang)
-    totalPages = (int) Math.ceil((double) allData.size() / rowsPerPage);
-    
-    // Quay về trang 1 để người dùng thấy ngay sản phẩm vừa thêm
-    currentPage = 1;
-    renderPage();
-    
-    javax.swing.JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
-}
+        if (diag.isConfirmed()) {
+            // Lấy mảng dữ liệu từ dialog gửi về
+            Object[] newRow = diag.getRowData();
+
+            // Thêm vào "Kho dữ liệu tổng" (allData) ở vị trí đầu tiên
+            allData.add(0, newRow);
+
+            // Tính toán lại tổng số trang (vì thêm dòng mới có thể làm tăng số trang)
+            totalPages = (int) Math.ceil((double) allData.size() / rowsPerPage);
+
+            // Quay về trang 1 để người dùng thấy ngay sản phẩm vừa thêm
+            currentPage = 1;
+            renderPage();
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Thêm sản phẩm thành công!");
+        }
     }//GEN-LAST:event_btnThemSPMouseClicked
 
     private void btnPrevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrevActionPerformed
         if (currentPage > 1) { // Nếu chưa phải trang đầu tiên
             currentPage--;     // Giảm số trang
             renderPage();      // Vẽ lại bảng
-    }
+        }
     }//GEN-LAST:event_btnPrevActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
         if (currentPage < totalPages) { // Nếu chưa tới trang cuối cùng
-        currentPage++;              // Tăng số trang
-        renderPage();               // Vẽ lại bảng
-    }
+            currentPage++;              // Tăng số trang
+            renderPage();               // Vẽ lại bảng
+        }
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void btnXoaSPMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnXoaSPMouseClicked
@@ -308,53 +314,54 @@ if (diag.isConfirmed()) {
 
     private void btnXoaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaSPActionPerformed
         int selectedRow = tblSanPham.getSelectedRow();
-    
-    if (selectedRow == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm trong bảng để xoá!");
-        return;
-    }
 
-    // 2. Hỏi xác nhận trước khi xoá (Tránh bấm nhầm)
-    int confirm = javax.swing.JOptionPane.showConfirmDialog(this, 
-            "Bạn có chắc chắn muốn xoá sản phẩm này không?", "Xác nhận xoá", 
-            javax.swing.JOptionPane.YES_NO_OPTION);
-
-    if (confirm == javax.swing.JOptionPane.YES_OPTION) {
-        // 3. XÁC ĐỊNH VỊ TRÍ THỰC SỰ TRONG DANH SÁCH TỔNG (allData)
-        // Vì bảng đang phân trang, dòng số 0 trên bảng có thể là dòng số 10, 20 trong kho dữ liệu
-        int realIndex = (currentPage - 1) * rowsPerPage + selectedRow;
-
-        // 4. Xoá trong kho dữ liệu tổng
-        allData.remove(realIndex);
-
-        // 5. Tính toán lại tổng số trang (Lỡ xoá xong làm giảm số trang)
-        totalPages = (int) Math.ceil((double) allData.size() / rowsPerPage);
-        if (totalPages == 0) totalPages = 1;
-
-        // 6. Xử lý trường hợp xoá hết sạch dòng ở trang cuối cùng
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng chọn một sản phẩm trong bảng để xoá!");
+            return;
         }
 
-        // 7. Cập nhật lại giao diện
-        renderPage();
-        javax.swing.JOptionPane.showMessageDialog(this, "Đã xoá sản phẩm thành công!");
-    }
+        // 2. Hỏi xác nhận trước khi xoá (Tránh bấm nhầm)
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc chắn muốn xoá sản phẩm này không?", "Xác nhận xoá",
+                javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            // 3. XÁC ĐỊNH VỊ TRÍ THỰC SỰ TRONG DANH SÁCH TỔNG (allData)
+            // Vì bảng đang phân trang, dòng số 0 trên bảng có thể là dòng số 10, 20 trong kho dữ liệu
+            int realIndex = (currentPage - 1) * rowsPerPage + selectedRow;
+
+            // 4. Xoá trong kho dữ liệu tổng
+            allData.remove(realIndex);
+
+            // 5. Tính toán lại tổng số trang (Lỡ xoá xong làm giảm số trang)
+            totalPages = (int) Math.ceil((double) allData.size() / rowsPerPage);
+            if (totalPages == 0) {
+                totalPages = 1;
+            }
+
+            // 6. Xử lý trường hợp xoá hết sạch dòng ở trang cuối cùng
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            // 7. Cập nhật lại giao diện
+            renderPage();
+            javax.swing.JOptionPane.showMessageDialog(this, "Đã xoá sản phẩm thành công!");
+        }
     }//GEN-LAST:event_btnXoaSPActionPerformed
 
     private void myTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_myTextField1KeyReleased
-                // Lấy chữ bạn vừa gõ trong ô (Chú ý: Thay jTextField1 bằng tên đúng của ô tìm kiếm nếu bạn đã đổi tên)
-String text = myTextField1.getText(); 
+        // Lấy chữ bạn vừa gõ trong ô (Chú ý: Thay jTextField1 bằng tên đúng của ô tìm kiếm nếu bạn đã đổi tên)
+        String text = myTextField1.getText();
 
-if (text.trim().length() == 0) {
-    // Nếu xóa hết chữ thì hiển thị lại toàn bộ bảng
-    rowSorter.setRowFilter(null);
-} else {
-    // Nếu có chữ thì lọc. "(?i)" giúp tìm kiếm không phân biệt chữ hoa, chữ thường
-    rowSorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + text));
-}
+        if (text.trim().length() == 0) {
+            // Nếu xóa hết chữ thì hiển thị lại toàn bộ bảng
+            rowSorter.setRowFilter(null);
+        } else {
+            // Nếu có chữ thì lọc. "(?i)" giúp tìm kiếm không phân biệt chữ hoa, chữ thường
+            rowSorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + text));
+        }
     }//GEN-LAST:event_myTextField1KeyReleased
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ChuyenPageSp;

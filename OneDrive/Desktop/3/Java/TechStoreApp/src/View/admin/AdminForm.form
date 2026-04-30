@@ -113,14 +113,14 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="58" max="-2" attributes="0"/>
-                              <Component id="myButton1" min="-2" pref="120" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                          </Group>
                           <Component id="btnDanhMuc" max="32767" attributes="0"/>
                           <Component id="btnKho" max="32767" attributes="0"/>
                       </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
+                      <Component id="myButton1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -160,7 +160,7 @@
                       <Component id="btnRole" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="myButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -224,7 +224,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/1.png"/>
+                  <Image iconType="3" name="/Resource/1.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Trang ch&#x1ee7;"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -271,7 +271,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/2.png"/>
+                  <Image iconType="3" name="/Resource/2.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="B&#xe1;n h&#xe0;ng t&#x1ea1;i qu&#x1ea7;y"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -299,7 +299,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/5.png"/>
+                  <Image iconType="3" name="/Resource/5.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; S&#x1ea3;n Ph&#x1ea9;m"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -327,7 +327,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/7.png"/>
+                  <Image iconType="3" name="/Resource/7.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; &#x110;&#x1a1;n H&#xe0;ng"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -355,7 +355,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/3.png"/>
+                  <Image iconType="3" name="/Resource/3.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; Khuy&#x1ebf;n m&#xe3;i"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -383,7 +383,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/8.png"/>
+                  <Image iconType="3" name="/Resource/8.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; T&#xe0;i kho&#x1ea3;n"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -411,7 +411,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/6.png"/>
+                  <Image iconType="3" name="/Resource/6.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Doanh S&#x1ed1;"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -439,7 +439,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/4.png"/>
+                  <Image iconType="3" name="/Resource/4.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Th&#x1ed1;ng k&#xea;"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -472,7 +472,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/8.png"/>
+                  <Image iconType="3" name="/Resource/8.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Ph&#xe2;n quy&#x1ec1;n"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -488,26 +488,6 @@
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnRoleMouseExited"/>
               </Events>
             </Component>
-            <Component class="Custom_Component.MyButton" name="myButton1">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="33" green="0" red="0" type="rgb"/>
-                </Property>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="33" green="0" red="ff" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="LogOut"/>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="18" style="1"/>
-                </Property>
-                <Property name="pressedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/1.png"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="myButton1ActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JLabel" name="btnDanhMuc">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -520,7 +500,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/menu.png"/>
+                  <Image iconType="3" name="/Resource/6.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; Danh M&#x1ee5;c"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -548,7 +528,7 @@
                   <Color blue="99" green="99" red="99" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icon/stock.png"/>
+                  <Image iconType="3" name="/Resource/stock.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; Kho H&#xe0;ng"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -562,6 +542,14 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnKhoMouseClicked"/>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnKhoMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnKhoMouseExited"/>
+              </Events>
+            </Component>
+            <Component class="Custom_Component.MyButton" name="myButton1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Log out"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="myButton1ActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

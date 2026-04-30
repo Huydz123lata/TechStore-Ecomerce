@@ -27,22 +27,8 @@ public class panelRolePermission extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        imagePanel1 = new Custom_Component.ImagePanel();
         myButton1 = new Custom_Component.MyButton();
         myTextField1 = new Custom_Component.MyTextField();
-
-        imagePanel1.setImage(new javax.swing.ImageIcon(getClass().getResource("/icon/3.png"))); // NOI18N
-
-        javax.swing.GroupLayout imagePanel1Layout = new javax.swing.GroupLayout(imagePanel1);
-        imagePanel1.setLayout(imagePanel1Layout);
-        imagePanel1Layout.setHorizontalGroup(
-            imagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        imagePanel1Layout.setVerticalGroup(
-            imagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
 
         myButton1.setText("myButton1");
 
@@ -62,9 +48,6 @@ public class panelRolePermission extends javax.swing.JPanel {
                         .addGap(188, 188, 188)
                         .addComponent(jLabel1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(imagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(75, 75, 75)
                         .addComponent(myTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -72,10 +55,8 @@ public class panelRolePermission extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(imagePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                .addGap(126, 126, 126)
+                .addComponent(jLabel1)
                 .addGap(37, 37, 37)
                 .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
@@ -85,7 +66,6 @@ public class panelRolePermission extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private Custom_Component.ImagePanel imagePanel1;
     private javax.swing.JLabel jLabel1;
     private Custom_Component.MyButton myButton1;
     private Custom_Component.MyTextField myTextField1;

@@ -46,8 +46,8 @@
                       <Component id="btnXoaSP" linkSize="1" min="-2" pref="155" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="jLabel1" pref="201" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="317" max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" pref="258" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnThemSP" linkSize="1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -125,7 +125,7 @@
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icon/search.png"/>
+          <Image iconType="3" name="/Resource/search.png"/>
         </Property>
       </Properties>
     </Component>
