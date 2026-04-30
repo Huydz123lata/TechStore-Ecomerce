@@ -7,16 +7,19 @@ package View.admin;
 import DAO.TokenDAO;
 import Util.TokenMonitorManager;
 import Util.UserSession;
-import View.AdminForm.panelBanhang;
-import View.AdminForm.panelGiaodich;
-import View.AdminForm.panelHoadon;
-import View.AdminForm.panelKhuyenmai;
-import View.AdminForm.panelRolePermission;
-import View.AdminForm.panelSanpham;
-import View.AdminForm.panelTaikhoan;
-import View.AdminForm.panelThongke;
-import View.AdminForm.panelTrangchu;
+
 import View.auth.LoginForm;
+import View.panel.admin.panelBanhang;
+import View.panel.admin.panelDanhmuc;
+import View.panel.admin.panelGiaodich;
+import View.panel.admin.panelHoadon;
+import View.panel.admin.panelKho;
+import View.panel.admin.panelKhuyenmai;
+import View.panel.admin.panelRolePermission;
+import View.panel.admin.panelSanpham;
+import View.panel.admin.panelTaikhoan;
+import View.panel.admin.panelThongke;
+import View.panel.admin.panelTrangchu;
 import java.awt.Color;
 import javax.swing.JPanel;
 
@@ -58,7 +61,7 @@ public class AdminForm extends javax.swing.JFrame {
         } else {
             btnArrowTrangchu.setOpaque(false);
         }
-        javax.swing.JLabel[] labels = {btnTrangchu, btnDoanhSo, btnThongke, btnBanhang, btnSanpham, btnHoadon, btnKhuyenmai, btnTaikhoan, btnRole};
+        javax.swing.JLabel[] labels = {btnTrangchu, btnDoanhSo, btnThongke, btnBanhang, btnSanpham, btnHoadon, btnKhuyenmai, btnTaikhoan, btnRole, btnDanhMuc, btnKho};
 
         for (javax.swing.JLabel lbl : labels) {
             if (lbl == activeLabel) {
@@ -110,6 +113,8 @@ public class AdminForm extends javax.swing.JFrame {
         btnThongke = new javax.swing.JLabel();
         btnRole = new javax.swing.JLabel();
         myButton1 = new Custom_Component.MyButton();
+        btnDanhMuc = new javax.swing.JLabel();
+        btnKho = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -124,7 +129,7 @@ public class AdminForm extends javax.swing.JFrame {
         );
         panelViewLayout.setVerticalGroup(
             panelViewLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 668, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         Menu.setBackground(new java.awt.Color(0, 0, 51));
@@ -215,7 +220,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnSanpham.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnSanpham.setForeground(new java.awt.Color(153, 153, 153));
         btnSanpham.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/5.png"))); // NOI18N
-        btnSanpham.setText("Quản lý sản phẩm");
+        btnSanpham.setText("Quản lý Sản Phẩm");
         btnSanpham.setFocusable(false);
         btnSanpham.setIconTextGap(15);
         btnSanpham.setOpaque(true);
@@ -366,6 +371,48 @@ public class AdminForm extends javax.swing.JFrame {
         myButton1.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/1.png"))); // NOI18N
         myButton1.addActionListener(this::myButton1ActionPerformed);
 
+        btnDanhMuc.setBackground(new java.awt.Color(0, 0, 51));
+        btnDanhMuc.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnDanhMuc.setForeground(new java.awt.Color(153, 153, 153));
+        btnDanhMuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/menu.png"))); // NOI18N
+        btnDanhMuc.setText("Quản lý Danh Mục");
+        btnDanhMuc.setFocusable(false);
+        btnDanhMuc.setIconTextGap(15);
+        btnDanhMuc.setOpaque(true);
+        btnDanhMuc.setPreferredSize(new java.awt.Dimension(82, 50));
+        btnDanhMuc.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDanhMucMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDanhMucMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDanhMucMouseExited(evt);
+            }
+        });
+
+        btnKho.setBackground(new java.awt.Color(0, 0, 51));
+        btnKho.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnKho.setForeground(new java.awt.Color(153, 153, 153));
+        btnKho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/stock.png"))); // NOI18N
+        btnKho.setText("Quản lý Kho Hàng");
+        btnKho.setFocusable(false);
+        btnKho.setIconTextGap(15);
+        btnKho.setOpaque(true);
+        btnKho.setPreferredSize(new java.awt.Dimension(82, 50));
+        btnKho.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnKhoMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnKhoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnKhoMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
         Menu.setLayout(MenuLayout);
         MenuLayout.setHorizontalGroup(
@@ -392,8 +439,11 @@ public class AdminForm extends javax.swing.JFrame {
                             .addComponent(btnThongke, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(MenuLayout.createSequentialGroup()
+                        .addGap(58, 58, 58)
                         .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnDanhMuc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnKho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         MenuLayout.setVerticalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -416,6 +466,10 @@ public class AdminForm extends javax.swing.JFrame {
                 .addComponent(Title2, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSanpham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnDanhMuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnKho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnHoadon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -440,7 +494,7 @@ public class AdminForm extends javax.swing.JFrame {
         );
         LayoutLayout.setVerticalGroup(
             LayoutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 668, Short.MAX_VALUE)
+            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, 786, Short.MAX_VALUE)
             .addComponent(panelView, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -691,6 +745,48 @@ public class AdminForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_myButton1ActionPerformed
 
+    private void btnDanhMucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseClicked
+        showPanel(new panelDanhmuc()); // Đảm bảo tên class Panel này đúng
+        currentSelectedLabel = btnDanhMuc;
+        resetMenuButtons(btnDanhMuc); 
+    }//GEN-LAST:event_btnDanhMucMouseClicked
+
+    private void btnDanhMucMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseEntered
+        if (btnDanhMuc != currentSelectedLabel) {
+            btnDanhMuc.setOpaque(true);
+            btnDanhMuc.setBackground(new Color(30, 30, 80));
+            btnDanhMuc.setForeground(Color.WHITE);
+        }
+    }//GEN-LAST:event_btnDanhMucMouseEntered
+
+    private void btnDanhMucMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseExited
+        if (btnDanhMuc != currentSelectedLabel) {
+            btnDanhMuc.setOpaque(false); // Trả về trong suốt
+            btnDanhMuc.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_btnDanhMucMouseExited
+
+    private void btnKhoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhoMouseClicked
+        showPanel(new panelKho()); // Đảm bảo tên class Panel này đúng
+        currentSelectedLabel = btnKho;
+        resetMenuButtons(btnKho); 
+    }//GEN-LAST:event_btnKhoMouseClicked
+
+    private void btnKhoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhoMouseEntered
+        if (btnKho != currentSelectedLabel) {
+            btnKho.setOpaque(true);
+            btnKho.setBackground(new Color(30, 30, 80));
+            btnKho.setForeground(Color.WHITE);
+        }
+    }//GEN-LAST:event_btnKhoMouseEntered
+
+    private void btnKhoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhoMouseExited
+        if (btnKho != currentSelectedLabel) {
+            btnKho.setOpaque(false); // Trả về trong suốt
+            btnKho.setForeground(new Color(153, 153, 153));
+        }
+    }//GEN-LAST:event_btnKhoMouseExited
+
     /**
      * @param args the command line arguments
      */
@@ -719,8 +815,10 @@ public class AdminForm extends javax.swing.JFrame {
     private javax.swing.JLabel Title2;
     private javax.swing.JLabel btnArrowTrangchu;
     private javax.swing.JLabel btnBanhang;
+    private javax.swing.JLabel btnDanhMuc;
     private javax.swing.JLabel btnDoanhSo;
     private javax.swing.JLabel btnHoadon;
+    private javax.swing.JLabel btnKho;
     private javax.swing.JLabel btnKhuyenmai;
     private javax.swing.JLabel btnRole;
     private javax.swing.JLabel btnSanpham;
