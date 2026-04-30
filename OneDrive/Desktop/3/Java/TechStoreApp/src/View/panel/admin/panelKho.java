@@ -8,12 +8,12 @@ package View.panel.admin;
  *
  * @author phamd
  */
-public class panelBanhang extends javax.swing.JPanel {
+public class panelKho extends javax.swing.JPanel {
 
     /**
-     * Creates new form panelBanhang
+     * Creates new form panelKho
      */
-    public panelBanhang() {
+    public panelKho() {
         initComponents();
     }
 
@@ -37,6 +37,7 @@ public class panelBanhang extends javax.swing.JPanel {
             .addGap(0, 300, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
