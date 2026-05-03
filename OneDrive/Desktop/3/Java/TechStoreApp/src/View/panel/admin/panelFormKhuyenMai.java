@@ -17,20 +17,28 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         initComponents();
         this.parentController = controller;
         this.parentDialog = dialog;
-        
-        // Mặc định ép combobox ở vị trí trắng
         cbxType.setSelectedIndex(0);
+
+        // Gỡ bỏ sự kiện lặp ẩn do NetBeans tạo ra (Triệt tiêu 100% việc hiện thông báo đúp)
+        for (java.awt.event.ActionListener al : btnAdd.getActionListeners()) btnAdd.removeActionListener(al);
+        for (java.awt.event.ActionListener al : btnHuy.getActionListeners()) btnHuy.removeActionListener(al);
+
+        btnAdd.addActionListener(e -> handleInsert());
+        btnHuy.addActionListener(e -> closeForm());
+    }
+
+    private void closeForm() {
+        if (parentDialog != null) parentDialog.dispose();
+        else SwingUtilities.getWindowAncestor(this).dispose();
     }
 
     private void handleInsert() {
-        // 1. Lấy dữ liệu và làm sạch
         String code = txtPromoCode.getText().trim().toUpperCase(); 
         String name = txtPromoName.getText().trim();
         int typeIndex = cbxType.getSelectedIndex();
         String valueStr = txtDiscountValue.getText().trim();
-
-        // [QUAN TRỌNG] Bẫy lỗi chữ mờ (Placeholder) của MyTextField
-        // (Sửa chữ trong ngoặc kép cho khớp với chữ mờ hiện tại trên form của bạn nếu có)
+        
+        // Bẫy lỗi chữ mờ (Placeholder)
         if (code.equalsIgnoreCase("MÃ KHUYẾN MÃI") || code.equalsIgnoreCase("NHẬP MÃ...")) code = "";
         if (name.equalsIgnoreCase("TÊN CHƯƠNG TRÌNH") || name.equalsIgnoreCase("NHẬP TÊN...")) name = "";
         if (valueStr.equalsIgnoreCase("MỨC GIẢM") || valueStr.equalsIgnoreCase("NHẬP MỨC GIẢM...")) valueStr = "";
@@ -38,19 +46,16 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         Date startDate = dateStart.getDate();
         Date endDate = dateEnd.getDate();
 
-        // 2A. KỊCH BẢN 1: RỖNG TOÀN BỘ -> ĐÓNG NGAY LẬP TỨC (Không cần báo)
         if (code.isEmpty() && name.isEmpty() && valueStr.isEmpty() && typeIndex <= 0) {
             closeForm();
             return; 
         }
 
-        // 2B. KỊCH BẢN 2: THIẾU DỮ LIỆU -> BÁO LỖI
         if (code.isEmpty() || name.isEmpty() || valueStr.isEmpty() || typeIndex <= 0 || startDate == null || endDate == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin (Mã, Tên, Loại, Mức giảm, Ngày tháng)!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // 2C. KIỂM TRA LOGIC CHUYÊN MÔN
         if (endDate.before(startDate)) {
             JOptionPane.showMessageDialog(this, "Ngày kết thúc không được nhỏ hơn Ngày bắt đầu!", "Lỗi ngày tháng", JOptionPane.ERROR_MESSAGE);
             return;
@@ -71,7 +76,6 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
             return;
         }
 
-        // 3. THỰC THI QUA CONTROLLER
         String typeStr = cbxType.getSelectedItem().toString();
         String status = "UPCOMING"; 
 
@@ -80,19 +84,10 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
             isSuccess = parentController.createNewPromotion(code, name, typeStr, discountValue, startDate, endDate, status);
         }
 
-        // 4. KẾT THÚC THÀNH CÔNG
         if (isSuccess) {
             JOptionPane.showMessageDialog(this, "Tạo mã khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             if (parentController != null) parentController.refreshCurrentPage();
             closeForm();
-        }
-    }
-
-    private void closeForm() {
-        if (parentDialog != null) {
-            parentDialog.dispose();
-        } else {
-            SwingUtilities.getWindowAncestor(this).dispose();
         }
     }
     @SuppressWarnings("unchecked")
@@ -123,7 +118,7 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("TẠO MÃ KHUYẾN MÃI MỚI");
+        jLabel1.setText("TẠO MÃ GIẢM GIÁ MỚI");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -140,12 +135,12 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
         lblMaKM.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblMaKM.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblMaKM.setText("Mã Khuyến mãi");
+        lblMaKM.setText("Mã Giảm giá");
         lblMaKM.setPreferredSize(new java.awt.Dimension(100, 35));
 
         lblName.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblName.setText("Tên Chương Trình");
+        lblName.setText("Mô tả");
         lblName.setPreferredSize(new java.awt.Dimension(100, 35));
 
         lvlType.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
@@ -163,7 +158,7 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         lvlStartDate.setText("Ngày Bắt đầu");
         lvlStartDate.setPreferredSize(new java.awt.Dimension(100, 35));
 
-        cbxType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Chọn loại --", "PERCENT", "AMOUNT" }));
+        cbxType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Chọn loại --", "PERCENTAGE", "AMOUNT" }));
         cbxType.setPreferredSize(new java.awt.Dimension(100, 22));
 
         lvlEndDate.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N

@@ -14,9 +14,8 @@ public class panelKhuyenmai extends javax.swing.JPanel {
     private boolean isRendering = false;
 
     public panelKhuyenmai() {
-        initComponents();
+        initComponents(); 
 
-        // Custom UI Table
         tblKhuyenmai.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
         tblKhuyenmai.setBackground(java.awt.Color.WHITE);
         tblKhuyenmai.setRowHeight(50); 
@@ -61,16 +60,15 @@ public class panelKhuyenmai extends javax.swing.JPanel {
     }
 
     private void setupEvents() {
+        // Gỡ bỏ Listener thừa nếu kéo thả UI sinh lỗi đúp
+        for (java.awt.event.ActionListener al : btnAdd.getActionListeners()) btnAdd.removeActionListener(al);
+        
         btnAdd.addActionListener(e -> controller.handleAdd());
         btnExcel.addActionListener(e -> controller.handleExportExcel());
         cbxKhuyenmai.addActionListener(e -> controller.handleSearch());
         myTextField1.addActionListener(e -> controller.handleSearch());
-        btnPrev.addActionListener(e -> {
-            if (currentPage > 1) { currentPage--; renderPage(); }
-        });
-        btnNext.addActionListener(e -> {
-            if (currentPage < totalPages) { currentPage++; renderPage(); }
-        });
+        btnPrev.addActionListener(e -> { if (currentPage > 1) { currentPage--; renderPage(); } });
+        btnNext.addActionListener(e -> { if (currentPage < totalPages) { currentPage++; renderPage(); } });
     }
 
     private void setupStatusCellEditor() {
@@ -204,7 +202,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Khuyến mãi", "Tên Chương trình", "Loại Giảm giá", "Mức giảm", "Bắt đầu", "Kết thúc", "Trạng thái"
+                "Mã Giảm giá", "Mô tả", "Loại Giảm giá", "Mức giảm", "Ngày Bắt đầu", "Ngày Kết thúc", "Trạng thái"
             }
         ) {
             Class[] types = new Class [] {
@@ -229,6 +227,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
             tblKhuyenmai.getColumnModel().getColumn(2).setResizable(false);
             tblKhuyenmai.getColumnModel().getColumn(3).setResizable(false);
             tblKhuyenmai.getColumnModel().getColumn(4).setResizable(false);
+            tblKhuyenmai.getColumnModel().getColumn(5).setResizable(false);
             tblKhuyenmai.getColumnModel().getColumn(6).setResizable(false);
         }
 

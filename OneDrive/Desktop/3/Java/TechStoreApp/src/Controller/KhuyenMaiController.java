@@ -24,7 +24,7 @@ public class KhuyenMaiController {
             view.currentPage = 1;
             view.renderPage();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(view, "Lỗi tải dữ liệu khuyến mãi: " + e.getMessage(), "Lỗi Database", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view, "Lỗi tải dữ liệu: " + e.getMessage(), "Lỗi Database", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -67,8 +67,8 @@ public class KhuyenMaiController {
     public void updatePromotionStatus(String promoCode, String newStatus) {
         if ("CANCELLED".equals(newStatus)) {
             int confirm = JOptionPane.showConfirmDialog(null, 
-                "CẢNH BÁO: Bạn có chắc chắn muốn dừng sớm chương trình khuyến mãi này?", 
-                "Xác nhận Dừng Khuyến mãi", 
+                "CẢNH BÁO: Bạn có chắc chắn muốn hủy mã này?\nKhách hàng sẽ không thể sử dụng mã này nữa.", 
+                "Xác nhận Hủy Mã", 
                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             if (confirm != JOptionPane.YES_OPTION) {
                 refreshCurrentPage(); 
