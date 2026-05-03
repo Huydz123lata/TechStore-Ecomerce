@@ -92,7 +92,7 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
         javax.swing.JComboBox<String> cbxStatusEditor = new javax.swing.JComboBox<>(
             new String[]{"PENDING", "CONFIRMED", "PROCESSING", "SHIPPING", "DELIVERED", "CANCELLED"}
         );
-        
+        cbxStatusEditor.setFont(tblDonhang.getFont());
         // 2. Gắn ComboBox này vào cột số 4 (Cột Trạng thái)
         javax.swing.table.TableColumn statusColumn = tblDonhang.getColumnModel().getColumn(4);
         statusColumn.setCellEditor(new javax.swing.DefaultCellEditor(cbxStatusEditor));
@@ -256,7 +256,6 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(myTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
@@ -268,7 +267,10 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
                             .addComponent(cbxThanhtoan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnExcel))))
+                        .addComponent(btnExcel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cbxDonhang, cbxThanhtoan});
