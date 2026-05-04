@@ -94,12 +94,39 @@ public class KhuyenMaiController {
         dialog.setVisible(true);
     }
 
-    public void handleExportExcel() {
-        if (view.allData.isEmpty()) {
-            JOptionPane.showMessageDialog(view, "Không có dữ liệu để xuất Excel!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+    public void handleDelete() {
+        // Trực tiếp gọi thẳng vào bảng tblKhuyenmai của view
+        int selectedRow = view.tblKhuyenmai.getSelectedRow();
+        
+        // Nếu người dùng chưa chọn dòng nào (selectedRow = -1)
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(view, "Vui lòng click chọn một mã giảm giá trên bảng để xóa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        JOptionPane.showMessageDialog(view, "Chức năng xuất Excel đang được xây dựng!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        
+        // Lấy mã giảm giá ở cột số 0 của dòng đang được chọn
+        String promoCode = view.tblKhuyenmai.getValueAt(selectedRow, 0).toString();
+        
+        // Hiển thị hộp thoại xác nhận xóa
+        int confirm = JOptionPane.showConfirmDialog(view, 
+            "CẢNH BÁO: Bạn có chắc chắn muốn xóa mã [" + promoCode + "] không?\nDữ liệu sẽ bị đưa vào thùng rác hệ thống.", 
+            "Xác nhận Xóa", 
+            JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            
+        // Xử lý Xóa nếu người dùng chọn YES
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                boolean isSuccess = service.deletePromotion(promoCode);
+                if (isSuccess) {
+                    JOptionPane.showMessageDialog(view, "Đã xóa thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    refreshCurrentPage(); // F5 tải lại bảng ngay lập tức
+                } else {
+                    JOptionPane.showMessageDialog(view, "Không thể xóa mã giảm giá này!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(view, "Lỗi hệ thống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     public boolean createNewPromotion(String code, String name, String type, double value, java.util.Date startDate, java.util.Date endDate, String status) {

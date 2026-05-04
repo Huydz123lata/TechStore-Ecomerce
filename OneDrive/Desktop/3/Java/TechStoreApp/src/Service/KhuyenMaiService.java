@@ -21,4 +21,7 @@ public class KhuyenMaiService {
     public void addPromotion(String code, String name, String type, double value, java.util.Date startDate, java.util.Date endDate, String status) throws Exception {
         dao.insertPromotion(code, name, type, value, startDate, endDate, status);
     }
+    public boolean deletePromotion(String promoCode) {
+        return dao.deletePromotion(promoCode);
+    }
 }

@@ -36,7 +36,6 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         tblKhuyenmai.setRowSorter(rowSorter);
         
         controller = new KhuyenMaiController(this);
-        setupEvents();
         setupStatusCellEditor();
         controller.loadData();
     }
@@ -58,19 +57,6 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         lblPage.setText("Trang " + currentPage + " / " + totalPages);
         isRendering = false;
     }
-
-    private void setupEvents() {
-        // Gỡ bỏ Listener thừa nếu kéo thả UI sinh lỗi đúp
-        for (java.awt.event.ActionListener al : btnAdd.getActionListeners()) btnAdd.removeActionListener(al);
-        
-        btnAdd.addActionListener(e -> controller.handleAdd());
-        btnExcel.addActionListener(e -> controller.handleExportExcel());
-        cbxKhuyenmai.addActionListener(e -> controller.handleSearch());
-        myTextField1.addActionListener(e -> controller.handleSearch());
-        btnPrev.addActionListener(e -> { if (currentPage > 1) { currentPage--; renderPage(); } });
-        btnNext.addActionListener(e -> { if (currentPage < totalPages) { currentPage++; renderPage(); } });
-    }
-
     private void setupStatusCellEditor() {
         javax.swing.JComboBox<String> cbxStatusEditor = new javax.swing.JComboBox<>(new String[]{"ACTIVE", "CANCELLED", "EXPIRED", "UPCOMING"});
         cbxStatusEditor.setFont(tblKhuyenmai.getFont()); 
@@ -99,7 +85,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         btnPrev = new javax.swing.JButton();
         lblPage = new javax.swing.JLabel();
         btnNext = new javax.swing.JButton();
-        btnExcel = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         myTextField1 = new Custom_Component.MyTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -178,10 +164,11 @@ public class panelKhuyenmai extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnExcel.setBackground(new java.awt.Color(0, 204, 51));
-        btnExcel.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        btnExcel.setForeground(new java.awt.Color(255, 255, 255));
-        btnExcel.setText("Xuất Excel");
+        btnDelete.setBackground(new java.awt.Color(0, 153, 153));
+        btnDelete.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnDelete.setForeground(new java.awt.Color(255, 255, 255));
+        btnDelete.setText("Xoá Mã");
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         jLabel6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -233,11 +220,13 @@ public class panelKhuyenmai extends javax.swing.JPanel {
 
         cbxKhuyenmai.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         cbxKhuyenmai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "ACTIVE", "CANCELLED", "EXPIRED", "UPCOMING" }));
+        cbxKhuyenmai.addActionListener(this::cbxKhuyenmaiActionPerformed);
 
         btnAdd.setBackground(new java.awt.Color(0, 51, 204));
         btnAdd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("Thêm Mã");
+        btnAdd.addActionListener(this::btnAddActionPerformed);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -261,7 +250,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(btnAdd)
                 .addGap(18, 18, 18)
-                .addComponent(btnExcel))
+                .addComponent(btnDelete))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -274,7 +263,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(myTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cbxKhuyenmai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnExcel)
+                        .addComponent(btnDelete)
                         .addComponent(btnAdd)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
@@ -314,13 +303,25 @@ public class panelKhuyenmai extends javax.swing.JPanel {
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void myTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myTextField1ActionPerformed
-        // TODO add your handling code here:
+        if (controller != null) controller.handleSearch();
     }//GEN-LAST:event_myTextField1ActionPerformed
+
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        if (controller != null) controller.handleAdd();
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        if (controller != null) controller.handleDelete();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void cbxKhuyenmaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxKhuyenmaiActionPerformed
+        if (controller != null) controller.handleSearch();
+    }//GEN-LAST:event_cbxKhuyenmaiActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ChuyenPageSp;
     private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnExcel;
+    private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnNext;
     private javax.swing.JButton btnPrev;
     public javax.swing.JComboBox<String> cbxKhuyenmai;
@@ -333,6 +334,6 @@ public class panelKhuyenmai extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblPage;
     public Custom_Component.MyTextField myTextField1;
-    private javax.swing.JTable tblKhuyenmai;
+    public javax.swing.JTable tblKhuyenmai;
     // End of variables declaration//GEN-END:variables
 }

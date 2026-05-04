@@ -37,16 +37,12 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
     rowSorter = new javax.swing.table.TableRowSorter<>(tblDonhang.getModel());
     tblDonhang.setRowSorter(rowSorter);
     controller = new DonHangController(this);
-    setupEvents();
+    setupTableEvents();
     setupStatusCellEditor();
     controller.loadData();
     }
     private javax.swing.Timer searchTimer;
-    private void setupEvents() {
-        btnExcel.addActionListener(e -> controller.handleExportExcel());
-        cbxDonhang.addActionListener(e -> controller.handleSearch());
-        cbxThanhtoan.addActionListener(e -> controller.handleSearch());
-        myTextField1.addActionListener(e -> controller.handleSearch());
+    private void setupTableEvents() {
         tblDonhang.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -177,6 +173,8 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabel1.setText("QUẢN LÝ ĐƠN HÀNG");
 
+        myTextField1.addActionListener(this::myTextField1ActionPerformed);
+
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(153, 153, 153));
         jLabel2.setText("Theo dõi và xử lý trạng thái đơn đặt hàng");
@@ -224,14 +222,17 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
 
         cbxDonhang.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         cbxDonhang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "PENDING", "CONFIRMED", "PROCESSING", "SHIPPING", "DELIVERED", "CANCELLED" }));
+        cbxDonhang.addActionListener(this::cbxDonhangActionPerformed);
 
         cbxThanhtoan.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         cbxThanhtoan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "SUCCESS", "FAILED", "PENDING", "REFUNDED" }));
+        cbxThanhtoan.addActionListener(this::cbxThanhtoanActionPerformed);
 
         btnExcel.setBackground(new java.awt.Color(0, 204, 51));
         btnExcel.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         btnExcel.setForeground(new java.awt.Color(255, 255, 255));
         btnExcel.setText("Xuất Excel");
+        btnExcel.addActionListener(this::btnExcelActionPerformed);
 
         jLabel6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         jLabel6.setText("Trạng thái đơn hàng");
@@ -317,6 +318,22 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
             renderPage();               // Vẽ lại bảng
         }
     }//GEN-LAST:event_btnNextActionPerformed
+
+    private void cbxDonhangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxDonhangActionPerformed
+        if (controller != null) controller.handleSearch();
+    }//GEN-LAST:event_cbxDonhangActionPerformed
+
+    private void cbxThanhtoanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxThanhtoanActionPerformed
+        if (controller != null) controller.handleSearch();
+    }//GEN-LAST:event_cbxThanhtoanActionPerformed
+
+    private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcelActionPerformed
+        if (controller != null) controller.handleExportExcel();
+    }//GEN-LAST:event_btnExcelActionPerformed
+
+    private void myTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myTextField1ActionPerformed
+        if (controller != null) controller.handleSearch();
+    }//GEN-LAST:event_myTextField1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ChuyenPageSp;

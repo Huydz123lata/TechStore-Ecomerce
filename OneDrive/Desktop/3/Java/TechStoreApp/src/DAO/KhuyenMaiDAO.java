@@ -140,4 +140,15 @@ public class KhuyenMaiDAO {
             ps.executeUpdate();
         }
     }
+    public boolean deletePromotion(String promoCode) {
+        String sql = "UPDATE COUPON SET IS_DELETED = 1 WHERE TRIM(CODE) = ?";
+        try (Connection conn = ConnectionOracle.getOracleConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, promoCode.trim());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) { 
+            e.printStackTrace(); 
+            return false; 
+        }
+    }
 }
