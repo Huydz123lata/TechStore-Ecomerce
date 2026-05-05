@@ -4,17 +4,52 @@
  */
 package View.panel.admin;
 
+import Controller.adminPageController;
+import DAO.FunctionDAO;
+import DAO.RoleDAO;
+import DAO.RoleGroupDAO;
+import Model.RoleGroupModel;
+import Util.StringUtils;
+import View.admin.AdminForm;
+import View.dialog.dialogThemQuyen;
+import config.ConnectionUtils;
+import java.awt.event.ItemEvent;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+
 /**
  *
  * @author HUY0406
  */
 public class panelRolePermission extends javax.swing.JPanel {
 
+    private final Controller.adminPageController adminController = new Controller.adminPageController();
+    private final RoleDAO roleDAO = new RoleDAO();
+    private final RoleGroupDAO rolegroupDAO = new RoleGroupDAO();
+    private final FunctionDAO functiondao = new FunctionDAO();
+
     /**
      * Creates new form panelPermission
      */
     public panelRolePermission() {
         initComponents();
+
+        //combobox
+        adminController.updateRoleGroupComboBox(cbxRoleGroup);
+
+        //pham vi
+        adminController.setUpTableRoleScope(tblRoleScope, 7);
+        adminController.loadDataToTableRoleScope(tblRoleScope);
+
+        //role group
+        adminController.setUpTable(tblRoleGroup, 3);
+        adminController.loadDataToTableRoleGroup(tblRoleGroup);
+
+        //role
+        adminController.setUpTable(tblRole, 3);
+        adminController.loadDataToTableRole(tblRole);
+
     }
 
     /**
@@ -27,47 +62,432 @@ public class panelRolePermission extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        myButton1 = new Custom_Component.MyButton();
-        myTextField1 = new Custom_Component.MyTextField();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        pnlRoleScope = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblRoleScope = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        cbxRoleGroup = new Custom_Component.MyComboBox();
+        btnSavePermission = new Custom_Component.MyButton();
+        pnlRole = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblRole = new javax.swing.JTable();
+        btnAddRole = new Custom_Component.MyButton();
+        pnlRoleGroup = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblRoleGroup = new javax.swing.JTable();
+        btnAddRoleGroup = new Custom_Component.MyButton();
 
-        myButton1.setText("myButton1");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setText("QUẢN LÝ PHÂN QUYỀN");
 
-        myTextField1.setText("myTextField1");
+        jTabbedPane1.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane1.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+        jTabbedPane1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+
+        pnlRoleScope.setBackground(new java.awt.Color(255, 255, 255));
+        pnlRoleScope.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 102, 0));
+        jLabel2.setText("Các phạm vi quyền hiện tại");
+
+        tblRoleScope.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tblRoleScope.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, "Quản lý kho", null, null, null, null, null, null},
+                {null, "Quản lý sản phẩm", null, null, null, null, null, null},
+                {null, "Quản lý danh mục", null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Chức năng", "Thêm", "Xóa", "Sửa", "Tải xuống", "Xem", "Hành động"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, true, true, true, true, true, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblRoleScope.setGridColor(new java.awt.Color(204, 204, 204));
+        jScrollPane1.setViewportView(tblRoleScope);
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setText("Vai trò");
+
+        cbxRoleGroup.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cbxRoleGroup.addItemListener(this::cbxRoleGroupItemStateChanged);
+        cbxRoleGroup.addActionListener(this::cbxRoleGroupActionPerformed);
+
+        btnSavePermission.setBackground(new java.awt.Color(51, 51, 255));
+        btnSavePermission.setForeground(new java.awt.Color(255, 255, 255));
+        btnSavePermission.setText("Lưu");
+        btnSavePermission.setColorClick(new java.awt.Color(0, 0, 255));
+        btnSavePermission.setColorHover(new java.awt.Color(51, 102, 255));
+        btnSavePermission.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSavePermission.addActionListener(this::btnSavePermissionActionPerformed);
+
+        javax.swing.GroupLayout pnlRoleScopeLayout = new javax.swing.GroupLayout(pnlRoleScope);
+        pnlRoleScope.setLayout(pnlRoleScopeLayout);
+        pnlRoleScopeLayout.setHorizontalGroup(
+            pnlRoleScopeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+            .addGroup(pnlRoleScopeLayout.createSequentialGroup()
+                .addGroup(pnlRoleScopeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlRoleScopeLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlRoleScopeLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbxRoleGroup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnSavePermission, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(14, 14, 14))
+        );
+        pnlRoleScopeLayout.setVerticalGroup(
+            pnlRoleScopeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRoleScopeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(8, 8, 8)
+                .addGroup(pnlRoleScopeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlRoleScopeLayout.createSequentialGroup()
+                        .addGap(9, 9, 9)
+                        .addComponent(cbxRoleGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(pnlRoleScopeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(btnSavePermission, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(10, 10, 10)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Quản lý phạm vi quyền", pnlRoleScope);
+
+        pnlRole.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 102, 0));
+        jLabel6.setText("Danh sách các quyền hiện tại");
+
+        tblRole.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        tblRole.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "STT", "ID", "Tên quyền", "Hành động"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(tblRole);
+        if (tblRole.getColumnModel().getColumnCount() > 0) {
+            tblRole.getColumnModel().getColumn(0).setMinWidth(100);
+            tblRole.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tblRole.getColumnModel().getColumn(0).setMaxWidth(100);
+            tblRole.getColumnModel().getColumn(1).setMinWidth(0);
+            tblRole.getColumnModel().getColumn(1).setPreferredWidth(0);
+            tblRole.getColumnModel().getColumn(1).setMaxWidth(0);
+            tblRole.getColumnModel().getColumn(3).setMinWidth(100);
+            tblRole.getColumnModel().getColumn(3).setPreferredWidth(100);
+            tblRole.getColumnModel().getColumn(3).setMaxWidth(100);
+        }
+
+        btnAddRole.setBackground(new java.awt.Color(51, 51, 255));
+        btnAddRole.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddRole.setText("Thêm quyền");
+        btnAddRole.setColorClick(new java.awt.Color(0, 0, 255));
+        btnAddRole.setColorHover(new java.awt.Color(51, 102, 255));
+        btnAddRole.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnAddRole.addActionListener(this::btnAddRoleActionPerformed);
+
+        javax.swing.GroupLayout pnlRoleLayout = new javax.swing.GroupLayout(pnlRole);
+        pnlRole.setLayout(pnlRoleLayout);
+        pnlRoleLayout.setHorizontalGroup(
+            pnlRoleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRoleLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(pnlRoleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnAddRole, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlRoleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                        .addComponent(jLabel6)))
+                .addGap(15, 15, 15))
+        );
+        pnlRoleLayout.setVerticalGroup(
+            pnlRoleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRoleLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addComponent(btnAddRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
+        );
+
+        jTabbedPane1.addTab("Quản lý quyền", pnlRole);
+
+        pnlRoleGroup.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 102, 0));
+        jLabel4.setText("Danh sách các Nhóm quyền hiện tại");
+
+        tblRoleGroup.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        tblRoleGroup.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "STT", "ID", "Tên nhóm quyền", "Hành động"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tblRoleGroup);
+        if (tblRoleGroup.getColumnModel().getColumnCount() > 0) {
+            tblRoleGroup.getColumnModel().getColumn(0).setMinWidth(100);
+            tblRoleGroup.getColumnModel().getColumn(0).setPreferredWidth(100);
+            tblRoleGroup.getColumnModel().getColumn(0).setMaxWidth(100);
+            tblRoleGroup.getColumnModel().getColumn(1).setMinWidth(0);
+            tblRoleGroup.getColumnModel().getColumn(1).setPreferredWidth(0);
+            tblRoleGroup.getColumnModel().getColumn(1).setMaxWidth(0);
+            tblRoleGroup.getColumnModel().getColumn(3).setMinWidth(100);
+            tblRoleGroup.getColumnModel().getColumn(3).setPreferredWidth(100);
+            tblRoleGroup.getColumnModel().getColumn(3).setMaxWidth(100);
+        }
+
+        btnAddRoleGroup.setBackground(new java.awt.Color(51, 51, 255));
+        btnAddRoleGroup.setForeground(new java.awt.Color(255, 255, 255));
+        btnAddRoleGroup.setText("Thêm nhóm quyền");
+        btnAddRoleGroup.setColorClick(new java.awt.Color(0, 0, 255));
+        btnAddRoleGroup.setColorHover(new java.awt.Color(51, 102, 255));
+        btnAddRoleGroup.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnAddRoleGroup.addActionListener(this::btnAddRoleGroupActionPerformed);
+
+        javax.swing.GroupLayout pnlRoleGroupLayout = new javax.swing.GroupLayout(pnlRoleGroup);
+        pnlRoleGroup.setLayout(pnlRoleGroupLayout);
+        pnlRoleGroupLayout.setHorizontalGroup(
+            pnlRoleGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRoleGroupLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(pnlRoleGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnAddRoleGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(pnlRoleGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                        .addComponent(jLabel4)))
+                .addGap(15, 15, 15))
+        );
+        pnlRoleGroupLayout.setVerticalGroup(
+            pnlRoleGroupLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRoleGroupLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addComponent(btnAddRoleGroup, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
+        );
+
+        jTabbedPane1.addTab("Quản lý nhóm quyền", pnlRoleGroup);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 161, Short.MAX_VALUE)
-                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(140, 140, 140))
             .addGroup(layout.createSequentialGroup()
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(188, 188, 188)
-                        .addComponent(jLabel1))
+                        .addComponent(jTabbedPane1)
+                        .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
-                        .addComponent(myTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(126, 126, 126)
-                .addComponent(jLabel1)
-                .addGap(37, 37, 37)
-                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(myTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30))
+                .addGap(20, 20, 20)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1)
+                .addGap(23, 23, 23))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddRoleGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRoleGroupActionPerformed
+        // Hiển thị hộp thoại nhập tên nhóm quyền
+        String groupName = JOptionPane.showInputDialog(this,
+                "Nhập tên nhóm quyền mới:",
+                "Thêm Nhóm Quyền",
+                JOptionPane.QUESTION_MESSAGE);
+
+        // Kiểm tra tính hợp lệ (groupname!=null là không nhấn nút cancel)
+        if (groupName != null && !groupName.trim().isEmpty()) {
+
+            // Gọi hàm insert
+            boolean isSuccess = rolegroupDAO.insertRoleGroup(groupName);
+
+            if (isSuccess) {
+                JOptionPane.showMessageDialog(this, "Thêm nhóm quyền '" + groupName + "' thành công!");
+
+                //Gọi lại hàm load để bảng cập nhật dòng mới ngay lập tức
+                adminController.loadDataToTableRoleGroup(tblRoleGroup);
+                adminController.updateRoleGroupComboBox(cbxRoleGroup);
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại! Tên nhóm đã tồn tại.",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnAddRoleGroupActionPerformed
+
+    private void btnSavePermissionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSavePermissionActionPerformed
+        // Lấy Nhóm quyền từ ComboBox
+        Object selectedItem = cbxRoleGroup.getSelectedItem();
+        if (selectedItem == null || selectedItem instanceof String) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một vai trò hợp lệ!");
+            return;
+        }
+
+        RoleGroupModel group = (RoleGroupModel) selectedItem;
+        int selectedGroupId = group.getRoleGroupId();
+
+        Connection conn = null;
+        try {
+            conn = ConnectionUtils.getMyConnection();
+            conn.setAutoCommit(false);
+
+            // Xóa trắng liên kết cũ của nhóm quyền này
+            rolegroupDAO.clearOldAssignment(selectedGroupId, conn);
+
+            DefaultTableModel model = (DefaultTableModel) tblRoleScope.getModel();
+
+            // Duyệt từng dòng trên JTable
+            for (int i = 0; i < model.getRowCount(); i++) {
+                // Lấy ID và Tên chức năng
+                int funcId = Integer.parseInt(model.getValueAt(i, 0).toString()); //parseInt là ép từ String về int
+                String funcName = model.getValueAt(i, 1).toString();
+
+                // Lấy boolean từ checkbox
+                boolean a = (boolean) model.getValueAt(i, 2);
+                boolean d = (boolean) model.getValueAt(i, 3);
+                boolean e = (boolean) model.getValueAt(i, 4);
+                boolean dl = (boolean) model.getValueAt(i, 5);
+                boolean v = (boolean) model.getValueAt(i, 6);
+
+                // Chỉ xử lý nếu có tích ít nhất 1 ô
+                if (a || d || e || dl || v) {
+                    String autoName = StringUtils.getAutoRoleName(funcName, a, d, e, dl, v);
+
+                    // Lấy hoặc tạo mới Role trong bảng ROLE
+                    int roleId = roleDAO.getOrCreateRoleId(funcId, autoName,
+                            a ? 1 : 0, d ? 1 : 0, e ? 1 : 0, dl ? 1 : 0, v ? 1 : 0, conn);
+
+                    // Gán Role đó cho Nhóm quyền (Bảng trung gian)
+                    rolegroupDAO.assignRoleToGroup(selectedGroupId, roleId, conn);
+                }
+            }
+
+            conn.commit();
+            JOptionPane.showMessageDialog(this, "Cập nhật phân quyền thành công cho nhóm " + group.toString());
+            adminController.loadDataToTableRole(tblRole);
+
+        } catch (Exception ex) {
+            try {
+                if (conn != null) {
+                    conn.rollback();
+                }
+            } catch (Exception e) {
+            }
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi: " + ex.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+            }
+        }
+    }//GEN-LAST:event_btnSavePermissionActionPerformed
+
+    private void cbxRoleGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxRoleGroupActionPerformed
+
+    }//GEN-LAST:event_cbxRoleGroupActionPerformed
+
+    private void cbxRoleGroupItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxRoleGroupItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            Object selected = cbxRoleGroup.getSelectedItem();
+            if (selected instanceof RoleGroupModel) {
+                RoleGroupModel group = (RoleGroupModel) selected;
+                adminController.displayPermissionsToTable(tblRoleScope, group.getRoleGroupId());
+            }
+        }
+    }//GEN-LAST:event_cbxRoleGroupItemStateChanged
+
+    private void btnAddRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRoleActionPerformed
+        AdminForm parent = (AdminForm) javax.swing.SwingUtilities.getWindowAncestor(this);
+
+        dialogThemQuyen dialog = new dialogThemQuyen(parent, true, this.tblRole);
+        dialog.setVisible(true);
+
+    }//GEN-LAST:event_btnAddRoleActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Custom_Component.MyButton btnAddRole;
+    private Custom_Component.MyButton btnAddRoleGroup;
+    private Custom_Component.MyButton btnSavePermission;
+    public Custom_Component.MyComboBox cbxRoleGroup;
     private javax.swing.JLabel jLabel1;
-    private Custom_Component.MyButton myButton1;
-    private Custom_Component.MyTextField myTextField1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel pnlRole;
+    private javax.swing.JPanel pnlRoleGroup;
+    private javax.swing.JPanel pnlRoleScope;
+    public javax.swing.JTable tblRole;
+    private javax.swing.JTable tblRoleGroup;
+    private javax.swing.JTable tblRoleScope;
     // End of variables declaration//GEN-END:variables
 }

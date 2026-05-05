@@ -9,7 +9,7 @@ import DAO.AuthDAO;
 import DAO.RoleDAO;
 import DAO.TokenDAO;
 import Model.AccountModel;
-import Model.Role;
+import Model.RoleModel;
 import Model.User;
 import Util.UserSession;
 import java.util.List;
@@ -35,7 +35,7 @@ public class AuthService {
         if (acc != null && "ACTIVE".equalsIgnoreCase(acc.getStatus())) {
             String token = java.util.UUID.randomUUID().toString().replace("-", "");
             tokenDAO.createToken(acc.getAccountId(), token);
-            List<Role> perms = roleDAO.getPermissionsByAccountId(acc.getAccountId());
+            List<RoleModel> perms = roleDAO.getPermissionsByAccountId(acc.getAccountId());
             UserSession.startSession(acc, token, perms);
             return acc;
         }

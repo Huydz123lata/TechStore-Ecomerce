@@ -4,11 +4,12 @@
  */
 package DAO;
 
-import Model.Role;
+import Model.RoleModel;
 import config.ConnectionUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,110 +19,53 @@ import java.util.List;
  */
 public class RoleDAO {
 
-    public List<String> getAllRoles() {
-        List<String> listRoles = new ArrayList<>();
-
-        String sql = "SELECT ROLE_NAME FROM ROLE WHERE IS_DELETED = 0";
-
-        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-
+    public int getOrCreateRoleId(int funcId, String roleName, int a, int e, int d, int down, int v, Connection con) throws SQLException {
+        // Tìm xem đã có dòng nào giống hệt chưa
+        String find = "SELECT ROLE_ID "
+                + "FROM ROLE "
+                + "WHERE FUNCTION_ID = ? "
+                + "    AND ADD_PERM = ? "
+                + "    AND EDIT_PERM = ? "
+                + "    AND DELETE_PERM = ? "
+                + "    AND DOWNLOAD_PERM = ? "
+                + "    AND VIEW_PERM = ? "
+                + "AND IS_DELETED = 0";
+        try (PreparedStatement ps = con.prepareStatement(find)) {
+            ps.setInt(1, funcId);
+            ps.setInt(2, a);
+            ps.setInt(3, e);
+            ps.setInt(4, d);
+            ps.setInt(5, down);
+            ps.setInt(6, v);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                listRoles.add(rs.getString("ROLE_NAME"));
+            if (rs.next()) {
+                return rs.getInt("ROLE_ID");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return listRoles;
+
+        String insertSql = "INSERT INTO ROLE (FUNCTION_ID, ROLE_NAME, ADD_PERM, EDIT_PERM, DELETE_PERM, DOWNLOAD_PERM, VIEW_PERM) VALUES (?, ?, ?, ?, ?, ?,?)";
+        String generatedColumns[] = {"ROLE_ID"};
+        try (PreparedStatement ps = con.prepareStatement(insertSql, generatedColumns)) {
+            ps.setInt(1, funcId);
+            ps.setString(2, roleName);
+            ps.setInt(3, a);
+            ps.setInt(4, e);
+            ps.setInt(5, d);
+            ps.setInt(6, down);
+            ps.setInt(7, v);
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return -1;
     }
 
-    public List<String> getFunctionName() {
-        List<String> listFunctions = new ArrayList<>();
-
-        String sql = "SELECT NAME_FUNCTION FROM FUNCTION";
-        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                listFunctions.add(rs.getString("NAME_FUNCTION"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return listFunctions;
-    }
-
-    public boolean savePermission(String roleName, String functionName, int add, int edit, int del, int view, int dl) {
-        String checkSql = "SELECT COUNT(*) FROM ROLE WHERE ROLE_NAME = ? "
-                + "AND FUNCTION_ID = (SELECT FUNCTION_ID FROM FUNCTION WHERE NAME_FUNCTION = ?)";
-        String insertSql = "INSERT INTO ROLE (ROLE_NAME, FUNCTION_ID, ADD_PERM, EDIT_PERM, DELETE_PERM, VIEW_PERM, DOWNLOAD_PERM) "
-                + "VALUES (?, (SELECT FUNCTION_ID FROM FUNCTION WHERE NAME_FUNCTION = ?), ?, ?, ?, ?, ?)";
-        String updateSql = "UPDATE ROLE "
-                + "SET ADD_PERM = ?, "
-                + "    EDIT_PERM = ?, "
-                + "    DELETE_PERM = ?, "
-                + "    DOWNLOAD_PERM = ?, "
-                + "    VIEW_PERM = ?,"
-                + "WHERE ROLE_NAME = ? "
-                + "  AND FUNCTION_ID = (SELECT FUNCTION_ID FROM FUNCTION WHERE NAME_FUNCTION = ?) ";
-        try (Connection con = ConnectionUtils.getMyConnection()) {
-            PreparedStatement psCheck = con.prepareStatement(checkSql);
-            psCheck.setString(1, roleName);
-            psCheck.setString(2, functionName);
-            ResultSet rs = psCheck.executeQuery();
-
-            boolean exist = false;
-            if (rs.next() && rs.getInt(1) > 0) {
-                exist = true;
-            }
-
-            PreparedStatement psAction;
-            if (exist) {
-                psAction = con.prepareStatement(updateSql);
-                psAction.setInt(1, add);
-                psAction.setInt(2, edit);
-                psAction.setInt(3, del);
-                psAction.setInt(4, dl);
-                psAction.setInt(5, view);
-                psAction.setString(6, roleName);
-                psAction.setString(7, functionName);
-            } else {
-                psAction = con.prepareStatement(insertSql);
-                psAction.setString(1, roleName);
-                psAction.setString(2, functionName);
-                psAction.setInt(3, add);
-                psAction.setInt(4, edit);
-                psAction.setInt(5, del);
-                psAction.setInt(6, view);
-                psAction.setInt(7, dl);
-            }
-            return psAction.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean deletePermission(String roleName, String functionName) {
-        String sql = "UPDATE ROLE SET IS_DELETED = 1 "
-                + "WHERE ROLE_NAME = ? "
-                + "AND FUNCTION_ID = (SELECT FUNCTION_ID FROM FUNCTION WHERE NAME_FUNCTION = ?)";
-
-        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setString(1, roleName);
-            ps.setString(2, functionName);
-
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public List<Role> getPermissionsByAccountId(int accountId) {
-        List<Role> list = new ArrayList<>();
-        String sql
-                = "SELECT "
+    public List<RoleModel> getPermissionsByAccountId(int accountId) {
+        List<RoleModel> list = new ArrayList<>();
+        String sql = "SELECT "
+                + "    f.FUNCTION_ID, "
                 + "    f.NAME_FUNCTION, "
                 + "    MAX(r.ADD_PERM) AS CAN_ADD, "
                 + "    MAX(r.EDIT_PERM) AS CAN_EDIT, "
@@ -145,7 +89,10 @@ public class RoleDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Role p = new Role(
+                RoleModel p = new RoleModel(
+                        0,
+                        rs.getInt("FUNCTION_ID"),
+                        null,
                         rs.getString("NAME_FUNCTION"),
                         rs.getInt("CAN_ADD"),
                         rs.getInt("CAN_EDIT"),
@@ -154,6 +101,21 @@ public class RoleDAO {
                         rs.getInt("CAN_DOWNLOAD")
                 );
                 list.add(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<RoleModel> getAllRoleName() {
+        List<RoleModel> list = new ArrayList<>();
+        String sql = "SELECT ROLE_ID,ROLE_NAME FROM ROLE WHERE IS_DELETED = 0";
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                RoleModel role = new RoleModel(rs.getInt("ROLE_ID"), 0, rs.getString("ROLE_NAME"), "", 0, 0, 0, 0, 0);
+                list.add(role);
             }
         } catch (Exception e) {
             e.printStackTrace();

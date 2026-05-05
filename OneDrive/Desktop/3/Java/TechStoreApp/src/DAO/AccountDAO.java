@@ -6,7 +6,7 @@ package DAO;
 
 import config.ConnectionUtils;
 import Model.AccountModel;
-import Model.Role;
+import Model.RoleModel;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

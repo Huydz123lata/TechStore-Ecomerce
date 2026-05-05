@@ -8,8 +8,11 @@ package Model;
  *
  * @author HUY0406
  */
-public class Role {
+public class RoleModel {
 
+    private int roleID;
+    private int functionID;
+    private String roleName;
     private String functionName;
     private int canAdd;
     private int canEdit;
@@ -17,7 +20,7 @@ public class Role {
     private int canView;
     private int canDownload;
 
-    public Role() {
+    public RoleModel() {
         this.functionName = "";
         this.canAdd = 0;
         this.canEdit = 0;
@@ -26,7 +29,12 @@ public class Role {
         this.canDownload = 0;
     }
 
-    public Role(String functionName, int canAdd, int canEdit, int canDelete, int canView, int canDownload) {
+    // Constructor đầy đủ tham số
+    public RoleModel(int roleID, int functionID, String roleName, String functionName,
+            int canAdd, int canEdit, int canDelete, int canView, int canDownload) {
+        this.roleID = roleID;
+        this.functionID = functionID;
+        this.roleName = roleName;
         this.functionName = functionName;
         this.canAdd = canAdd;
         this.canEdit = canEdit;
@@ -58,4 +66,17 @@ public class Role {
     public int getCanDownload() {
         return canDownload;
     }
+
+    public int getRoleID() {
+        return roleID;
+    }
+
+    public int getFunctionID() {
+        return functionID;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
 }

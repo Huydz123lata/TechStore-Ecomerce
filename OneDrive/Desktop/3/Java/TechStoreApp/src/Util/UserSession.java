@@ -1,7 +1,7 @@
 package Util;
 
 import Model.AccountModel;
-import Model.Role;
+import Model.RoleModel;
 import java.util.List;
 
 /**
@@ -11,9 +11,9 @@ public class UserSession {
 
     private static AccountModel currentAccount;
     private static String currentTokenValue;
-    private static List<Role> currentPermissions;
+    private static List<RoleModel> currentPermissions;
 
-    public static void startSession(AccountModel account, String tokenValue, List<Role> perm) {
+    public static void startSession(AccountModel account, String tokenValue, List<RoleModel> perm) {
         currentAccount = account;
         currentTokenValue = tokenValue;
         currentPermissions = perm;
@@ -37,7 +37,7 @@ public class UserSession {
         if (currentPermissions == null) {
             return 0;
         }
-        for (Role p : currentPermissions) {
+        for (RoleModel p : currentPermissions) {
             if (p.getFunctionName().equals(functionName)) {
                 switch (action) {
                     case "ADD":

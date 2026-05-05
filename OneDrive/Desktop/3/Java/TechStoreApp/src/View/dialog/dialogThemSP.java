@@ -2,26 +2,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package View.panel.admin;
+package View.dialog;
 
 /**
  *
  * @author phamd
  */
 public class dialogThemSP extends javax.swing.JDialog {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(dialogThemSP.class.getName());
     // Biến kiểm tra xem người dùng có bấm Lưu hay không
     private boolean confirmed = false;
 // Mảng chứa dữ liệu sản phẩm mới để gửi về
     private Object[] rowData;
-    public boolean isConfirmed() {
-    return confirmed;
-}
 
-public Object[] getRowData() {
-    return rowData;
-}
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public Object[] getRowData() {
+        return rowData;
+    }
+
     public dialogThemSP(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -241,29 +243,30 @@ public Object[] getRowData() {
 
     private void btnLuuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLuuMouseClicked
         try {
-    // 1. Thu thập dữ liệu từ các ô nhập liệu
-    String ma = txtID.getText().trim();
-    String ten = txtName.getText().trim();
-    double gia = Double.parseDouble(txtCost.getText().trim());
-    int tonKho = Integer.parseInt(txtStock.getText().trim());
-    String trangThai = cbxStatus.getSelectedItem().toString();
-    
-    // 2. Lấy đường dẫn ảnh từ ToolTip của cái khung ảnh (jLabel9)
-    String pathAnh = lblPicture.getToolTipText();
-    if (pathAnh == null) pathAnh = ""; // Nếu không chọn ảnh thì để trống
+            // 1. Thu thập dữ liệu từ các ô nhập liệu
+            String ma = txtID.getText().trim();
+            String ten = txtName.getText().trim();
+            double gia = Double.parseDouble(txtCost.getText().trim());
+            int tonKho = Integer.parseInt(txtStock.getText().trim());
+            String trangThai = cbxStatus.getSelectedItem().toString();
 
-    // 3. Đóng gói thành mảng Object (khớp với số cột của bảng ở màn hình chính)
-    // Thứ tự: [Hình ảnh, Mã SP, Tên SP, Giá Bán, Tồn kho, Đã bán, Trạng thái]
-    rowData = new Object[]{pathAnh, ma, ten, gia, tonKho, 0, trangThai};
-    
-    // 4. Xác nhận và đóng dialog
-    confirmed = true;
-    this.dispose();
+            // 2. Lấy đường dẫn ảnh từ ToolTip của cái khung ảnh (jLabel9)
+            String pathAnh = lblPicture.getToolTipText();
+            if (pathAnh == null) {
+                pathAnh = ""; // Nếu không chọn ảnh thì để trống
+            }
+            // 3. Đóng gói thành mảng Object (khớp với số cột của bảng ở màn hình chính)
+            // Thứ tự: [Hình ảnh, Mã SP, Tên SP, Giá Bán, Tồn kho, Đã bán, Trạng thái]
+            rowData = new Object[]{pathAnh, ma, ten, gia, tonKho, 0, trangThai};
 
-} catch (NumberFormatException e) {
-    // Thông báo nếu người dùng nhập chữ vào ô số
-    javax.swing.JOptionPane.showMessageDialog(this, "Giá bán và Tồn kho phải là số!", "Lỗi nhập liệu", 0);
-}
+            // 4. Xác nhận và đóng dialog
+            confirmed = true;
+            this.dispose();
+
+        } catch (NumberFormatException e) {
+            // Thông báo nếu người dùng nhập chữ vào ô số
+            javax.swing.JOptionPane.showMessageDialog(this, "Giá bán và Tồn kho phải là số!", "Lỗi nhập liệu", 0);
+        }
     }//GEN-LAST:event_btnLuuMouseClicked
 
     private void btnHuyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHuyMouseClicked

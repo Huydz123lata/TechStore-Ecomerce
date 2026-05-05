@@ -262,7 +262,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnKhuyenmai.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKhuyenmai.setForeground(new java.awt.Color(153, 153, 153));
         btnKhuyenmai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/3.png"))); // NOI18N
-        btnKhuyenmai.setText("Quản lý Khuyến mãi");
+        btnKhuyenmai.setText("Quản lý Khuyến Mãi");
         btnKhuyenmai.setFocusable(false);
         btnKhuyenmai.setIconTextGap(15);
         btnKhuyenmai.setOpaque(true);
@@ -283,7 +283,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnTaikhoan.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnTaikhoan.setForeground(new java.awt.Color(153, 153, 153));
         btnTaikhoan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
-        btnTaikhoan.setText("Quản lý Tài khoản");
+        btnTaikhoan.setText("Quản lý Tài Khoản");
         btnTaikhoan.setFocusable(false);
         btnTaikhoan.setIconTextGap(15);
         btnTaikhoan.setOpaque(true);
@@ -347,7 +347,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnRole.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnRole.setForeground(new java.awt.Color(153, 153, 153));
         btnRole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
-        btnRole.setText("Phân quyền");
+        btnRole.setText("Quản lý phân quyền");
         btnRole.setFocusable(false);
         btnRole.setIconTextGap(15);
         btnRole.setOpaque(true);
@@ -406,7 +406,11 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        myButton1.setText("Log out");
+        myButton1.setBackground(new java.awt.Color(0, 0, 51));
+        myButton1.setForeground(new java.awt.Color(255, 0, 0));
+        myButton1.setText("LOG OUT");
+        myButton1.setToolTipText("");
+        myButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         myButton1.addActionListener(this::myButton1ActionPerformed);
 
         javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
@@ -436,10 +440,10 @@ public class AdminForm extends javax.swing.JFrame {
                         .addContainerGap())
                     .addComponent(btnDanhMuc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnKho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addGap(69, 69, 69)
-                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37))
         );
         MenuLayout.setVerticalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -475,8 +479,8 @@ public class AdminForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout LayoutLayout = new javax.swing.GroupLayout(Layout);
@@ -773,26 +777,36 @@ public class AdminForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKhoMouseExited
 
     private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
-        LoginForm login = new LoginForm();
-        login.setVisible(true);
+
+        TokenMonitorManager.stop();
+        UserSession.clearSession();
+
         this.dispose();
+        new View.auth.LoginForm().setVisible(true);
+
     }//GEN-LAST:event_myButton1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        // 1. Bật khử răng cưa để chữ Segoe UI mượt, không bị đứt nét
         System.setProperty("awt.useSystemAAFontSettings", "on");
         System.setProperty("swing.aatext", "true");
-        try {
-            javax.swing.UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
 
-            javax.swing.UIManager.put("defaultFont", new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 13));
+        // 2. Khởi tạo FlatLaf (Giao diện phẳng hiện đại)
+        try {
+            // Cách gọi nhanh nhất của FlatLaf
+            com.formdev.flatlaf.FlatLightLaf.setup();
+
+            // (Tùy chọn) Muốn màu so le của bảng rõ hơn thì thêm dòng này
+            javax.swing.UIManager.put("Table.alternateRowColor", new java.awt.Color(242, 242, 242));
+
         } catch (Exception ex) {
-            System.err.println("Không thể khởi tạo FlatLaf");
+            System.err.println("Không thể khởi tạo FlatLaf, sẽ dùng giao diện mặc định");
         }
 
-        // 2. Code gọi cửa sổ AdminForm hiện lên (Giữ nguyên code cũ của bạn ở phần này)
+        // 3. Chạy giao diện
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new AdminForm().setVisible(true);
