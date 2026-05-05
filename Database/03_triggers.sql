@@ -1,4 +1,3 @@
-
 -- 1. TRG_ORDER_TOTAL_CALC
 CREATE OR REPLACE TRIGGER TRG_ORDER_TOTAL_CALC
 AFTER INSERT OR UPDATE OR DELETE ON ORDER_DETAIL
@@ -152,7 +151,6 @@ FOR EACH ROW
 BEGIN
     IF :NEW.STATUS = 'SUCCESS'
        AND :OLD.STATUS <> 'SUCCESS' THEN
-        -- Host user bấm nút xác nhận khi đã đủ thành viên
         IF :NEW.CURRENT_MEMBER < :NEW.TARGET_MEMBER THEN
             RAISE_APPLICATION_ERROR(-20012, 'Chua du thanh vien de xac nhan thanh cong');
         END IF;
