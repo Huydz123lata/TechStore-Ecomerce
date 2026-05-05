@@ -20,9 +20,7 @@ public class KhuyenMaiDAO {
                "END";
     }
 
-    // ==============================================================
-    // HÀM MỚI: Tự động gắn hậu tố % hoặc VNĐ, và phẩy hàng nghìn
-    // ==============================================================
+    // HÀM Tự động gắn hậu tố % hoặc VNĐ, và phẩy hàng nghìn
     private String formatDiscountValue(double value, String type) {
         // "#,###.##" giúp bỏ số 0 vô nghĩa ở đuôi, thêm dấu phẩy hàng nghìn
         DecimalFormat formatter = new DecimalFormat("#,###.##");
@@ -94,9 +92,6 @@ public class KhuyenMaiDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String type = rs.getString("DISCOUNT_TYPE");
-                    if ("PERCENTAGE".equals(type)) type = "PERCENT";
-
-                    // ÉP FORMAT DỮ LIỆU Ở ĐÂY CHO PHẦN TÌM KIẾM
                     String formattedValue = formatDiscountValue(rs.getDouble("DISCOUNT_VALUE"), type);
 
                     list.add(new Object[]{
@@ -124,7 +119,7 @@ public class KhuyenMaiDAO {
     }
 
     public void insertPromotion(String code, String name, String type, double value, java.util.Date startDate, java.util.Date endDate, String status) throws Exception {
-        String dbType = "PERCENT".equals(type) ? "PERCENTAGE" : "AMOUNT";
+        String dbType = "PERCENTAGE".equals(type) ? "PERCENTAGE" : "AMOUNT";
         
         String sql = "INSERT INTO COUPON (CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, START_AT, END_AT, IS_ACTIVE, IS_DELETED) " +
                      "VALUES (?, ?, ?, ?, ?, ?, 1, 0)";
@@ -141,7 +136,7 @@ public class KhuyenMaiDAO {
         }
     }
     public boolean deletePromotion(String promoCode) {
-        String sql = "UPDATE COUPON SET IS_DELETED = 1 WHERE TRIM(CODE) = ?";
+        String sql = "UPDATE COUPON SET IS_DELETED = 1, IS_ACTIVE = 0 WHERE TRIM(CODE) = ?";
         try (Connection conn = ConnectionOracle.getOracleConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, promoCode.trim());

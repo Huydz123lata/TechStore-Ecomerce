@@ -18,13 +18,6 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         this.parentController = controller;
         this.parentDialog = dialog;
         cbxType.setSelectedIndex(0);
-
-        // Gỡ bỏ sự kiện lặp ẩn do NetBeans tạo ra (Triệt tiêu 100% việc hiện thông báo đúp)
-        for (java.awt.event.ActionListener al : btnAdd.getActionListeners()) btnAdd.removeActionListener(al);
-        for (java.awt.event.ActionListener al : btnHuy.getActionListeners()) btnHuy.removeActionListener(al);
-
-        btnAdd.addActionListener(e -> handleInsert());
-        btnHuy.addActionListener(e -> closeForm());
     }
 
     private void closeForm() {
@@ -45,7 +38,8 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
         Date startDate = dateStart.getDate();
         Date endDate = dateEnd.getDate();
-
+        System.out.println("===> Bắt đầu (dateStart): " + startDate);
+        System.out.println("===> Kết thúc (dateEnd): " + endDate);
         if (code.isEmpty() && name.isEmpty() && valueStr.isEmpty() && typeIndex <= 0) {
             closeForm();
             return; 
@@ -108,8 +102,8 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         txtDiscountValue = new Custom_Component.MyTextField();
         cbxType = new javax.swing.JComboBox<>();
         lvlEndDate = new javax.swing.JLabel();
-        dateStart = new com.toedter.calendar.JDateChooser();
         dateEnd = new com.toedter.calendar.JDateChooser();
+        dateStart = new com.toedter.calendar.JDateChooser();
         btnAdd = new javax.swing.JButton();
         btnHuy = new javax.swing.JButton();
 
@@ -159,20 +153,20 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         lvlStartDate.setPreferredSize(new java.awt.Dimension(100, 35));
 
         cbxType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Chọn loại --", "PERCENTAGE", "AMOUNT" }));
-        cbxType.setPreferredSize(new java.awt.Dimension(100, 22));
+        cbxType.setPreferredSize(new java.awt.Dimension(150, 22));
 
         lvlEndDate.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lvlEndDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lvlEndDate.setText("Ngày Kết thúc");
         lvlEndDate.setPreferredSize(new java.awt.Dimension(100, 35));
 
-        dateStart.setDateFormatString("dd/MM/yyyy");
-        dateStart.setFont(new java.awt.Font("Sans Serif Collection", 1, 12)); // NOI18N
-        dateStart.setPreferredSize(new java.awt.Dimension(100, 25));
-
         dateEnd.setDateFormatString("dd/MM/yyyy");
-        dateEnd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        dateEnd.setFont(new java.awt.Font("Sans Serif Collection", 1, 12)); // NOI18N
         dateEnd.setPreferredSize(new java.awt.Dimension(100, 25));
+
+        dateStart.setDateFormatString("dd/MM/yyyy");
+        dateStart.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        dateStart.setPreferredSize(new java.awt.Dimension(100, 25));
 
         btnAdd.setBackground(new java.awt.Color(0, 51, 204));
         btnAdd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
@@ -208,15 +202,15 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(dateStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(lvlStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(dateStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(lvlType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
@@ -247,12 +241,12 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
                     .addComponent(txtDiscountValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dateStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lvlStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dateStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdd)
