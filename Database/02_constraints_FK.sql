@@ -1,7 +1,6 @@
 --------------------------------------------------------------------------------
 -- PHẦN 2: THIẾT LẬP RÀNG BUỘC KHÓA NGOẠI (FOREIGN KEYS)
 --------------------------------------------------------------------------------
-
 -- [1] CỤM QUẢN LÝ TÀI KHOẢN VÀ PHÂN QUYỀN
 ALTER TABLE ACCOUNT ADD CONSTRAINT FK_ACC_USER FOREIGN KEY (USER_ID) REFERENCES "USER"(USER_ID);
 ALTER TABLE ROLE ADD CONSTRAINT FK_ROLE_FUNC FOREIGN KEY (FUNCTION_ID) REFERENCES FUNCTION(FUNCTION_ID);
