@@ -1,23 +1,46 @@
--- 1. TRG_ORDER_TOTAL_CALC
-CREATE OR REPLACE TRIGGER TRG_ORDER_TOTAL_CALC
+CREATE OR REPLACE TRIGGER TRG_CALC_LINE_TOTAL
+BEFORE INSERT OR UPDATE ON ORDER_DETAIL
+FOR EACH ROW
+BEGIN
+    :NEW.LINE_TOTAL := :NEW.QUANTITY * :NEW.PRICE;
+END;
+
+/
+
+
+CREATE OR REPLACE TRIGGER TRG_UPDATE_ORDER_TOTAL
 AFTER INSERT OR UPDATE OR DELETE ON ORDER_DETAIL
 FOR EACH ROW
 DECLARE
-    v_order_id NUMBER;
+    v_order_id     NUMBER;
+    v_subtotal     NUMBER(18,2);
+    v_shipping_fee NUMBER(18,2);
+    v_coupon_id    NUMBER;
+    v_discount     NUMBER(18,2) := 0;
 BEGIN
-    IF INSERTING OR UPDATING THEN
-        v_order_id := :NEW.ORDER_ID;
-    ELSE
-        v_order_id := :OLD.ORDER_ID;
+    -- Xác định đơn hàng nào cần tính lại
+    IF INSERTING OR UPDATING THEN v_order_id := :NEW.ORDER_ID;
+    ELSE v_order_id := :OLD.ORDER_ID; END IF;
+
+    -- 1. Lấy thông tin phí ship và coupon từ bảng ORDERS
+    SELECT SHIPPING_FEE, COUPON_ID INTO v_shipping_fee, v_coupon_id
+    FROM ORDERS WHERE ORDER_ID = v_order_id;
+
+    -- 2. Tính tổng tiền hàng (Subtotal) từ các dòng ORDER_DETAIL
+    SELECT SUM(LINE_TOTAL) INTO v_subtotal
+    FROM ORDER_DETAIL WHERE ORDER_ID = v_order_id;
+
+    -- 3. Tính số tiền được giảm (Gọi cái Function tính Coupon mình viết lúc trước)
+    IF v_coupon_id IS NOT NULL THEN
+        v_discount := fn_calculate_discount_amount(v_subtotal, v_coupon_id);
     END IF;
 
+    -- 4. Cập nhật con số cuối cùng vào bảng ORDERS
     UPDATE ORDERS
-    SET TOTAL = (
-        SELECT NVL(SUM(QUANTITY * PRICE), 0)
-        FROM ORDER_DETAIL
-        WHERE ORDER_ID = v_order_id
-    ) + NVL(SHIPPING_FEE,0),
-    UPDATED_AT = SYSDATE
+    SET SUBTOTAL = NVL(v_subtotal, 0),
+        DISCOUNT_AMOUNT = v_discount,
+        TOTAL = (NVL(v_subtotal, 0) + NVL(v_shipping_fee, 0) - v_discount),
+        UPDATED_AT = SYSDATE
     WHERE ORDER_ID = v_order_id;
 END;
 /
