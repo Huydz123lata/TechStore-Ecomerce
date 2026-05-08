@@ -15,10 +15,15 @@ public class AccountModel {
     private String username;
     private String password;
     private String status;
-    public User userInfo;
+    private RoleGroupModel roleGroup;
+    private RoleModel role;
+    private UserModel userInfo;
+
+    public AccountModel() {
+    }
 
     // Constructor 1: Dùng cho ĐĂNG KÝ
-    public AccountModel(User userInfo, String username, String password) {
+    public AccountModel(UserModel userInfo, String username, String password) {
         this.userInfo = userInfo;
         this.username = username;
         this.password = password;
@@ -53,7 +58,7 @@ public class AccountModel {
         return status;
     }
 
-    public User getUserInfo() {
+    public UserModel getUserInfo() {
         return userInfo;
     }
 
@@ -77,8 +82,29 @@ public class AccountModel {
         this.status = status;
     }
 
-    public void setUserInfo(User userInfo) {
+    public void setUserInfo(UserModel userInfo) {
         this.userInfo = userInfo;
+    }
+
+    public RoleGroupModel getRoleGroup() {
+        return roleGroup;
+    }
+
+    public void setRoleGroup(RoleGroupModel roleGroup) {
+        this.roleGroup = roleGroup;
+    }
+
+    public RoleModel getRole() {
+        return role;
+    }
+
+    public void setRole(RoleModel role) {
+        this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return this.username;
     }
 
 }

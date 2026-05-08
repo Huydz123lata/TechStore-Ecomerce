@@ -11,23 +11,34 @@ package Model;
 public class RoleGroupModel {
 
     private int roleGroupId;
-    private String groupName;
+    private String roleGroupName;
 
-    public String getGroupName() {
-        return groupName;
+    public RoleGroupModel() {
     }
 
     public RoleGroupModel(int id, String name) {
         this.roleGroupId = id;
-        this.groupName = name;
+        this.roleGroupName = name;
     }
 
     public int getRoleGroupId() {
         return roleGroupId;
     }
 
+    public void setRoleGroupId(int roleGroupId) {
+        this.roleGroupId = roleGroupId;
+    }
+
+    public void setRoleGroupName(String roleGroupName) {
+        this.roleGroupName = roleGroupName;
+    }
+
+    public String getRoleGroupName() {
+        return roleGroupName;
+    }
+
     @Override
     public String toString() {
-        return groupName;
+        return roleGroupName;
     }
 }

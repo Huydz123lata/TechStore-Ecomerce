@@ -54,7 +54,7 @@ public class AuthDAO {
 
             // INSERT USER
             String sqlUser
-                    = "INSERT INTO \"USER\" (FULL_NAME, SDT, NGAY_SINH, GIOI_TINH) "
+                    = "INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, NGAY_SINH, GIOI_TINH) "
                     + "VALUES (?, ?, ?, ?)";
 
             int userId = -1;

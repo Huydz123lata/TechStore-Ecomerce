@@ -4,6 +4,7 @@
  */
 package View.auth;
 
+import Controller.RegisterController;
 import Service.AuthService;
 import Util.HashUtil;
 import java.awt.Color;
@@ -257,51 +258,8 @@ public class RegisterForm extends javax.swing.JFrame {
     }//GEN-LAST:event_passwordFieldActionPerformed
 
     private void btnSignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignUpActionPerformed
-
-        String name = nameField.getText();
-        String user = userNameField.getText();
-        String pass = passwordField.getText();
-        String pass2 = password2Field.getText();
-        String sdt = phoneNumberField.getText();
-
-        String gioiTinh = "Nam";
-        if (rbNu.isSelected()) {
-            gioiTinh = "Nu";
-        }
-
-        String ngay = cboNgay.getSelectedItem().toString();
-        String thang = cboThang.getSelectedItem().toString();
-        String nam = cboNam.getSelectedItem().toString();
-
-        if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || sdt.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
-            return;
-        }
-        if (!(pass2.equals(pass))) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Mật khẩu nhập lại không khớp");
-            return;
-        }
-
-        String passwordHash = HashUtil.hashPassword(pass);
-        try {
-            AuthService registerProcess = new AuthService();
-            registerProcess.excuteRegister(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
-
-            JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
-            LoginForm login = new LoginForm();
-            login.setVisible(true);
-            this.dispose();
-
-        } catch (java.sql.SQLException e) {
-            if (e.getErrorCode() == 1) {
-                JOptionPane.showMessageDialog(this, "Số điện thoại này đã tồn tại trong hệ thống!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Lỗi Database: " + e.getMessage());
-            }
-        } catch (Exception e) {
-            // Các lỗi code khác
-            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra: " + e.getMessage());
-        }
+        RegisterController controller = new RegisterController(this);
+        controller.handleRegister();
     }//GEN-LAST:event_btnSignUpActionPerformed
 
     private void password2FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_password2FieldActionPerformed
