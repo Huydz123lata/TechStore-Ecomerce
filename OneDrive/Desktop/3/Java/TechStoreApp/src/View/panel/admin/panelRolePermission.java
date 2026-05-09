@@ -27,7 +27,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
  * @author HUY0406
  */
 public class panelRolePermission extends javax.swing.JPanel {
-    
+
     private final Controller.adminPageController adminController = new Controller.adminPageController();
     private final RoleDAO roleDAO = new RoleDAO();
     private final RoleGroupDAO rolegroupDAO = new RoleGroupDAO();
@@ -724,7 +724,7 @@ public class panelRolePermission extends javax.swing.JPanel {
 
             // Gọi hàm insert
             boolean isSuccess = rolegroupDAO.insertRoleGroup(groupName);
-            
+
             if (isSuccess) {
                 JOptionPane.showMessageDialog(this, "Thêm nhóm quyền '" + groupName + "' thành công!");
 
@@ -732,14 +732,14 @@ public class panelRolePermission extends javax.swing.JPanel {
                 adminController.loadDataToTableRoleGroup(tblRoleGroup);
                 adminController.updateRoleGroupComboBox(cbxRoleGroup);
                 adminController.updateAccountNameToComboBox(cbxAcc);
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm thất bại! Tên nhóm đã tồn tại.",
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnAddRoleGroupActionPerformed
-    
+
     private void btnSavePermissionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSavePermissionActionPerformed
         // Lấy Nhóm quyền từ ComboBox
         Object selectedItem = cbxRoleGroup.getSelectedItem();
@@ -747,10 +747,10 @@ public class panelRolePermission extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một vai trò hợp lệ!");
             return;
         }
-        
+
         RoleGroupModel group = (RoleGroupModel) selectedItem;
         int selectedGroupId = group.getRoleGroupId();
-        
+
         Connection conn = null;
         try {
             conn = ConnectionUtils.getMyConnection();
@@ -758,7 +758,7 @@ public class panelRolePermission extends javax.swing.JPanel {
 
             // Xóa trắng liên kết cũ của nhóm quyền này
             rolegroupDAO.clearOldAssignment(selectedGroupId, conn);
-            
+
             DefaultTableModel model = (DefaultTableModel) tblRoleScope.getModel();
 
             // Duyệt từng dòng trên JTable
@@ -786,11 +786,11 @@ public class panelRolePermission extends javax.swing.JPanel {
                     rolegroupDAO.assignRoleToGroup(selectedGroupId, roleId, conn);
                 }
             }
-            
+
             conn.commit();
             JOptionPane.showMessageDialog(this, "Cập nhật phân quyền thành công cho nhóm " + group.toString());
             adminController.loadDataToTableRole(tblRole);
-            
+
         } catch (Exception ex) {
             try {
                 if (conn != null) {
@@ -809,11 +809,11 @@ public class panelRolePermission extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnSavePermissionActionPerformed
-    
+
     private void cbxRoleGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxRoleGroupActionPerformed
-        
+
     }//GEN-LAST:event_cbxRoleGroupActionPerformed
-    
+
     private void cbxRoleGroupItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxRoleGroupItemStateChanged
         if (evt.getStateChange() == ItemEvent.SELECTED) {
             Object selected = cbxRoleGroup.getSelectedItem();
@@ -823,19 +823,19 @@ public class panelRolePermission extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_cbxRoleGroupItemStateChanged
-    
+
     private void btnAddRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRoleActionPerformed
         AdminForm parent = (AdminForm) javax.swing.SwingUtilities.getWindowAncestor(this);
-        
+
         dialogThemQuyen dialog = new dialogThemQuyen(parent, true, this.tblRole);
         dialog.setVisible(true);
-        
+
     }//GEN-LAST:event_btnAddRoleActionPerformed
-    
+
     private void btnRevokeAssignedRoleGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevokeAssignedRoleGroupActionPerformed
         // 1. Lấy dòng đang chọn trên bảng hiển thị ở dưới
         int row = tblAccountAssignRG.getSelectedRow();
-        
+
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng trong bảng dưới đây để thu hồi!");
             return;
@@ -852,7 +852,7 @@ public class panelRolePermission extends javax.swing.JPanel {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Thu hồi nhóm quyền '" + rgName + "' của tài khoản '" + accName + "'?",
                 "Xác nhận thu hồi", JOptionPane.YES_NO_OPTION);
-        
+
         if (confirm == JOptionPane.YES_OPTION) {
             if (accountDAO.revokeRoleGroup(accId, rgId)) {
                 JOptionPane.showMessageDialog(this, "Đã thu hồi quyền thành công!");
@@ -862,7 +862,7 @@ public class panelRolePermission extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnRevokeAssignedRoleGroupActionPerformed
-    
+
     private void btnCapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatActionPerformed
         Object selectedAcc = cbxAcc.getSelectedItem();
         Object selectedRole = cbxAssignRG.getSelectedItem();
@@ -876,22 +876,22 @@ public class panelRolePermission extends javax.swing.JPanel {
         }
         AccountModel acc = (AccountModel) selectedAcc;
         RoleGroupModel role = (RoleGroupModel) selectedRole;
-        
+
         if (accountDAO.assignRoleGroup(acc.getAccountId(), role.getRoleGroupId())) {
             JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
             adminController.loadDataToTableAccountAssignRG(tblAccountAssignRG, acc.getAccountId());
         } else {
             JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
         }
-        
+
     }//GEN-LAST:event_btnCapNhatActionPerformed
-    
+
     private void cbxAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxAccActionPerformed
         Object selectedItem = cbxAcc.getSelectedItem();
         if (selectedItem == null) {
             return;
         }
-        
+
         if (selectedItem.toString().equals("--Tất cả các tài khoản--")) {
             lblCurrentAccountName.setText("Tất cả các tài khoản đã được cấu hình nhóm quyền trong hệ thống");
             adminController.loadDataToTableAccountAssignRG(tblAccountAssignRG, 0);
@@ -901,13 +901,13 @@ public class panelRolePermission extends javax.swing.JPanel {
             adminController.loadDataToTableAccountAssignRG(tblAccountAssignRG, acc.getAccountId());
         }
     }//GEN-LAST:event_cbxAccActionPerformed
-    
+
     private void cbxAcc_RoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxAcc_RoleActionPerformed
         Object selectedItem = cbxAcc_Role.getSelectedItem();
         if (selectedItem == null) {
             return;
         }
-        
+
         if (selectedItem.toString().equals("--Tất cả các tài khoản--")) {
             lblCurrentAccountName1.setText("Tất cả các tài khoản đã được cấu hình quyền trong hệ thống");
             adminController.loadDataToTableAccountAssignRole(tblAccountAssignRole, 0);
@@ -917,11 +917,11 @@ public class panelRolePermission extends javax.swing.JPanel {
             adminController.loadDataToTableAccountAssignRole(tblAccountAssignRole, acc.getAccountId());
         }
     }//GEN-LAST:event_cbxAcc_RoleActionPerformed
-    
+
     private void btnRevokeAssignedRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRevokeAssignedRoleActionPerformed
         // 1. Lấy dòng đang chọn trên bảng hiển thị ở dưới
         int row = tblAccountAssignRole.getSelectedRow();
-        
+
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng trong bảng dưới đây để thu hồi!");
             return;
@@ -938,7 +938,7 @@ public class panelRolePermission extends javax.swing.JPanel {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Thu hồi quyền '" + rName + "' của tài khoản '" + accName + "'?",
                 "Xác nhận thu hồi", JOptionPane.YES_NO_OPTION);
-        
+
         if (confirm == JOptionPane.YES_OPTION) {
             if (accountDAO.revokeRole(accId, rId)) {
                 JOptionPane.showMessageDialog(this, "Đã thu hồi quyền thành công!");
@@ -948,7 +948,7 @@ public class panelRolePermission extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnRevokeAssignedRoleActionPerformed
-    
+
     private void btnCapNhatRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCapNhatRoleActionPerformed
         Object selectedAcc = cbxAcc_Role.getSelectedItem();
         Object selectedRole = cbxAssignRole.getSelectedItem();
@@ -973,11 +973,11 @@ public class panelRolePermission extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Cập nhật thất bại!");
         }
     }//GEN-LAST:event_btnCapNhatRoleActionPerformed
-    
+
     private void btnDeleteRoleGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteRoleGroupActionPerformed
         // 1. Lấy dòng đang được chọn trên bảng
         int selectedRow = tblRoleGroup.getSelectedRow();
-        
+
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một nhóm quyền để xóa!");
             return;
@@ -998,7 +998,7 @@ public class panelRolePermission extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnDeleteRoleGroupActionPerformed
-    
+
     private void btnDeleteRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteRoleActionPerformed
         // 1. Lấy dòng đang được chọn trên bảng
         int selectedRow = tblRole.getSelectedRow();
@@ -1026,7 +1026,7 @@ public class panelRolePermission extends javax.swing.JPanel {
         // 1. Lấy ID từ bảng (giả sử ID ở cột 0)
         int id = (int) tblRoleGroup.getValueAt(row, 0);
         String name = tblRoleGroup.getValueAt(row, 1).toString();
-        
+
         int confirm = JOptionPane.showConfirmDialog(this, "Xóa nhóm quyền: " + name + "?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             // Gọi DAO thực tế của bạn ở đây
@@ -1042,7 +1042,7 @@ public class panelRolePermission extends javax.swing.JPanel {
         // Giả sử ID ở cột 0
         int id = (int) tblRole.getValueAt(row, 0);
         String name = tblRole.getValueAt(row, 1).toString();
-        
+
         int confirm = JOptionPane.showConfirmDialog(this, "Xóa quyền: " + name + "?", "Xác nhận", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             // Gọi DAO thực tế của bạn ở đây
