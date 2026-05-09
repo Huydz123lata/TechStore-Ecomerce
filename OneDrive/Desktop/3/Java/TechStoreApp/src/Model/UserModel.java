@@ -19,6 +19,7 @@ public class UserModel {
     private Date ngaySinh;
     private String gioiTinh;
     private String address;
+    private String userType;
 
     public UserModel() {
     }
@@ -98,6 +99,14 @@ public class UserModel {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getUserType() {
+        return userType;
     }
 
 }

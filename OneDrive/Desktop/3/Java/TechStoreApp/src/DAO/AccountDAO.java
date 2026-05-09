@@ -16,14 +16,83 @@ import java.util.Vector;
 
 public class AccountDAO {
 
+    public boolean insertAccount(AccountModel acc) {
+        // Khởi tạo connection bên ngoài để có thể rollback và đóng trong finally
+        Connection con = null;
+        try {
+            con = ConnectionUtils.getMyConnection();
+            con.setAutoCommit(false); // Bắt đầu giao dịch
+
+            // BƯỚC 1: Thêm vào APP_USER
+            String sqlUser = "INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, ADDRESS, USER_TYPE) VALUES (?, ?, ?, ?)";
+            String[] generatedColumns = {"USER_ID"}; // Đảm bảo tên cột này viết hoa đúng như trong DB
+
+            int userId = 0;
+            try (PreparedStatement psUser = con.prepareStatement(sqlUser, generatedColumns)) {
+                psUser.setString(1, acc.getUserInfo().getFullName());
+                psUser.setString(2, acc.getUserInfo().getSDT());
+                psUser.setString(3, acc.getUserInfo().getAddress());
+                psUser.setString(4, acc.getUserInfo().getUserType()); // Lấy từ model thay vì ép cứng "STAFF"
+
+                psUser.executeUpdate();
+
+                try (ResultSet rs = psUser.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        userId = rs.getInt(1);
+                    }
+                }
+            }
+
+            if (userId == 0) {
+                throw new Exception("Không lấy được USER_ID mới!");
+            }
+
+            // BƯỚC 2: Thêm vào ACCOUNT
+            String sqlAcc = "INSERT INTO ACCOUNT (USER_ID, USERNAME, PASSWORD_HASH, STATUS) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement psAcc = con.prepareStatement(sqlAcc)) {
+                psAcc.setInt(1, userId);
+                psAcc.setString(2, acc.getUsername());
+                psAcc.setString(3, acc.getPasswordHash());
+                psAcc.setString(4, acc.getStatus());
+
+                psAcc.executeUpdate();
+            }
+
+            con.commit(); // Chốt đơn! Lưu tất cả vào DB
+            return true;
+
+        } catch (Exception e) {
+            if (con != null) {
+                try {
+                    con.rollback(); // Có biến là hủy hết, trả lại hiện trạng ban đầu
+                    System.out.println("Đã Rollback giao dịch do lỗi.");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            // Luôn luôn đóng kết nối dù thành công hay thất bại
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public List<AccountModel> getAllAdminAccounts() {
         List<AccountModel> list = new ArrayList();
-        String sql = "SELECT a.ACCOUNT_ID, a.USER_ID, a.USERNAME, a.STATUS,u.FULL_NAME, u.PHONE_NUMBER, u.ADDRESS, rg.NAME_ROLE_GROUP "
+        String sql = "SELECT a.ACCOUNT_ID, a.USER_ID, a.USERNAME, a.STATUS, "
+                + "u.FULL_NAME, u.PHONE_NUMBER, u.ADDRESS, rg.NAME_ROLE_GROUP "
                 + "FROM ACCOUNT a "
                 + "JOIN APP_USER u ON a.USER_ID = u.USER_ID "
-                + "JOIN ACCOUNT_ASSIGN_ROLE_GROUP aarg ON aarg.ACCOUNT_ID = a.ACCOUNT_ID "
-                + "JOIN ROLE_GROUP rg ON rg.ROLE_GROUP_ID = aarg.ROLE_GROUP_ID "
-                + "WHERE a.IS_DELETED = 0 AND USER_TYPE IN('ADMIN','STAFF')";
+                + "LEFT JOIN ACCOUNT_ASSIGN_ROLE_GROUP aarg ON aarg.ACCOUNT_ID = a.ACCOUNT_ID "
+                + "LEFT JOIN ROLE_GROUP rg ON rg.ROLE_GROUP_ID = aarg.ROLE_GROUP_ID "
+                + "WHERE a.IS_DELETED = 0 AND u.USER_TYPE IN ('ADMIN','STAFF')";
         try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

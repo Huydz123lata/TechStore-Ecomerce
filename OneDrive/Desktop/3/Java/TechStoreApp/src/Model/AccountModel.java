@@ -15,6 +15,7 @@ public class AccountModel {
     private String username;
     private String password;
     private String status;
+    private String passwordHash;
     private RoleGroupModel roleGroup;
     private RoleModel role;
     private UserModel userInfo;
@@ -100,6 +101,14 @@ public class AccountModel {
 
     public void setRole(RoleModel role) {
         this.role = role;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     @Override

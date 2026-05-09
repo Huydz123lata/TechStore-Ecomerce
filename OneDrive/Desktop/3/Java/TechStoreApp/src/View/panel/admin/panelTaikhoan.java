@@ -6,17 +6,24 @@ package View.panel.admin;
 
 import Util.TableDecorate;
 import Controller.adminPageController;
+import DAO.AccountDAO;
+import Model.AccountModel;
 import View.admin.AdminForm;
+import View.dialog.AccountDialog;
 import View.dialog.dialogThemQuyen;
+import java.awt.Frame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author phamd
  */
 public class panelTaikhoan extends javax.swing.JPanel {
-
+    
     private adminPageController adminController = new adminPageController();
     private TableDecorate tableAction = new TableDecorate();
+    private AccountDAO accountDAO = new AccountDAO();
 
     /**
      * Creates new form panelTaikhoan
@@ -87,17 +94,17 @@ public class panelTaikhoan extends javax.swing.JPanel {
         tblAdminAccount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblAdminAccount.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Vai trò", "Trạng thái"
+                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Năm sinh", "Giới tính", "Vai trò", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, true, true, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -110,7 +117,6 @@ public class panelTaikhoan extends javax.swing.JPanel {
             tblAdminAccount.getColumnModel().getColumn(1).setMinWidth(0);
             tblAdminAccount.getColumnModel().getColumn(1).setPreferredWidth(0);
             tblAdminAccount.getColumnModel().getColumn(1).setMaxWidth(0);
-            tblAdminAccount.getColumnModel().getColumn(5).setHeaderValue("Vai trò");
         }
 
         imagePanel1.setImage(new javax.swing.ImageIcon(getClass().getResource("/Resource/search.png"))); // NOI18N
@@ -377,25 +383,45 @@ public class panelTaikhoan extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDeleteAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAccActionPerformed
-
+        
     }//GEN-LAST:event_btnDeleteAccActionPerformed
-
+    
     private void btnAddAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAccActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAddAccActionPerformed
+        // 1. Khởi tạo dialog (truyền vào Frame cha)
+        Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
+        AccountDialog dialog = new AccountDialog(parent);
 
+        // 2. Hiển thị dialog (nó sẽ dừng code ở đây cho đến khi dialog đóng)
+        dialog.setVisible(true);
+
+        // 3. Nếu bấm "Lưu" thành công thì mới xử lý tiếp
+        if (dialog.isSucceeded()) {
+            AccountModel newAcc = dialog.getAccountData();
+
+            // 4. Gọi DAO để lưu vào 2 bảng (Dùng hàm insertAccount mình đã viết ở trên)
+            if (accountDAO.insertAccount(newAcc)) {
+                JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
+                // Load lại bảng
+                adminController.loadDataToTableAdminAccount(tblAdminAccount);
+                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại! Kiểm tra lại SĐT hoặc Username.");
+            }
+        }
+    }//GEN-LAST:event_btnAddAccActionPerformed
+    
     private void btnEditAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEditAccActionPerformed
-
+    
     private void btnDeleteCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCusAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDeleteCusAccActionPerformed
-
+    
     private void btnAddCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCusAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddCusAccActionPerformed
-
+    
     private void btnEditCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCusAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEditCusAccActionPerformed
@@ -409,37 +435,19 @@ public class panelTaikhoan extends javax.swing.JPanel {
     private Custom_Component.MyButton btnEditCusAcc;
     private Custom_Component.ImagePanel imagePanel1;
     private Custom_Component.ImagePanel imagePanel2;
-    private Custom_Component.ImagePanel imagePanel3;
-    private Custom_Component.ImagePanel imagePanel4;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JPanel pnlAdminAccount;
-    private javax.swing.JPanel pnlAdminAccount2;
-    private javax.swing.JPanel pnlAdminAccount3;
-    private javax.swing.JPanel pnlContent2;
-    private javax.swing.JPanel pnlContent3;
     private javax.swing.JPanel pnlCustomerAccount;
     private javax.swing.JPanel pnlcus;
     private javax.swing.JTable tblAdminAccount;
-    private javax.swing.JTable tblAdminAccount2;
-    private javax.swing.JTable tblAdminAccount3;
     private javax.swing.JTable tblCustomerAccount;
     private Custom_Component.MyTextField txtFindAccount;
-    private Custom_Component.MyTextField txtFindAccount2;
-    private Custom_Component.MyTextField txtFindAccount3;
     private Custom_Component.MyTextField txtFindCusAccount;
     // End of variables declaration//GEN-END:variables
 }

@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableModel;
  * @author HUY0406
  */
 public class dialogThemQuyen extends javax.swing.JDialog {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(dialogThemQuyen.class.getName());
     private final Controller.adminPageController adminController = new Controller.adminPageController();
     private JTable tblRole;
@@ -31,7 +31,7 @@ public class dialogThemQuyen extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(parent);
         adminController.updateFunctionNameToComboBox(cbxFunction);
-        
+
     }
 
     /**
@@ -165,11 +165,11 @@ public class dialogThemQuyen extends javax.swing.JDialog {
     private void txtRoleNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRoleNameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtRoleNameActionPerformed
-    
+
     private void cbxFunctionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxFunctionActionPerformed
-        
+
     }//GEN-LAST:event_cbxFunctionActionPerformed
-    
+
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         int funcId = ((FunctionModel) cbxFunction.getSelectedItem()).getFunctionId();
         String roleName = txtRoleName.getText().trim();
@@ -178,7 +178,7 @@ public class dialogThemQuyen extends javax.swing.JDialog {
         int d = chkDelete.isSelected() ? 1 : 0;
         int down = chkDownload.isSelected() ? 1 : 0;
         int v = chkView.isSelected() ? 1 : 0;
-        
+
         if (roleName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập tên quyền!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
         }
@@ -186,37 +186,37 @@ public class dialogThemQuyen extends javax.swing.JDialog {
             Connection con = ConnectionUtils.getMyConnection();
             RoleDAO role = new RoleDAO();
             int roleIdResult = role.getOrCreateRoleId(funcId, roleName, a, e, d, down, v, con);
-            
+
             boolean isAlreadyInTable = false;
             DefaultTableModel model = (DefaultTableModel) tblRole.getModel();
-            
+
             for (int i = 0; i < model.getRowCount(); i++) {
                 int idInTable = Integer.parseInt(model.getValueAt(i, 1).toString());
-                
+
                 if (idInTable == roleIdResult) {
                     isAlreadyInTable = true;
                     break;
                 }
             }
-            
+
             if (isAlreadyInTable) {
                 JOptionPane.showMessageDialog(this,
                         "Phạm vi quyền này đã tồn tại trong bảng danh sách bên dưới!",
                         "Trùng lặp",
                         JOptionPane.WARNING_MESSAGE);
             } else {
-                
+
                 JOptionPane.showMessageDialog(this, "Thêm thành công!");
                 this.dispose();
-                
+
                 adminController.loadDataToTableRole(tblRole);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
     }//GEN-LAST:event_btnOkActionPerformed
-    
+
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
