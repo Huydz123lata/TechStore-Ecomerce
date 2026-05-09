@@ -4,9 +4,11 @@
  */
 package Controller;
 
+import DAO.AccountDAO;
 import DAO.FunctionDAO;
 import DAO.RoleDAO;
 import DAO.RoleGroupDAO;
+import Model.AccountModel;
 import Model.FunctionModel;
 import Model.RoleModel;
 import Model.RoleGroupModel;
@@ -25,6 +27,7 @@ public class adminPageController {
     private final RoleDAO roleDAO = new RoleDAO();
     private final RoleGroupDAO rolegroupDAO = new RoleGroupDAO();
     private final FunctionDAO functionDAO = new FunctionDAO();
+    private final AccountDAO accountDAO = new AccountDAO();
 
     public void setUpTableRoleScope(JTable table, int col) {
 
@@ -34,12 +37,11 @@ public class adminPageController {
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        centerRenderer.setVerticalAlignment(JLabel.CENTER);
         for (int i = 0; i < 2; i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        table.getColumnModel().getColumn(col).setCellRenderer(new TableAction.ActionRenderer());
-        table.getColumnModel().getColumn(col).setCellEditor(new TableAction.ActionEditor());
     }
 
     public void setUpTable(JTable table, int col) {
@@ -50,12 +52,11 @@ public class adminPageController {
 
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        centerRenderer.setVerticalAlignment(JLabel.CENTER);
         for (int i = 0; i < table.getColumnCount(); i++) {
             table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
-        table.getColumnModel().getColumn(col).setCellRenderer(new TableAction.ActionRenderer());
-        table.getColumnModel().getColumn(col).setCellEditor(new TableAction.ActionEditor());
     }
 
     //Role_permission management
@@ -94,7 +95,7 @@ public class adminPageController {
                 model.addRow(new Object[]{
                     stt++,
                     group.getRoleGroupId(),
-                    group.getGroupName(),
+                    group.getRoleGroupName(),
                     "",});
             }
         }
@@ -169,6 +170,116 @@ public class adminPageController {
         if (list != null) {
             for (FunctionModel l : list) {
                 comboBox.addItem(l);
+            }
+        }
+    }
+
+    //Account
+    public void loadDataToTableAdminAccount(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        AccountDAO dao = new AccountDAO();
+        List<AccountModel> list = dao.getAllAdminAccounts();
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+
+        for (AccountModel acc : list) {
+            String ngayHienThi = "";
+            if (acc.getUserInfo().getNgaySinh() != null) {
+                ngayHienThi = sdf.format(acc.getUserInfo().getNgaySinh());
+            }
+            Object[] row = new Object[]{
+                acc.getUsername(),
+                acc.getAccountId(),
+                acc.getUserInfo().getFullName(),
+                acc.getUserInfo().getSDT(),
+                acc.getUserInfo().getAddress(),
+                ngayHienThi,
+                acc.getUserInfo().getGioiTinh(),
+                acc.getRoleGroup().getRoleGroupName() != null ? acc.getRoleGroup().getRoleGroupName() : "Chưa gán",
+                acc.getStatus()
+
+            };
+            model.addRow(row);
+        }
+    }
+
+    public void loadDataToTableCustomerAccount(JTable table) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        AccountDAO dao = new AccountDAO();
+        List<AccountModel> list = dao.getAllCustomerAccounts();
+
+        for (AccountModel acc : list) {
+            Object[] row = new Object[]{
+                acc.getUsername(),
+                acc.getAccountId(),
+                acc.getUserInfo().getFullName(),
+                acc.getUserInfo().getSDT(),
+                acc.getUserInfo().getAddress(),
+                acc.getStatus()
+
+            };
+            model.addRow(row);
+        }
+    }
+
+    //Account Assign Role_Group & Account Assign Role
+    public void updateAccountNameToComboBox(JComboBox comboBox) {
+        List<AccountModel> list = accountDAO.getAllAdminAccounts();
+        comboBox.removeAllItems();
+        comboBox.addItem("--Tất cả các tài khoản--");
+        if (list != null) {
+            for (AccountModel model : list) {
+                comboBox.addItem(model);
+            }
+        }
+    }
+
+    public void loadDataToTableAccountAssignRG(JTable table, int filterId) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        List<AccountModel> list = accountDAO.getRoleGroupAssignedAccounts(filterId);
+        int stt = 1;
+        for (AccountModel acc : list) {
+            Object[] row = new Object[]{
+                stt++,
+                acc.getAccountId(),
+                acc.getRoleGroup().getRoleGroupId(),
+                acc.getUsername(),
+                acc.getRoleGroup().getRoleGroupName()
+            };
+            model.addRow(row);
+        }
+    }
+
+    public void loadDataToTableAccountAssignRole(JTable table, int filterId) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        List<AccountModel> list = accountDAO.getRoleAssignedAccounts(filterId);
+        int stt = 1;
+        for (AccountModel acc : list) {
+            Object[] row = new Object[]{
+                stt++,
+                acc.getAccountId(),
+                acc.getRole().getRoleID(),
+                acc.getUsername(),
+                acc.getRole().getRoleName()
+            };
+            model.addRow(row);
+        }
+    }
+
+    public void updateRoleComboBox(JComboBox comboBox) {
+        List<RoleModel> list = roleDAO.getAllRoleName();
+        comboBox.removeAllItems();
+        comboBox.addItem("-- Chọn quyền riêng--");
+        if (list != null) {
+            for (RoleModel model : list) {
+                comboBox.addItem(model);
             }
         }
     }

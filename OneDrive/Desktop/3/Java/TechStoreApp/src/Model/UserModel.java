@@ -11,29 +11,32 @@ import java.sql.Date;
  *
  * @author HUY0406
  */
-public class User {
+public class UserModel {
 
     private int userId;
     private String fullName;
     private String SDT;
     private Date ngaySinh;
     private String gioiTinh;
+    private String address;
+    private String userType;
 
-    public User() {
+    public UserModel() {
     }
 
     // Constructor cho đăng ký 
-    public User(String fullName, String SDT, String gioiTinh) {
+    public UserModel(String fullName, String SDT, String gioiTinh) {
         this.fullName = fullName;
         this.SDT = SDT;
         this.gioiTinh = gioiTinh;
     }
 
     // Constructor đầy đủ
-    public User(int userId, String fullName, String email, String SDT) {
+    public UserModel(int userId, String fullName, String SDT, String address) {
         this.userId = userId;
         this.fullName = fullName;
         this.SDT = SDT;
+        this.address = address;
     }
 
     // --- HÀM XỬ LÝ NGÀY SINH TỪ COMBOBOX ---
@@ -89,4 +92,21 @@ public class User {
     public void setGioiTinh(String gioiTinh) {
         this.gioiTinh = gioiTinh;
     }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
 }

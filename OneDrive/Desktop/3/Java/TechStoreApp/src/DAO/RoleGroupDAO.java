@@ -68,6 +68,18 @@ public class RoleGroupDAO {
         }
     }
 
+    public boolean deleteRoleGroup(int id) {
+        String sql = "DELETE FROM ROLE_GROUP WHERE ROLE_GROUP_ID = ?";
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.out.println("Lỗi xóa: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public List<RoleModel> getRolesByGroupId(int groupId) {
         List<RoleModel> list = new ArrayList<>();
         // SQL Join để lấy cả Function Name và các quyền

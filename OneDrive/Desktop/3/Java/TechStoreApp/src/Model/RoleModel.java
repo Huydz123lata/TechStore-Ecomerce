@@ -79,4 +79,17 @@ public class RoleModel {
         return roleName;
     }
 
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public void setRoleID(int roleID) {
+        this.roleID = roleID;
+    }
+
+    @Override
+    public String toString() {
+        return roleName;
+    }
+
 }

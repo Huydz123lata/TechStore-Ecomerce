@@ -10,7 +10,7 @@ import DAO.RoleDAO;
 import DAO.TokenDAO;
 import Model.AccountModel;
 import Model.RoleModel;
-import Model.User;
+import Model.UserModel;
 import Util.UserSession;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class AuthService {
             String ngay, String thang, String nam,
             String userName, String pass) throws Exception {
 
-        User u = new User(fullname, sdt, gioiTinh);
+        UserModel u = new UserModel(fullname, sdt, gioiTinh);
         u.setNgaySinhFromPicker(ngay, thang, nam);
 
         AccountModel acc = new AccountModel(u, userName, pass);

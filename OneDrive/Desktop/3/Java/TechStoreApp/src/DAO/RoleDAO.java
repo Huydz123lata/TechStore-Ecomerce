@@ -62,6 +62,20 @@ public class RoleDAO {
         return -1;
     }
 
+    public boolean deleteRole(int id) {
+        String sql = "DELETE FROM ROLE WHERE ROLE_ID = ?";
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("Lỗi xóa: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public List<RoleModel> getPermissionsByAccountId(int accountId) {
         List<RoleModel> list = new ArrayList<>();
         String sql = "SELECT "
