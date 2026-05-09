@@ -7,12 +7,11 @@ package View.admin;
 import DAO.TokenDAO;
 import Util.TokenMonitorManager;
 import Util.UserSession;
-
 import View.auth.LoginForm;
 import View.panel.admin.panelBanhang;
 import View.panel.admin.panelDanhmuc;
 import View.panel.admin.panelGiaodich;
-import View.panel.admin.panelHoadon;
+import View.panel.admin.panelDonhang;
 import View.panel.admin.panelKho;
 import View.panel.admin.panelKhuyenmai;
 import View.panel.admin.panelRolePermission;
@@ -660,7 +659,7 @@ public class AdminForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSanphamMouseClicked
 
     private void btnHoadonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHoadonMouseClicked
-        showPanel(new panelHoadon()); // Đảm bảo tên class Panel này đúng
+        showPanel(new panelDonhang()); // Đảm bảo tên class Panel này đúng
         currentSelectedLabel = btnHoadon;
         resetMenuButtons(btnHoadon);
     }//GEN-LAST:event_btnHoadonMouseClicked

@@ -8,10 +8,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- *
- * @author HUY0406
- */
 public class ConnectionOracle {
 
     /**
