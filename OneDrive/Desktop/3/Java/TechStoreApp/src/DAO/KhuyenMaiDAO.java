@@ -33,28 +33,40 @@ public class KhuyenMaiDAO {
 
     public List<Object[]> selectAll() {
         List<Object[]> list = new ArrayList<>();
-        String sql = "SELECT CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, START_AT, END_AT, " +
+        // ĐÃ SỬA: Đổi MAX_DISCOUNT_AMOUNT thành MAX_DISCOUNT
+        String sql = "SELECT CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, MIN_ORDER_VALUE, MAX_DISCOUNT, START_AT, END_AT, " +
                      getStatusLogicSQL() + " AS CURRENT_STATUS " +
                      "FROM COUPON WHERE IS_DELETED = 0 ORDER BY START_AT DESC";
 
-        try (Connection conn = ConnectionOracle.getOracleConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = ps.executeQuery()) {
              
             while (rs.next()) {
                 String type = rs.getString("DISCOUNT_TYPE");
-                if ("PERCENTAGE".equals(type)) type = "PERCENT";
-
-                // ÉP FORMAT DỮ LIỆU Ở ĐÂY TRƯỚC KHI ĐẨY LÊN BẢNG
                 String formattedValue = formatDiscountValue(rs.getDouble("DISCOUNT_VALUE"), type);
+                
+                double min = rs.getDouble("MIN_ORDER_VALUE");
+                // ĐÃ SỬA: Lấy đúng cột MAX_DISCOUNT
+                double max = rs.getDouble("MAX_DISCOUNT"); 
+                
+                String minStr = (min <= 0) ? "0 VNĐ" : String.format("%,.0f VNĐ", min);
+                String maxStr;
+                if ("AMOUNT".equals(type)) {
+                    maxStr = " - "; 
+                } else {
+                    maxStr = (max <= 0) ? "Không giới hạn" : String.format("%,.0f VNĐ", max);
+                }
 
                 list.add(new Object[]{
                     rs.getString("CODE"),
                     rs.getString("DESCRIPTION"),
                     type,
-                    formattedValue, // <--- Dữ liệu đã được format đẹp đẽ
-                    rs.getDate("START_AT"),
-                    rs.getDate("END_AT"),
+                    formattedValue,
+                    minStr, 
+                    maxStr, 
+                    rs.getDate("START_AT"), 
+                    rs.getDate("END_AT"), 
                     rs.getString("CURRENT_STATUS")
                 });
             }
@@ -64,8 +76,9 @@ public class KhuyenMaiDAO {
 
     public List<Object[]> selectByCondition(String keyword, String status) {
         List<Object[]> list = new ArrayList<>();
+        // ĐÃ SỬA: MAX_DISCOUNT
         StringBuilder sql = new StringBuilder(
-            "SELECT CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, START_AT, END_AT, " +
+            "SELECT CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, MIN_ORDER_VALUE, MAX_DISCOUNT, START_AT, END_AT, " +
             getStatusLogicSQL() + " AS CURRENT_STATUS " +
             "FROM COUPON WHERE IS_DELETED = 0 ");
 
@@ -77,8 +90,8 @@ public class KhuyenMaiDAO {
         }
         sql.append("ORDER BY START_AT DESC");
 
-        try (Connection conn = ConnectionOracle.getOracleConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             
             int idx = 1;
             if (keyword != null && !keyword.isEmpty()) {
@@ -89,15 +102,32 @@ public class KhuyenMaiDAO {
                 ps.setString(idx++, status);
             }
 
-            try (ResultSet rs = ps.executeQuery()) {
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     String type = rs.getString("DISCOUNT_TYPE");
                     String formattedValue = formatDiscountValue(rs.getDouble("DISCOUNT_VALUE"), type);
+                    
+                    double min = rs.getDouble("MIN_ORDER_VALUE");
+                    // ĐÃ SỬA: MAX_DISCOUNT
+                    double max = rs.getDouble("MAX_DISCOUNT"); 
+                    
+                    String minStr = (min <= 0) ? "0 VNĐ" : String.format("%,.0f VNĐ", min);
+                    String maxStr;
+                    if ("AMOUNT".equals(type)) {
+                        maxStr = " - "; 
+                    } else {
+                        maxStr = (max <= 0) ? "Không giới hạn" : String.format("%,.0f VNĐ", max);
+                    }
 
                     list.add(new Object[]{
-                        rs.getString("CODE"), rs.getString("DESCRIPTION"), type, 
-                        formattedValue, // <--- Dữ liệu đã được format đẹp đẽ
-                        rs.getDate("START_AT"), rs.getDate("END_AT"), 
+                        rs.getString("CODE"),
+                        rs.getString("DESCRIPTION"),
+                        type,
+                        formattedValue,
+                        minStr, 
+                        maxStr, 
+                        rs.getDate("START_AT"), 
+                        rs.getDate("END_AT"), 
                         rs.getString("CURRENT_STATUS")
                     });
                 }
@@ -118,20 +148,24 @@ public class KhuyenMaiDAO {
         } catch (Exception e) { e.printStackTrace(); return false; }
     }
 
-    public void insertPromotion(String code, String name, String type, double value, java.util.Date startDate, java.util.Date endDate, String status) throws Exception {
+    public void insertPromotion(String code, String name, String type, double value, double minOrder, double maxDiscount, java.util.Date startDate, java.util.Date endDate, String status) throws Exception {
+        
         String dbType = "PERCENTAGE".equals(type) ? "PERCENTAGE" : "AMOUNT";
         
-        String sql = "INSERT INTO COUPON (CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, START_AT, END_AT, IS_ACTIVE, IS_DELETED) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, 1, 0)";
+        // Thêm 2 cột MIN_ORDER_VALUE và MAX_DISCOUNT vào câu lệnh INSERT
+        String sql = "INSERT INTO COUPON (CODE, DESCRIPTION, DISCOUNT_TYPE, DISCOUNT_VALUE, MIN_ORDER_VALUE, MAX_DISCOUNT, START_AT, END_AT, IS_ACTIVE, IS_DELETED) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 0)";
                      
-        try (Connection conn = config.ConnectionOracle.getOracleConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, code);
             ps.setString(2, name); 
             ps.setString(3, dbType);
             ps.setDouble(4, value);
-            ps.setDate(5, new java.sql.Date(startDate.getTime()));
-            ps.setDate(6, new java.sql.Date(endDate.getTime()));
+            ps.setDouble(5, minOrder);     // Set tham số Min
+            ps.setDouble(6, maxDiscount);  // Set tham số Max
+            ps.setDate(7, new java.sql.Date(startDate.getTime()));
+            ps.setDate(8, new java.sql.Date(endDate.getTime()));
             ps.executeUpdate();
         }
     }
@@ -145,5 +179,102 @@ public class KhuyenMaiDAO {
             e.printStackTrace(); 
             return false; 
         }
+    }
+    public List<Object[]> selectAllPro() {
+        List<Object[]> list = new ArrayList<>();
+        // Hàm getStatusLogicSQL() là hàm tôi đã viết ở tab Coupon trước đây, ta dùng lại luôn!
+        String sql = "SELECT PROMOTION_ID, PROMOTION_NAME, START_AT, END_AT, " +
+                     getStatusLogicSQL() + " AS CURRENT_STATUS " +
+                     "FROM PROMOTION WHERE IS_DELETED = 0 ORDER BY START_AT DESC";
+
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+             java.sql.ResultSet rs = ps.executeQuery()) {
+             
+            while (rs.next()) {
+                list.add(new Object[]{
+                    "PRO" + rs.getString("PROMOTION_ID"), 
+                    rs.getString("PROMOTION_NAME"),
+                    rs.getDate("START_AT"),
+                    rs.getDate("END_AT"),
+                    rs.getString("CURRENT_STATUS"),
+                    "Xem chi tiết"  // <--- Cột thứ 6: Hành động xem chi tiết
+                });
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
+    }
+
+    public List<Object[]> selectByConditionPro(String keyword, String status) {
+        List<Object[]> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder(
+            "SELECT PROMOTION_ID, PROMOTION_NAME, START_AT, END_AT, " +
+            getStatusLogicSQL() + " AS CURRENT_STATUS " +
+            "FROM PROMOTION WHERE IS_DELETED = 0 ");
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append("AND (LOWER(PROMOTION_NAME) LIKE LOWER(?) OR 'PRO'||PROMOTION_ID LIKE UPPER(?)) ");
+        }
+        if (!status.equals("All")) {
+            sql.append("AND (").append(getStatusLogicSQL()).append(") = ? ");
+        }
+        sql.append("ORDER BY START_AT DESC");
+
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
+            int idx = 1;
+            if (keyword != null && !keyword.isEmpty()) {
+                ps.setString(idx++, "%" + keyword + "%");
+                ps.setString(idx++, "%" + keyword + "%");
+            }
+            if (!status.equals("All")) {
+                ps.setString(idx++, status);
+            }
+
+            try (java.sql.ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Object[]{
+                        "PRO" + rs.getString("PROMOTION_ID"), 
+                        rs.getString("PROMOTION_NAME"), 
+                        rs.getDate("START_AT"), 
+                        rs.getDate("END_AT"), 
+                        rs.getString("CURRENT_STATUS"),
+                        "Xem chi tiết"
+                    });
+                }
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
+    }
+
+    public boolean updateStatusPro(String proCode, String newStatus) {
+        boolean isCancelled = "CANCELLED".equals(newStatus);
+        String sql;
+        String idStr = proCode.replace("PRO", ""); // Cắt chữ PRO đi để lấy số
+        
+        if (isCancelled) {
+            sql = "UPDATE PROMOTION SET IS_ACTIVE = 0, " +
+                  "END_AT = CASE WHEN SYSDATE < START_AT THEN START_AT + (1/24) ELSE SYSDATE END " +
+                  "WHERE PROMOTION_ID = ?";
+        } else {
+            sql = "UPDATE PROMOTION SET IS_ACTIVE = 1 WHERE PROMOTION_ID = ?";
+        }
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Integer.parseInt(idStr));
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) { e.printStackTrace(); return false; }
+    }
+
+    public boolean deletePromotionPro(String proCode) {
+        String idStr = proCode.replace("PRO", "");
+        // Xóa mềm: Bật cờ Deleted và Khóa Active
+        String sql = "UPDATE PROMOTION SET IS_DELETED = 1, IS_ACTIVE = 0 WHERE PROMOTION_ID = ?";
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Integer.parseInt(idStr));
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) { e.printStackTrace(); return false; }
     }
 }

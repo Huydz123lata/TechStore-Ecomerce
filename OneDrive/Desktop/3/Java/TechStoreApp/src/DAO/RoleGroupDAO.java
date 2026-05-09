@@ -4,13 +4,15 @@
  */
 package DAO;
 
+import Model.RoleModel;
+import Model.RoleGroupModel;
 import config.ConnectionUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.sql.SQLException;
 
 /**
  *
@@ -18,91 +20,86 @@ import java.util.Vector;
  */
 public class RoleGroupDAO {
 
-    public List<String> getRoleGroupName() {
-        List<String> listRoleGroup = new ArrayList<>();
+    public List<RoleGroupModel> getAllRoleGroupName() {
+        List<RoleGroupModel> list = new ArrayList<>();
 
-        String sql = "SELECT NAME_ROLE_GROUP FROM ROLE_GROUP WHERE IS_DELETED = 0";
+        String sql = "SELECT ROLE_GROUP_ID, NAME_ROLE_GROUP FROM ROLE_GROUP WHERE IS_DELETED = 0";
         try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                listRoleGroup.add(rs.getString("NAME_ROLE_GROUP"));
+                RoleGroupModel r = new RoleGroupModel(
+                        rs.getInt("ROLE_GROUP_ID"),
+                        rs.getString("NAME_ROLE_GROUP")
+                );
+                list.add(r);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return listRoleGroup;
+        return list;
     }
 
-    public boolean saveGroupAssign(String groupName, List<String> listRolesChecked) {
-        String deleteSql = "DELETE FROM ROLE_GROUP_ASSIGN_ROLE WHERE ROLE_GROUP_ID IN "
-                + "(SELECT ROLE_GROUP_ID FROM ROLE_GROUP WHERE NAME_ROLE_GROUP = ?)";
+    public void clearOldAssignment(int roleGroupId, Connection con) throws SQLException {
+        String sql = "DELETE FROM ROLE_GROUP_ASSIGN_ROLE WHERE ROLE_GROUP_ID = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, roleGroupId);
+            ps.executeUpdate();
+        }
+    }
 
-        String insertSql = "INSERT INTO ROLE_GROUP_ASSIGN_ROLE (ROLE_GROUP_ID, ROLE_ID) VALUES ("
-                + "(SELECT ROLE_GROUP_ID FROM ROLE_GROUP WHERE NAME_ROLE_GROUP = ? AND IS_DELETED = 0), "
-                + "(SELECT ROLE_ID FROM ROLE WHERE ROLE_NAME = ? AND IS_DELETED = 0))";
+    public void assignRoleToGroup(int roleGroupId, int roleId, Connection con) throws SQLException {
+        String sql = "INSERT INTO ROLE_GROUP_ASSIGN_ROLE (ROLE_GROUP_ID, ROLE_ID) VALUES (?,?)";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, roleGroupId);
+            ps.setInt(2, roleId);
+            ps.executeUpdate();
+        }
+    }
 
-        try (Connection con = ConnectionUtils.getMyConnection()) {
-            PreparedStatement psDel = con.prepareStatement(deleteSql);
-            psDel.setString(1, groupName);
-            psDel.executeUpdate();
+    public boolean insertRoleGroup(String groupName) {
+        String sql = "INSERT INTO ROLE_GROUP (NAME_ROLE_GROUP) VALUES (?)";
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-            PreparedStatement psIns = con.prepareStatement(insertSql);
-            for (String rName : listRolesChecked) {
-                psIns.setString(1, groupName);
-                psIns.setString(2, rName);
-                psIns.executeUpdate();
-            }
-            return true;
-
+            ps.setString(1, groupName);
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
-    public List<Vector> getRoleGroupCombined() {
-        List<Vector> data = new ArrayList<>();
-
-        String sql = "SELECT rg.NAME_ROLE_GROUP, "
-                + "LISTAGG(r.ROLE_NAME, ', ') WITHIN GROUP (ORDER BY r.ROLE_NAME) AS ROLES "
-                + "FROM ROLE_GROUP rg "
-                + "LEFT JOIN ROLE_GROUP_ASSIGN_ROLE rgar ON rg.ROLE_GROUP_ID = rgar.ROLE_GROUP_ID "
-                + "LEFT JOIN ROLE r ON rgar.ROLE_ID = r.ROLE_ID "
-                + "WHERE rg.IS_DELETED = 0 "
-                + "GROUP BY rg.NAME_ROLE_GROUP "
-                + "ORDER BY rg.NAME_ROLE_GROUP";
+    public List<RoleModel> getRolesByGroupId(int groupId) {
+        List<RoleModel> list = new ArrayList<>();
+        // SQL Join để lấy cả Function Name và các quyền
+        String sql = "SELECT r.ROLE_ID, f.FUNCTION_ID, r.ROLE_NAME, f.NAME_FUNCTION, "
+                + "r.ADD_PERM, r.EDIT_PERM, r.DELETE_PERM, r.DOWNLOAD_PERM, r.VIEW_PERM "
+                + "FROM ROLE_GROUP_ASSIGN_ROLE ar "
+                + "JOIN ROLE r ON ar.ROLE_ID = r.ROLE_ID "
+                + "JOIN FUNCTION f ON r.FUNCTION_ID = f.FUNCTION_ID "
+                + "WHERE ar.ROLE_GROUP_ID = ? AND r.IS_DELETED = 0";
 
         try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, groupId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Vector row = new Vector();
-                row.add(rs.getString(1)); // Cột Role_Group
 
-                String roles = rs.getString(2);
-                row.add(roles == null ? "" : roles); // Cột Role (đã có dấu phẩy)
+                RoleModel role = new RoleModel(
+                        rs.getInt("ROLE_ID"),
+                        rs.getInt("FUNCTION_ID"),
+                        rs.getString("ROLE_NAME"),
+                        rs.getString("NAME_FUNCTION"),
+                        rs.getInt("ADD_PERM"),
+                        rs.getInt("EDIT_PERM"),
+                        rs.getInt("DELETE_PERM"),
+                        rs.getInt("VIEW_PERM"),
+                        rs.getInt("DOWNLOAD_PERM")
+                );
 
-                data.add(row);
+                list.add(role);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return data;
-    }
-
-    public int getGroupIdByName(String groupName) {
-        int id = -1;
-        String sql = "SELECT ROLE_GROUP_ID FROM ROLE_GROUP WHERE NAME_ROLE_GROUP = ?";
-
-        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setString(1, groupName);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                id = rs.getInt(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return id;
+        return list;
     }
 }
