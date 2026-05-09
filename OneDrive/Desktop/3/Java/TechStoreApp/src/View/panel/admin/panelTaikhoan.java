@@ -20,7 +20,7 @@ import javax.swing.SwingUtilities;
  * @author phamd
  */
 public class panelTaikhoan extends javax.swing.JPanel {
-    
+
     private adminPageController adminController = new adminPageController();
     private TableDecorate tableAction = new TableDecorate();
     private AccountDAO accountDAO = new AccountDAO();
@@ -32,7 +32,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
         initComponents();
 
         //Admin account
-        adminController.setUpTable(tblAdminAccount, 6);
+        adminController.setUpTable(tblAdminAccount, 8);
         adminController.loadDataToTableAdminAccount(tblAdminAccount);
 
         //Customer account
@@ -41,7 +41,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
 
         //Decorate Table
         TableDecorate.StatusRenderer statusRenderer = new TableDecorate().new StatusRenderer();
-        tblAdminAccount.getColumnModel().getColumn(6).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
+        tblAdminAccount.getColumnModel().getColumn(8).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
         tblCustomerAccount.getColumnModel().getColumn(5).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
     }
 
@@ -100,7 +100,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Năm sinh", "Giới tính", "Vai trò", "Trạng thái"
+                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính", "Vai trò", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -211,17 +211,17 @@ public class panelTaikhoan extends javax.swing.JPanel {
         tblCustomerAccount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblCustomerAccount.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Trạng thái"
+                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -383,9 +383,9 @@ public class panelTaikhoan extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDeleteAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAccActionPerformed
-        
+
     }//GEN-LAST:event_btnDeleteAccActionPerformed
-    
+
     private void btnAddAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAccActionPerformed
         // 1. Khởi tạo dialog (truyền vào Frame cha)
         Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
@@ -409,19 +409,19 @@ public class panelTaikhoan extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnAddAccActionPerformed
-    
+
     private void btnEditAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEditAccActionPerformed
-    
+
     private void btnDeleteCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCusAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDeleteCusAccActionPerformed
-    
+
     private void btnAddCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCusAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAddCusAccActionPerformed
-    
+
     private void btnEditCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCusAccActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnEditCusAccActionPerformed

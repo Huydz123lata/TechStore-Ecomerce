@@ -181,14 +181,21 @@ public class adminPageController {
 
         AccountDAO dao = new AccountDAO();
         List<AccountModel> list = dao.getAllAdminAccounts();
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
 
         for (AccountModel acc : list) {
+            String ngayHienThi = "";
+            if (acc.getUserInfo().getNgaySinh() != null) {
+                ngayHienThi = sdf.format(acc.getUserInfo().getNgaySinh());
+            }
             Object[] row = new Object[]{
                 acc.getUsername(),
                 acc.getAccountId(),
                 acc.getUserInfo().getFullName(),
                 acc.getUserInfo().getSDT(),
                 acc.getUserInfo().getAddress(),
+                ngayHienThi,
+                acc.getUserInfo().getGioiTinh(),
                 acc.getRoleGroup().getRoleGroupName() != null ? acc.getRoleGroup().getRoleGroupName() : "Chưa gán",
                 acc.getStatus()
 
