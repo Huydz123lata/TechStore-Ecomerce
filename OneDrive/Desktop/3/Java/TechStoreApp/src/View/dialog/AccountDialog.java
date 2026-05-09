@@ -17,7 +17,7 @@ public class AccountDialog extends JDialog {
     private final Color TECH_ORANGE = new Color(255, 102, 0);
 
     public AccountDialog(Frame parent) {
-        super(parent, "QUẢN LÝ TÀI KHOẢN - THÊM MỚI", true);
+        super(parent, "QUẢN LÝ TÀI KHOẢN ADMIN - THÊM MỚI", true);
         initComponents();
     }
 
@@ -50,8 +50,8 @@ public class AccountDialog extends JDialog {
         txtPassword = new JPasswordField("123456");
         txtPassword.setPreferredSize(new Dimension(250, 35));
 
-        cbxGender = new JComboBox<>(new String[]{"Male", "Female"});
-        cbxUserType = new JComboBox<>(new String[]{"STAFF", "ADMIN", "CUSTOMER"});
+        cbxGender = new JComboBox<>(new String[]{"Nam", "Nữ"});
+        cbxUserType = new JComboBox<>(new String[]{"STAFF", "ADMIN"});
 
         // Birth Date Picker
         JPanel pnlBirth = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
