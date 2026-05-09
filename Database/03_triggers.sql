@@ -1,3 +1,4 @@
+--0
 CREATE OR REPLACE TRIGGER TRG_CALC_LINE_TOTAL
 BEFORE INSERT OR UPDATE ON ORDER_DETAIL
 FOR EACH ROW
@@ -6,42 +7,49 @@ BEGIN
 END;
 
 /
-
-
+--1
 CREATE OR REPLACE TRIGGER TRG_UPDATE_ORDER_TOTAL
 AFTER INSERT OR UPDATE OR DELETE ON ORDER_DETAIL
-FOR EACH ROW
 DECLARE
-    v_order_id     NUMBER;
     v_subtotal     NUMBER(18,2);
     v_shipping_fee NUMBER(18,2);
     v_coupon_id    NUMBER;
-    v_discount     NUMBER(18,2) := 0;
+    v_discount     NUMBER(18,2);
 BEGIN
-    -- Xác định đơn hàng nào cần tính lại
-    IF INSERTING OR UPDATING THEN v_order_id := :NEW.ORDER_ID;
-    ELSE v_order_id := :OLD.ORDER_ID; END IF;
+    -- Duyệt qua các Order_ID cần cập nhật
+    FOR r IN (SELECT DISTINCT ORDER_ID FROM ORDER_DETAIL) LOOP
+        BEGIN
+            SELECT SHIPPING_FEE, COUPON_ID
+            INTO v_shipping_fee, v_coupon_id
+            FROM ORDERS
+            WHERE ORDER_ID = r.ORDER_ID;
 
-    -- 1. Lấy thông tin phí ship và coupon từ bảng ORDERS
-    SELECT SHIPPING_FEE, COUPON_ID INTO v_shipping_fee, v_coupon_id
-    FROM ORDERS WHERE ORDER_ID = v_order_id;
+            -- Tính tổng tiền hàng
+            SELECT SUM(LINE_TOTAL) INTO v_subtotal
+            FROM ORDER_DETAIL
+            WHERE ORDER_ID = r.ORDER_ID;
 
-    -- 2. Tính tổng tiền hàng (Subtotal) từ các dòng ORDER_DETAIL
-    SELECT SUM(LINE_TOTAL) INTO v_subtotal
-    FROM ORDER_DETAIL WHERE ORDER_ID = v_order_id;
+            -- Tính giảm giá
+            IF v_coupon_id IS NOT NULL THEN
+                v_discount := fn_calculate_discount_amount(v_subtotal, v_coupon_id);
+            ELSE
+                v_discount := 0;
+            END IF;
 
-    -- 3. Tính số tiền được giảm (Gọi cái Function tính Coupon mình viết lúc trước)
-    IF v_coupon_id IS NOT NULL THEN
-        v_discount := fn_calculate_discount_amount(v_subtotal, v_coupon_id);
-    END IF;
+            -- Cập nhật bảng ORDERS
+            UPDATE ORDERS
+            SET SUBTOTAL = NVL(v_subtotal, 0),
+                DISCOUNT_AMOUNT = NVL(v_discount, 0),
+                TOTAL = (NVL(v_subtotal, 0) + NVL(v_shipping_fee, 0) - NVL(v_discount, 0)),
+                UPDATED_AT = SYSDATE
+            WHERE ORDER_ID = r.ORDER_ID;
 
-    -- 4. Cập nhật con số cuối cùng vào bảng ORDERS
-    UPDATE ORDERS
-    SET SUBTOTAL = NVL(v_subtotal, 0),
-        DISCOUNT_AMOUNT = v_discount,
-        TOTAL = (NVL(v_subtotal, 0) + NVL(v_shipping_fee, 0) - v_discount),
-        UPDATED_AT = SYSDATE
-    WHERE ORDER_ID = v_order_id;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                NULL;
+        END;
+
+    END LOOP;
 END;
 /
 
@@ -64,20 +72,21 @@ CREATE OR REPLACE TRIGGER TRG_CANCEL_ORDER_RESTORE_STOCK
 AFTER UPDATE OF STATUS ON ORDERS
 FOR EACH ROW
 BEGIN
+    -- Sửa 'CANCELLED' thành 'CANCEL' cho khớp với Check Constraint của bạn
     IF :NEW.STATUS = 'CANCELLED' AND :OLD.STATUS <> 'CANCELLED' THEN
         FOR r IN (
-            SELECT PRODUCT_ID, WAREHOUSE_ID, QUANTITY
+            SELECT PRODUCT_ID, QUANTITY
             FROM ORDER_DETAIL
             WHERE ORDER_ID = :NEW.ORDER_ID
         ) LOOP
-            UPDATE INVENTORY
-            SET QUANTITY = QUANTITY + r.QUANTITY,
+            UPDATE PRODUCT
+            SET STOCK_QUANTITY = STOCK_QUANTITY + r.QUANTITY,
                 UPDATED_AT = SYSDATE
-            WHERE PRODUCT_ID = r.PRODUCT_ID
-              AND WAREHOUSE_ID = r.WAREHOUSE_ID;
+            WHERE PRODUCT_ID = r.PRODUCT_ID;
         END LOOP;
     END IF;
 END;
+/
 /
 
 -- 4. TRG_CONFIRM_ORDER_DEDUCT_STOCK
@@ -87,35 +96,38 @@ FOR EACH ROW
 BEGIN
     IF :NEW.STATUS = 'CONFIRMED' AND :OLD.STATUS <> 'CONFIRMED' THEN
         FOR r IN (
-            SELECT PRODUCT_ID, WAREHOUSE_ID, QUANTITY
+            SELECT PRODUCT_ID, QUANTITY
             FROM ORDER_DETAIL
             WHERE ORDER_ID = :NEW.ORDER_ID
         ) LOOP
-            UPDATE INVENTORY
-            SET QUANTITY = QUANTITY - r.QUANTITY,
+            UPDATE PRODUCT
+            SET STOCK_QUANTITY = STOCK_QUANTITY - r.QUANTITY,
                 UPDATED_AT = SYSDATE
-            WHERE PRODUCT_ID = r.PRODUCT_ID
-              AND WAREHOUSE_ID = r.WAREHOUSE_ID;
+            WHERE PRODUCT_ID = r.PRODUCT_ID;
         END LOOP;
     END IF;
 END;
 /
 
--- 5. TRG_PREVENT_ORDER_IF_OUT_OF_STOCK
+-- 5. TRG_PREVENT_ORDER_IF_OUT_OF_STOCK [1]
 CREATE OR REPLACE TRIGGER TRG_PREVENT_ORDER_IF_OUT_OF_STOCK
 BEFORE INSERT ON ORDER_DETAIL
 FOR EACH ROW
 DECLARE
-    v_qty NUMBER;
+    v_stock_available NUMBER;
 BEGIN
-    SELECT QUANTITY INTO v_qty
-    FROM INVENTORY
-    WHERE PRODUCT_ID = :NEW.PRODUCT_ID
-      AND WAREHOUSE_ID = :NEW.WAREHOUSE_ID;
+    -- Lấy số lượng tồn kho trực tiếp từ bảng PRODUCT
+    SELECT STOCK_QUANTITY INTO v_stock_available
+    FROM PRODUCT
+    WHERE PRODUCT_ID = :NEW.PRODUCT_ID;
 
-    IF :NEW.QUANTITY > v_qty THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Khong du ton kho');
+    -- Kiểm tra nếu khách mua nhiều hơn số lượng đang có
+    IF :NEW.QUANTITY > v_stock_available THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Sản phẩm này hiện không đủ tồn kho (Chỉ còn: ' || v_stock_available || ')');
     END IF;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Sản phẩm không tồn tại trong hệ thống');
 END;
 /
 
@@ -266,35 +278,18 @@ CREATE OR REPLACE TRIGGER TRG_CART_QUANTITY_LIMIT
 BEFORE INSERT OR UPDATE ON CART_ITEM
 FOR EACH ROW
 DECLARE
-    v_qty NUMBER;
+    v_current_stock NUMBER;
 BEGIN
-    SELECT SUM(QUANTITY) INTO v_qty
-    FROM INVENTORY
+    SELECT STOCK_QUANTITY INTO v_current_stock
+    FROM PRODUCT
     WHERE PRODUCT_ID = :NEW.PRODUCT_ID;
 
-    IF :NEW.QUANTITY > NVL(v_qty,0) THEN
-        RAISE_APPLICATION_ERROR(-20007, 'Vuot qua ton kho');
+    IF :NEW.QUANTITY > NVL(v_current_stock, 0) THEN
+        RAISE_APPLICATION_ERROR(-20007, 'So luong vuot qua ton kho hien co');
     END IF;
 END;
 /
 
--- 16. TRG_PREVENT_DELETE_WAREHOUSE_IF_HAS_INVENTORY
-CREATE OR REPLACE TRIGGER TRG_PREVENT_DELETE_WAREHOUSE_IF_HAS_INVENTORY
-BEFORE UPDATE OF IS_DELETED ON WAREHOUSE
-FOR EACH ROW
-DECLARE
-    v_count NUMBER;
-BEGIN
-    SELECT COUNT(*) INTO v_count
-    FROM INVENTORY
-    WHERE WAREHOUSE_ID = :NEW.WAREHOUSE_ID
-      AND QUANTITY > 0;
-
-    IF :NEW.IS_DELETED = 1 AND v_count > 0 THEN
-        RAISE_APPLICATION_ERROR(-20008, 'Kho van con hang');
-    END IF;
-END;
-/
 
 -- 17. TRG_PREVENT_ORDER_IF_NO_RECEIVER_INFO
 CREATE OR REPLACE TRIGGER TRG_PREVENT_ORDER_IF_NO_RECEIVER_INFO
