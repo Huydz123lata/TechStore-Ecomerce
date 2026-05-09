@@ -50,8 +50,8 @@ public class AccountDialog extends JDialog {
         txtPassword = new JPasswordField("123456");
         txtPassword.setPreferredSize(new Dimension(250, 35));
 
-        cbxGender = new JComboBox<>(new String[]{"Nam", "Nữ"});
-        cbxUserType = new JComboBox<>(new String[]{"STAFF", "ADMIN"});
+        cbxGender = new JComboBox<>(new String[]{"Male", "Female"});
+        cbxUserType = new JComboBox<>(new String[]{"STAFF", "ADMIN", "CUSTOMER"});
 
         // Birth Date Picker
         JPanel pnlBirth = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
