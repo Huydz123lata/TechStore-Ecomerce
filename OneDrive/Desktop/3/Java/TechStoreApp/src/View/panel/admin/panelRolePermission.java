@@ -28,7 +28,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
  */
 public class panelRolePermission extends javax.swing.JPanel {
 
-    private final Controller.adminPageController adminController = new Controller.adminPageController();
+    private final adminPageController adminController = new adminPageController();
     private final RoleDAO roleDAO = new RoleDAO();
     private final RoleGroupDAO rolegroupDAO = new RoleGroupDAO();
     private final FunctionDAO functiondao = new FunctionDAO();

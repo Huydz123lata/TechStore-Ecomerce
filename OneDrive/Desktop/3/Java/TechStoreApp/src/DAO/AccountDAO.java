@@ -74,6 +74,84 @@ public class AccountDAO {
         }
     }
 
+    public boolean updateAccount(AccountModel acc) {
+        Connection con = null;
+        try {
+            con = ConnectionUtils.getMyConnection();
+            con.setAutoCommit(false);
+
+            // 1. Cập nhật bảng APP_USER
+            String sqlUser = "UPDATE APP_USER SET FULL_NAME = ?, PHONE_NUMBER = ?, ADDRESS = ?, BIRTH = ?, GENDER = ? WHERE USER_ID = ?";
+            try (PreparedStatement psU = con.prepareStatement(sqlUser)) {
+                UserModel u = acc.getUserInfo();
+                psU.setString(1, u.getFullName());
+                psU.setString(2, u.getSDT());
+                psU.setString(3, u.getAddress());
+                psU.setDate(4, u.getNgaySinh());
+                psU.setString(5, u.getGioiTinh());
+                psU.setInt(6, acc.getUserId());
+                psU.executeUpdate();
+            }
+
+            String sqlAcc = "UPDATE ACCOUNT SET STATUS = ? WHERE USER_ID = ?";
+            try (PreparedStatement psA = con.prepareStatement(sqlAcc)) {
+                psA.setString(1, acc.getStatus());
+                psA.setInt(2, acc.getUserId());
+                psA.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            if (con != null) try {
+                con.rollback();
+            } catch (Exception ex) {
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (con != null) try {
+                con.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public boolean deleteAccount(int userId) {
+        Connection con = null;
+        try {
+            con = ConnectionUtils.getMyConnection();
+            con.setAutoCommit(false);
+
+            String sqlAcc = "DELETE FROM ACCOUNT WHERE USER_ID = ?";
+            String sqlUser = "DELETE FROM APP_USER WHERE USER_ID = ?";
+
+            try (PreparedStatement psAcc = con.prepareStatement(sqlAcc); PreparedStatement psUser = con.prepareStatement(sqlUser)) {
+
+                psAcc.setInt(1, userId);
+                psAcc.executeUpdate();
+
+                psUser.setInt(1, userId);
+                psUser.executeUpdate();
+            }
+
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            if (con != null) try {
+                con.rollback();
+            } catch (SQLException ex) {
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (con != null) try {
+                con.close();
+            } catch (SQLException e) {
+            }
+        }
+    }
+
     public List<AccountModel> getAllAdminAccounts() {
         List<AccountModel> list = new ArrayList();
         String sql = "SELECT a.ACCOUNT_ID, a.USER_ID, a.USERNAME, a.STATUS, "
@@ -309,6 +387,20 @@ public class AccountDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public int getUserIdByAccountId(int accountId) {
+        String sql = "SELECT USER_ID FROM ACCOUNT WHERE ACCOUNT_ID = ?";
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, accountId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("USER_ID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
 }

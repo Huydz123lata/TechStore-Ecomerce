@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class panelFormKhuyenMai extends javax.swing.JPanel {
+
     private final KhuyenMaiController parentController;
     private final javax.swing.JDialog parentDialog;
 
@@ -17,32 +18,41 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         initComponents();
         this.parentController = controller;
         this.parentDialog = dialog;
-        cbxType.setSelectedIndex(0); 
+        cbxType.setSelectedIndex(0);
         handleTypeChange();
     }
 
     private void closeForm() {
-        if (parentDialog != null) parentDialog.dispose();
-        else SwingUtilities.getWindowAncestor(this).dispose();
+        if (parentDialog != null) {
+            parentDialog.dispose();
+        } else {
+            SwingUtilities.getWindowAncestor(this).dispose();
+        }
     }
 
     private void handleInsert() {
-        String code = txtPromoCode.getText().trim().toUpperCase(); 
+        String code = txtPromoCode.getText().trim().toUpperCase();
         String name = txtPromoName.getText().trim();
         int typeIndex = cbxType.getSelectedIndex();
         String valueStr = txtDiscountValue.getText().trim();
         String minStr = txtMin.getText().trim();
         String maxStr = txtMax.getText().trim();
         // Bẫy lỗi chữ mờ (Placeholder)
-        if (code.equalsIgnoreCase("MÃ KHUYẾN MÃI") || code.equalsIgnoreCase("NHẬP MÃ...")) code = "";
-        if (name.equalsIgnoreCase("TÊN CHƯƠNG TRÌNH") || name.equalsIgnoreCase("NHẬP TÊN...")) name = "";
-        if (valueStr.equalsIgnoreCase("MỨC GIẢM") || valueStr.equalsIgnoreCase("NHẬP MỨC GIẢM...")) valueStr = "";
+        if (code.equalsIgnoreCase("MÃ KHUYẾN MÃI") || code.equalsIgnoreCase("NHẬP MÃ...")) {
+            code = "";
+        }
+        if (name.equalsIgnoreCase("TÊN CHƯƠNG TRÌNH") || name.equalsIgnoreCase("NHẬP TÊN...")) {
+            name = "";
+        }
+        if (valueStr.equalsIgnoreCase("MỨC GIẢM") || valueStr.equalsIgnoreCase("NHẬP MỨC GIẢM...")) {
+            valueStr = "";
+        }
 
         Date startDate = dateStart.getDate();
         Date endDate = dateEnd.getDate();
         if (code.isEmpty() && name.isEmpty() && valueStr.isEmpty() && typeIndex <= 0) {
             closeForm();
-            return; 
+            return;
         }
 
         if (code.isEmpty() || name.isEmpty() || valueStr.isEmpty() || typeIndex <= 0 || startDate == null || endDate == null) {
@@ -61,14 +71,18 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
         try {
             discountValue = Double.parseDouble(valueStr);
-            if (discountValue <= 0) throw new NumberFormatException();
-            
+            if (discountValue <= 0) {
+                throw new NumberFormatException();
+            }
+
             // MIN (Đơn tối thiểu): Nếu bỏ trống thì gán = 0
             minOrder = minStr.isEmpty() ? 0 : Double.parseDouble(minStr);
-            if (minOrder < 0) throw new NumberFormatException();
+            if (minOrder < 0) {
+                throw new NumberFormatException();
+            }
 
             String typeStr = cbxType.getSelectedItem().toString();
-            
+
             if ("PERCENTAGE".equals(typeStr) || "PERCENT".equals(typeStr)) {
                 if (discountValue > 100) {
                     JOptionPane.showMessageDialog(this, "Mức giảm theo phần trăm không được vượt quá 100%!", "Lỗi giá trị", JOptionPane.ERROR_MESSAGE);
@@ -76,20 +90,22 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
                 }
                 // MAX (Giảm tối đa): Nếu bỏ trống thì gán = 0 (Tức là không giới hạn)
                 maxDiscount = maxStr.isEmpty() ? 0 : Double.parseDouble(maxStr);
-                if (maxDiscount < 0) throw new NumberFormatException();
-                
+                if (maxDiscount < 0) {
+                    throw new NumberFormatException();
+                }
+
             } else {
                 // Nếu là AMOUNT (VNĐ) thì Giảm tối đa chính là giá trị giảm luôn
-                maxDiscount = discountValue; 
+                maxDiscount = discountValue;
             }
-            
+
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Mức giảm, Đơn tối thiểu và Giảm tối đa phải là con số hợp lệ (> 0)!", "Lỗi giá trị", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String typeStr = cbxType.getSelectedItem().toString();
-        String status = "UPCOMING"; 
+        String status = "UPCOMING";
 
         boolean isSuccess = false;
         if (parentController != null) {
@@ -99,15 +115,20 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
         if (isSuccess) {
             JOptionPane.showMessageDialog(this, "Tạo mã khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            if (parentController != null) parentController.refreshCurrentPage();
+            if (parentController != null) {
+                parentController.refreshCurrentPage();
+            }
             closeForm();
         }
     }
+
     private void handleTypeChange() {
-        if (cbxType.getSelectedItem() == null) return;
-        
+        if (cbxType.getSelectedItem() == null) {
+            return;
+        }
+
         String selectedType = cbxType.getSelectedItem().toString();
-        
+
         if ("PERCENTAGE".equals(selectedType)) {
             // Nếu chọn % -> Hiện cả Label và Ô nhập Max
             lvlValue2.setVisible(true);
@@ -118,11 +139,12 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
             txtMax.setVisible(false);
             txtMax.setText(""); // Xóa trắng dữ liệu lỡ nhập dở
         }
-        
+
         // Refresh lại giao diện để không bị lưu bóng mờ (Glitch UI)
         this.revalidate();
         this.repaint();
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -141,7 +163,6 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         txtDiscountValue = new Custom_Component.MyTextField();
         cbxType = new javax.swing.JComboBox<>();
         lvlEndDate = new javax.swing.JLabel();
-        dateEnd = new com.toedter.calendar.JDateChooser();
         dateStart = new com.toedter.calendar.JDateChooser();
         btnAdd = new javax.swing.JButton();
         btnHuy = new javax.swing.JButton();
@@ -149,6 +170,7 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         lvlValue2 = new javax.swing.JLabel();
         txtMin = new Custom_Component.MyTextField();
         txtMax = new Custom_Component.MyTextField();
+        dateEnd = new com.toedter.calendar.JDateChooser();
 
         jPanel2.setBackground(new java.awt.Color(255, 153, 0));
 
@@ -200,13 +222,9 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         cbxType.addActionListener(this::cbxTypeActionPerformed);
 
         lvlEndDate.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        lvlEndDate.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lvlEndDate.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lvlEndDate.setText("Ngày Kết thúc");
         lvlEndDate.setPreferredSize(new java.awt.Dimension(100, 35));
-
-        dateEnd.setDateFormatString("dd/MM/yyyy");
-        dateEnd.setFont(new java.awt.Font("Sans Serif Collection", 1, 12)); // NOI18N
-        dateEnd.setPreferredSize(new java.awt.Dimension(100, 25));
 
         dateStart.setDateFormatString("dd/MM/yyyy");
         dateStart.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
@@ -232,10 +250,20 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         lvlValue2.setText("GIảm tối đa");
         lvlValue2.setPreferredSize(new java.awt.Dimension(100, 35));
 
+        dateEnd.setDateFormatString("dd/MM/yyyy");
+        dateEnd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        dateEnd.setPreferredSize(new java.awt.Dimension(100, 25));
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAdd)
+                .addGap(18, 18, 18)
+                .addComponent(btnHuy)
+                .addGap(23, 23, 23))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,32 +280,31 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(txtDiscountValue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lvlStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(dateStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(lvlType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lvlValue2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lvlValue1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtMin, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(txtMax, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(lvlType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cbxType, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                    .addComponent(lvlStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(dateStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                    .addGap(14, 14, 14)
+                                    .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAdd)
-                .addGap(18, 18, 18)
-                .addComponent(btnHuy)
-                .addGap(23, 23, 23))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,10 +338,10 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
                     .addComponent(dateStart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lvlStartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(28, 28, 28)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdd)
                     .addComponent(btnHuy))
@@ -350,10 +377,10 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
         if (parentDialog != null) {
-         parentDialog.dispose();
-     } else {
-         SwingUtilities.getWindowAncestor(this).dispose();
-     }
+            parentDialog.dispose();
+        } else {
+            SwingUtilities.getWindowAncestor(this).dispose();
+        }
     }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
@@ -363,7 +390,6 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
     private void cbxTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTypeActionPerformed
         handleTypeChange();
     }//GEN-LAST:event_cbxTypeActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;

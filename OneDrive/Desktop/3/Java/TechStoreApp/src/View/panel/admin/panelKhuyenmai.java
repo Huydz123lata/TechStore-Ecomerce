@@ -3,33 +3,37 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package View.panel.admin;
+
 import Controller.KhuyenMaiController;
+
 public class panelKhuyenmai extends javax.swing.JPanel {
+
     private KhuyenMaiController controller;
     private javax.swing.table.TableRowSorter<javax.swing.table.TableModel> rowSorter;
     public java.util.List<Object[]> allData = new java.util.ArrayList<>();
     public int currentPage = 1;
-    public int rowsPerPage = 10; 
+    public int rowsPerPage = 10;
     public int totalPages = 1;
     private boolean isRendering = false;
-    
+
     public java.util.List<Object[]> allDataPro = new java.util.ArrayList<>();
     public int currentPagePro = 1;
     public int totalPagesPro = 1;
     private boolean isRenderingPro = false;
+
     public panelKhuyenmai() {
-        initComponents(); 
+        initComponents();
 
         tblCoupon.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
         tblCoupon.setBackground(java.awt.Color.WHITE);
-        tblCoupon.setRowHeight(50); 
-        tblCoupon.setShowVerticalLines(false); 
-        tblCoupon.setShowHorizontalLines(true); 
-        tblCoupon.setGridColor(new java.awt.Color(235, 235, 235)); 
+        tblCoupon.setRowHeight(50);
+        tblCoupon.setShowVerticalLines(false);
+        tblCoupon.setShowHorizontalLines(true);
+        tblCoupon.setGridColor(new java.awt.Color(235, 235, 235));
         tblCoupon.getTableHeader().setBackground(java.awt.Color.WHITE);
-        tblCoupon.getTableHeader().setForeground(new java.awt.Color(100, 100, 100)); 
+        tblCoupon.getTableHeader().setForeground(new java.awt.Color(100, 100, 100));
         tblCoupon.getTableHeader().setFont(new java.awt.Font("Sansserif", java.awt.Font.BOLD, 15));
-        tblCoupon.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(235, 235, 235))); 
+        tblCoupon.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(235, 235, 235)));
         tblCoupon.setFillsViewportHeight(true);
 
         if (tblCoupon.getParent() instanceof javax.swing.JViewport) {
@@ -40,14 +44,14 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         tblCoupon.setRowSorter(rowSorter);
         tblPromotion.getTableHeader().setBorder(javax.swing.BorderFactory.createEmptyBorder());
         tblPromotion.setBackground(java.awt.Color.WHITE);
-        tblPromotion.setRowHeight(50); 
-        tblPromotion.setShowVerticalLines(false); 
-        tblPromotion.setShowHorizontalLines(true); 
-        tblPromotion.setGridColor(new java.awt.Color(235, 235, 235)); 
+        tblPromotion.setRowHeight(50);
+        tblPromotion.setShowVerticalLines(false);
+        tblPromotion.setShowHorizontalLines(true);
+        tblPromotion.setGridColor(new java.awt.Color(235, 235, 235));
         tblPromotion.getTableHeader().setBackground(java.awt.Color.WHITE);
-        tblPromotion.getTableHeader().setForeground(new java.awt.Color(100, 100, 100)); 
+        tblPromotion.getTableHeader().setForeground(new java.awt.Color(100, 100, 100));
         tblPromotion.getTableHeader().setFont(new java.awt.Font("Sansserif", java.awt.Font.BOLD, 15));
-        tblPromotion.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(235, 235, 235))); 
+        tblPromotion.getTableHeader().setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(235, 235, 235)));
         tblPromotion.setFillsViewportHeight(true);
 
         if (tblPromotion.getParent() instanceof javax.swing.JViewport) {
@@ -55,12 +59,11 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         }
         javax.swing.table.TableRowSorter<javax.swing.table.TableModel> rowSorterPro = new javax.swing.table.TableRowSorter<>(tblPromotion.getModel());
         tblPromotion.setRowSorter(rowSorterPro);
-        
-        
+
         controller = new KhuyenMaiController(this);
         setupStatusCellEditor();
-        setupStatusCellEditorPro(); 
-        setupTableEventsPro(); 
+        setupStatusCellEditorPro();
+        setupTableEventsPro();
 
         controller.loadData();
         controller.loadDataPro();
@@ -72,84 +75,93 @@ public class panelKhuyenmai extends javax.swing.JPanel {
             tblCoupon.getCellEditor().cancelCellEditing();
         }
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblCoupon.getModel();
-        model.setRowCount(0); 
-        
+        model.setRowCount(0);
+
         int start = (currentPage - 1) * rowsPerPage;
         int end = Math.min(start + rowsPerPage, allData.size());
-        
+
         for (int i = start; i < end; i++) {
             model.addRow(allData.get(i));
         }
         lblPage.setText("Trang " + currentPage + " / " + totalPages);
         isRendering = false;
     }
+
     public void renderPagePro() {
         isRenderingPro = true;
         if (tblPromotion.isEditing()) {
             tblPromotion.getCellEditor().cancelCellEditing();
         }
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblPromotion.getModel();
-        model.setRowCount(0); 
-        
+        model.setRowCount(0);
+
         int start = (currentPagePro - 1) * rowsPerPage;
         int end = Math.min(start + rowsPerPage, allDataPro.size());
-        
+
         for (int i = start; i < end; i++) {
             model.addRow(allDataPro.get(i));
         }
         lblPage1.setText("Trang " + currentPagePro + " / " + totalPagesPro);
         isRenderingPro = false;
     }
+
     private void setupStatusCellEditor() {
         javax.swing.JComboBox<String> cbxStatusEditor = new javax.swing.JComboBox<>(new String[]{"ACTIVE", "CANCELLED", "EXPIRED", "UPCOMING"});
-        cbxStatusEditor.setFont(tblCoupon.getFont()); 
+        cbxStatusEditor.setFont(tblCoupon.getFont());
         javax.swing.table.TableColumn statusColumn = tblCoupon.getColumnModel().getColumn(8);
         statusColumn.setCellEditor(new javax.swing.DefaultCellEditor(cbxStatusEditor));
-        
+
         tblCoupon.getModel().addTableModelListener(e -> {
             if (!isRendering && e.getType() == javax.swing.event.TableModelEvent.UPDATE && e.getColumn() == 8) {
                 int row = e.getFirstRow();
                 javax.swing.table.TableModel model = (javax.swing.table.TableModel) e.getSource();
                 String promoCode = model.getValueAt(row, 0).toString();
                 String newStatus = model.getValueAt(row, 8).toString();
-                if(controller != null) controller.updatePromotionStatus(promoCode, newStatus);
+                if (controller != null) {
+                    controller.updatePromotionStatus(promoCode, newStatus);
+                }
             }
         });
     }
+
     private void setupStatusCellEditorPro() {
         javax.swing.JComboBox<String> cbxStatusEditor = new javax.swing.JComboBox<>(new String[]{"ACTIVE", "CANCELLED", "EXPIRED", "UPCOMING"});
-        cbxStatusEditor.setFont(tblPromotion.getFont()); 
-        
+        cbxStatusEditor.setFont(tblPromotion.getFont());
+
         // Chú ý: Cột trạng thái bây giờ là số 4 (nếu đếm từ 0, sau khi bạn đã xóa cột Mô tả)
         javax.swing.table.TableColumn statusColumn = tblPromotion.getColumnModel().getColumn(4);
         statusColumn.setCellEditor(new javax.swing.DefaultCellEditor(cbxStatusEditor));
-        
+
         tblPromotion.getModel().addTableModelListener(e -> {
             if (!isRenderingPro && e.getType() == javax.swing.event.TableModelEvent.UPDATE && e.getColumn() == 4) {
                 int row = e.getFirstRow();
                 javax.swing.table.TableModel model = (javax.swing.table.TableModel) e.getSource();
                 String proID = model.getValueAt(row, 0).toString();
                 String newStatus = model.getValueAt(row, 4).toString();
-                if(controller != null) controller.updateProStatus(proID, newStatus);
+                if (controller != null) {
+                    controller.updateProStatus(proID, newStatus);
+                }
             }
         });
     }
+
     private void setupTableEventsPro() {
         tblPromotion.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 int row = tblPromotion.getSelectedRow();
                 int col = tblPromotion.getSelectedColumn();
-                
+
                 // Cột "Chi tiết" bây giờ là cột số 5
                 if (row != -1 && col == 5) {
                     String proIdStr = tblPromotion.getValueAt(row, 0).toString();
-                    javax.swing.JOptionPane.showMessageDialog(panelKhuyenmai.this, 
-                        "Sắp tới sẽ mở Form xem danh sách sản phẩm của: " + proIdStr);
+                    javax.swing.JOptionPane.showMessageDialog(panelKhuyenmai.this,
+                            "Sắp tới sẽ mở Form xem danh sách sản phẩm của: " + proIdStr);
                 }
             }
         });
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -546,49 +558,65 @@ public class panelKhuyenmai extends javax.swing.JPanel {
     }//GEN-LAST:event_btnNextActionPerformed
 
     private void myTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myTextField1ActionPerformed
-        if (controller != null) controller.handleSearch();
+        if (controller != null) {
+            controller.handleSearch();
+        }
     }//GEN-LAST:event_myTextField1ActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        if (controller != null) controller.handleAdd();
+        if (controller != null) {
+            controller.handleAdd();
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        if (controller != null) controller.handleDelete();
+        if (controller != null) {
+            controller.handleDelete();
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void cbxKhuyenmaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxKhuyenmaiActionPerformed
-        if (controller != null) controller.handleSearch();
+        if (controller != null) {
+            controller.handleSearch();
+        }
     }//GEN-LAST:event_cbxKhuyenmaiActionPerformed
 
     private void btnPrev1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrev1ActionPerformed
-        if (currentPagePro > 1) { 
-            currentPagePro--;     
-            renderPagePro();      
+        if (currentPagePro > 1) {
+            currentPagePro--;
+            renderPagePro();
         }
     }//GEN-LAST:event_btnPrev1ActionPerformed
 
     private void btnNext1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNext1ActionPerformed
-        if (currentPagePro < totalPagesPro) { 
-            currentPagePro++;              
-            renderPagePro();               
+        if (currentPagePro < totalPagesPro) {
+            currentPagePro++;
+            renderPagePro();
         }
     }//GEN-LAST:event_btnNext1ActionPerformed
 
     private void btnDeleteProActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteProActionPerformed
-        if (controller != null) controller.handleDeletePro();
+        if (controller != null) {
+            controller.handleDeletePro();
+        }
     }//GEN-LAST:event_btnDeleteProActionPerformed
 
     private void myTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myTextField2ActionPerformed
-        if (controller != null) controller.handleSearchPro();
+        if (controller != null) {
+            controller.handleSearchPro();
+        }
     }//GEN-LAST:event_myTextField2ActionPerformed
 
     private void cbxKhuyenmai1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxKhuyenmai1ActionPerformed
-        if (controller != null) controller.handleSearchPro();
+        if (controller != null) {
+            controller.handleSearchPro();
+        }
     }//GEN-LAST:event_cbxKhuyenmai1ActionPerformed
 
     private void btnAddProActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProActionPerformed
-        if (controller != null) controller.handleAddPro();
+        if (controller != null) {
+            controller.handleAddPro();
+        }
     }//GEN-LAST:event_btnAddProActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

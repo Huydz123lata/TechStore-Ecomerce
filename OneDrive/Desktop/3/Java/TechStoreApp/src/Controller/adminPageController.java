@@ -218,6 +218,8 @@ public class adminPageController {
                 acc.getUserInfo().getFullName(),
                 acc.getUserInfo().getSDT(),
                 acc.getUserInfo().getAddress(),
+                acc.getUserInfo().getNgaySinh(),
+                acc.getUserInfo().getGioiTinh(),
                 acc.getStatus()
 
             };
@@ -284,4 +286,36 @@ public class adminPageController {
         }
     }
 
+    //product
+//    public void loadDataToTableProduct(JTable table) {
+//        // 1. Lấy Model của bảng và xóa sạch dữ liệu cũ
+//        DefaultTableModel model = (DefaultTableModel) table.getModel();
+//        model.setRowCount(0);
+//
+//        // 2. Gọi DAO lấy danh sách
+//        ProductDAO dao = new ProductDAO();
+//        List<ProductModel> list = dao.getAllProduct();
+//
+//        // 3. Đổ dữ liệu
+//        int stt = 1;
+//        for (ProductModel p : list) {
+//            // Trạng thái hiển thị Tiếng Việt
+//            String statusText = (p.getStatus() == 1) ? "Đang bán" : "Tạm ngưng";
+//
+//            // Định dạng giá tiền (VD: 1500000 -> 1,500,000)
+//            // Nếu Huy muốn để số thô thì dùng: String.valueOf(p.getPrice())
+//            String formattedPrice = String.format("%,.0f", p.getPrice());
+//
+//            Object[] row = {
+//                stt++, // Cột STT
+//                p.getProductId(), // HIỂN THỊ SỐ THUẦN TÚY TỪ DB
+//                p.getName(),
+//                p.getCategoryName(),
+//                p.getStockQuantity(),
+//                formattedPrice,
+//                statusText
+//            };
+//            model.addRow(row);
+//        }
+//    }
 }

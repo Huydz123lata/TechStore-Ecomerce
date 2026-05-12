@@ -4,6 +4,7 @@ import Model.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.util.Calendar;
 
 public class AccountDialog extends JDialog {
 
@@ -17,13 +18,44 @@ public class AccountDialog extends JDialog {
     private final Color TECH_ORANGE = new Color(255, 102, 0);
 
     public AccountDialog(Frame parent) {
-        super(parent, "QUẢN LÝ TÀI KHOẢN ADMIN - THÊM MỚI", true);
+        super(parent, "QUẢN LÝ TÀI KHOẢN", true);
         initComponents();
+    }
+
+    // --- HÀM NÀY XÀI KHI BẤM NÚT SỬA ---
+    public void setModel(AccountModel acc) {
+        this.setTitle("CẬP NHẬT TÀI KHOẢN: " + acc.getUsername().toUpperCase());
+
+        // Đổ dữ liệu từ Model vào các JTextField
+        txtFullName.setText(acc.getUserInfo().getFullName());
+        txtSDT.setText(acc.getUserInfo().getSDT());
+        txtAddress.setText(acc.getUserInfo().getAddress());
+        txtUsername.setText(acc.getUsername());
+
+        // Khóa Username không cho sửa (thông lệ quản lý account)
+        txtUsername.setEditable(false);
+        txtUsername.setBackground(new Color(240, 240, 240));
+
+        // Đổ dữ liệu vào ComboBox
+        cbxGender.setSelectedItem(acc.getUserInfo().getGioiTinh());
+        cbxUserType.setSelectedItem(acc.getUserInfo().getUserType());
+
+        // Xử lý tách ngày sinh đổ vào 3 ComboBox
+        if (acc.getUserInfo().getNgaySinh() != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(acc.getUserInfo().getNgaySinh());
+
+            cbxDay.setSelectedItem(String.format("%02d", cal.get(Calendar.DAY_OF_MONTH)));
+            cbxMonth.setSelectedItem(String.format("%02d", cal.get(Calendar.MONTH) + 1));
+            cbxYear.setSelectedItem(String.valueOf(cal.get(Calendar.YEAR)));
+        }
+
+        // Đổi chữ trên nút bấm
+        btnSave.setText("CẬP NHẬT TÀI KHOẢN");
     }
 
     private void initComponents() {
         setLayout(new BorderLayout());
-        setPreferredSize(new Dimension(500, 600));
 
         // --- Header ---
         JPanel header = new JPanel();
@@ -47,11 +79,11 @@ public class AccountDialog extends JDialog {
         txtSDT = createStyledField();
         txtAddress = createStyledField();
         txtUsername = createStyledField();
-        txtPassword = new JPasswordField("123456");
+        txtPassword = new JPasswordField();
         txtPassword.setPreferredSize(new Dimension(250, 35));
 
         cbxGender = new JComboBox<>(new String[]{"Nam", "Nữ"});
-        cbxUserType = new JComboBox<>(new String[]{"STAFF", "ADMIN"});
+        cbxUserType = new JComboBox<>(new String[]{"STAFF", "ADMIN", "CUSTOMER"});
 
         // Birth Date Picker
         JPanel pnlBirth = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -59,6 +91,7 @@ public class AccountDialog extends JDialog {
         cbxDay = new JComboBox<>();
         cbxMonth = new JComboBox<>();
         cbxYear = new JComboBox<>();
+
         for (int i = 1; i <= 31; i++) {
             cbxDay.addItem(String.format("%02d", i));
         }
@@ -68,13 +101,14 @@ public class AccountDialog extends JDialog {
         for (int i = 2026; i >= 1970; i--) {
             cbxYear.addItem(String.valueOf(i));
         }
+
         pnlBirth.add(cbxDay);
         pnlBirth.add(new JLabel("/"));
         pnlBirth.add(cbxMonth);
         pnlBirth.add(new JLabel("/"));
         pnlBirth.add(cbxYear);
 
-        // Thêm các hàng vào GridBag
+        // Add rows
         int r = 0;
         addRow(main, "Họ và tên:", txtFullName, r++, g);
         addRow(main, "Số điện thoại:", txtSDT, r++, g);
@@ -83,7 +117,7 @@ public class AccountDialog extends JDialog {
         addRow(main, "Giới tính:", cbxGender, r++, g);
         addRow(main, "Tên đăng nhập:", txtUsername, r++, g);
         addRow(main, "Mật khẩu:", txtPassword, r++, g);
-        addRow(main, "Vai trò:", cbxUserType, r++, g);
+        addRow(main, "Admin / khách hàng:", cbxUserType, r++, g);
 
         add(main, BorderLayout.CENTER);
 
@@ -93,6 +127,7 @@ public class AccountDialog extends JDialog {
         btnSave.setBackground(TECH_ORANGE);
         btnSave.setForeground(Color.WHITE);
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnCancel = new JButton("HỦY");
 
@@ -102,7 +137,6 @@ public class AccountDialog extends JDialog {
                 return;
             }
 
-            // Theo Model của bạn
             UserModel u = new UserModel();
             u.setFullName(txtFullName.getText().trim());
             u.setSDT(txtSDT.getText().trim());
@@ -119,6 +153,7 @@ public class AccountDialog extends JDialog {
             accountData.setUserInfo(u);
             accountData.setUsername(txtUsername.getText().trim());
             accountData.setPasswordHash(new String(txtPassword.getPassword()));
+            accountData.setStatus("ACTIVE"); // Mặc định khi lưu/sửa
 
             isSucceeded = true;
             dispose();

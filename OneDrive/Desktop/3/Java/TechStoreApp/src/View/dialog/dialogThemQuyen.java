@@ -56,6 +56,7 @@ public class dialogThemQuyen extends javax.swing.JDialog {
         btnCancel = new Custom_Component.MyButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
         setName("Chỉnh sửa quyền"); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N

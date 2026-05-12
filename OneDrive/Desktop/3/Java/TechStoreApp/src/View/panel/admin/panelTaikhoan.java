@@ -8,10 +8,12 @@ import Util.TableDecorate;
 import Controller.adminPageController;
 import DAO.AccountDAO;
 import Model.AccountModel;
+import Model.UserModel;
 import View.admin.AdminForm;
 import View.dialog.AccountDialog;
 import View.dialog.dialogThemQuyen;
 import java.awt.Frame;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -36,7 +38,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
         adminController.loadDataToTableAdminAccount(tblAdminAccount);
 
         //Customer account
-        adminController.setUpTable(tblCustomerAccount, 5);
+        adminController.setUpTable(tblCustomerAccount, 7);
         adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
 
         //Decorate Table
@@ -383,7 +385,37 @@ public class panelTaikhoan extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDeleteAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAccActionPerformed
+        int selectedRow = tblAdminAccount.getSelectedRow();
 
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần xóa!");
+            return;
+        }
+
+        // 1. Lấy Username từ cột đầu tiên (Index 0) để hiển thị thông báo
+        String username = tblAdminAccount.getValueAt(selectedRow, 0).toString();
+
+        // 2. Lấy AccountID từ cột thứ hai (Index 1) để dùng làm điều kiện xóa trong SQL
+        int accountId = Integer.parseInt(tblAdminAccount.getValueAt(selectedRow, 1).toString());
+
+        // 3. Thông báo hiển thị tên Username cho thân thiện
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc chắn muốn xóa tài khoản: " + username + " không?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            AccountDAO dao = new AccountDAO();
+
+            // Gọi hàm xóa vĩnh viễn bằng ID
+            if (dao.deleteAccount(accountId)) {
+                JOptionPane.showMessageDialog(this, "Đã xóa tài khoản " + username + " thành công!");
+                adminController.loadDataToTableAdminAccount(tblAdminAccount);
+            } else {
+                JOptionPane.showMessageDialog(this, "Lỗi! Không thể xóa tài khoản này.");
+            }
+        }
     }//GEN-LAST:event_btnDeleteAccActionPerformed
 
     private void btnAddAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAccActionPerformed
@@ -411,19 +443,189 @@ public class panelTaikhoan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAddAccActionPerformed
 
     private void btnEditAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditAccActionPerformed
-        // TODO add your handling code here:
+        int row = tblAdminAccount.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần sửa!");
+            return;
+        }
+
+        try {
+            // 1. Bốc dữ liệu trực tiếp từ các cột theo hình Huy gửi
+            String username = tblAdminAccount.getValueAt(row, 0).toString();
+            int accountId = Integer.parseInt(tblAdminAccount.getValueAt(row, 1).toString());
+            String fullName = tblAdminAccount.getValueAt(row, 2).toString();
+            String sdt = tblAdminAccount.getValueAt(row, 3).toString();
+            String diaChi = tblAdminAccount.getValueAt(row, 4).toString();
+            String ngaySinhStr = tblAdminAccount.getValueAt(row, 5).toString();
+            String gioiTinh = tblAdminAccount.getValueAt(row, 6).toString();
+            String vaiTro = tblAdminAccount.getValueAt(row, 7).toString();
+            String trangThai = tblAdminAccount.getValueAt(row, 8).toString();
+
+            // 2. Tạo đối tượng tạm thời để đổ lên Dialog
+            UserModel u = new UserModel();
+            u.setFullName(fullName);
+            u.setSDT(sdt);
+            u.setAddress(diaChi);
+            u.setGioiTinh(gioiTinh);
+            u.setUserType(vaiTro);
+
+            try {
+                u.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr));
+            } catch (Exception e) {
+
+            }
+
+            AccountModel selectedAcc = new AccountModel();
+            selectedAcc.setAccountId(accountId);
+            selectedAcc.setUsername(username);
+            selectedAcc.setUserInfo(u);
+            selectedAcc.setStatus(trangThai);
+
+            // 3. Mở Dialog
+            AccountDialog dialog = new AccountDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this));
+            dialog.setModel(selectedAcc);
+            dialog.setVisible(true);
+
+            // 4. Xử lý sau khi người dùng bấm "CẬP NHẬT"
+            if (dialog.isSucceeded()) {
+                AccountModel updatedData = dialog.getAccountData();
+
+                // QUAN TRỌNG: Vì bốc từ bảng không có USER_ID, Huy cần lấy nó từ listAccount hoặc DB
+                // Để đơn giản và chính xác nhất, mình tìm lại USER_ID dựa vào AccountID trong DB
+                int realUserId = accountDAO.getUserIdByAccountId(accountId);
+                updatedData.setUserId(realUserId);
+                updatedData.setAccountId(accountId);
+
+                if (accountDAO.updateAccount(updatedData)) {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                    adminController.loadDataToTableAdminAccount(tblAdminAccount);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ bảng!");
+        }
     }//GEN-LAST:event_btnEditAccActionPerformed
 
     private void btnDeleteCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCusAccActionPerformed
-        // TODO add your handling code here:
+        int selectedRow = tblCustomerAccount.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần xóa!");
+            return;
+        }
+
+        // 1. Lấy Username từ cột đầu tiên (Index 0) để hiển thị thông báo
+        String username = tblCustomerAccount.getValueAt(selectedRow, 0).toString();
+
+        // 2. Lấy AccountID từ cột thứ hai (Index 1) để dùng làm điều kiện xóa trong SQL
+        int accountId = Integer.parseInt(tblCustomerAccount.getValueAt(selectedRow, 1).toString());
+
+        // 3. Thông báo hiển thị tên Username cho thân thiện
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc chắn muốn xóa tài khoản: " + username + " không?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            AccountDAO dao = new AccountDAO();
+
+            // Gọi hàm xóa vĩnh viễn bằng ID
+            if (dao.deleteAccount(accountId)) {
+                JOptionPane.showMessageDialog(this, "Đã xóa tài khoản " + username + " thành công!");
+                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
+            } else {
+                JOptionPane.showMessageDialog(this, "Lỗi! Không thể xóa tài khoản này.");
+            }
+        }
     }//GEN-LAST:event_btnDeleteCusAccActionPerformed
 
     private void btnAddCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCusAccActionPerformed
-        // TODO add your handling code here:
+        // 1. Khởi tạo dialog (truyền vào Frame cha)
+        Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
+        AccountDialog dialog = new AccountDialog(parent);
+
+        // 2. Hiển thị dialog (nó sẽ dừng code ở đây cho đến khi dialog đóng)
+        dialog.setVisible(true);
+
+        // 3. Nếu bấm "Lưu" thành công thì mới xử lý tiếp
+        if (dialog.isSucceeded()) {
+            AccountModel newAcc = dialog.getAccountData();
+
+            // 4. Gọi DAO để lưu vào 2 bảng (Dùng hàm insertAccount mình đã viết ở trên)
+            if (accountDAO.insertAccount(newAcc)) {
+                JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
+                // Load lại bảng
+                adminController.loadDataToTableAdminAccount(tblAdminAccount);
+                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại! Kiểm tra lại SĐT hoặc Username.");
+            }
+        }
     }//GEN-LAST:event_btnAddCusAccActionPerformed
 
     private void btnEditCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCusAccActionPerformed
-        // TODO add your handling code here:
+        int row = tblAdminAccount.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần sửa!");
+            return;
+        }
+
+        try {
+            // 1. Bốc dữ liệu trực tiếp từ các cột theo hình Huy gửi
+            String username = tblAdminAccount.getValueAt(row, 0).toString();
+            int accountId = Integer.parseInt(tblAdminAccount.getValueAt(row, 1).toString());
+            String fullName = tblAdminAccount.getValueAt(row, 2).toString();
+            String sdt = tblAdminAccount.getValueAt(row, 3).toString();
+            String diaChi = tblAdminAccount.getValueAt(row, 4).toString();
+            String ngaySinhStr = tblAdminAccount.getValueAt(row, 5).toString();
+            String gioiTinh = tblAdminAccount.getValueAt(row, 6).toString();
+            String trangThai = tblAdminAccount.getValueAt(row, 8).toString();
+
+            // 2. Tạo đối tượng tạm thời để đổ lên Dialog
+            UserModel u = new UserModel();
+            u.setFullName(fullName);
+            u.setSDT(sdt);
+            u.setAddress(diaChi);
+            u.setGioiTinh(gioiTinh);
+
+            try {
+                u.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr));
+            } catch (Exception e) {
+
+            }
+
+            AccountModel selectedAcc = new AccountModel();
+            selectedAcc.setAccountId(accountId);
+            selectedAcc.setUsername(username);
+            selectedAcc.setUserInfo(u);
+            selectedAcc.setStatus(trangThai);
+
+            // 3. Mở Dialog
+            AccountDialog dialog = new AccountDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this));
+            dialog.setModel(selectedAcc);
+            dialog.setVisible(true);
+
+            // 4. Xử lý sau khi người dùng bấm "CẬP NHẬT"
+            if (dialog.isSucceeded()) {
+                AccountModel updatedData = dialog.getAccountData();
+
+                // QUAN TRỌNG: Vì bốc từ bảng không có USER_ID, Huy cần lấy nó từ listAccount hoặc DB
+                // Để đơn giản và chính xác nhất, mình tìm lại USER_ID dựa vào AccountID trong DB
+                int realUserId = accountDAO.getUserIdByAccountId(accountId);
+                updatedData.setUserId(realUserId);
+                updatedData.setAccountId(accountId);
+
+                if (accountDAO.updateAccount(updatedData)) {
+                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                    adminController.loadDataToTableAdminAccount(tblAdminAccount);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ bảng!");
+        }
     }//GEN-LAST:event_btnEditCusAccActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
