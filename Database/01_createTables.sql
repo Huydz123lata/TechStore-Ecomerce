@@ -319,7 +319,7 @@ commit;
 
 
 
-
+select * from PRODUCT;
 
 select * from CATEGORY;
 
