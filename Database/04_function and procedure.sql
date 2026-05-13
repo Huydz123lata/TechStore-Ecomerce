@@ -427,119 +427,104 @@ END;
 select * from PRODUCT;
 select * from CART_ITEM;
 
--- CREATE OR REPLACE PROCEDURE sp_PlaceOrder (
---     p_user_id        IN NUMBER,
---     p_receiver_name  IN VARCHAR2,
---     p_receiver_phone IN VARCHAR2,
---     p_address        IN VARCHAR2,
---     p_coupon_code    IN VARCHAR2 DEFAULT NULL
--- ) IS
---     v_cart_id         NUMBER(10);
---     v_order_id        NUMBER(10);
---     v_subtotal        NUMBER(18,2) := 0;
---     v_coupon_id       NUMBER := NULL;
---     v_discount_amount NUMBER(18,2) := 0;
---     v_discount_type   NVARCHAR2(10);
---     v_discount_val    NUMBER(18,2);
---     v_min_order       NUMBER(18,2);
---     v_max_discount    NUMBER(18,2);
---     v_total           NUMBER(18,2) := 0;
--- BEGIN
---     -- 1. Lấy mã giỏ hàng
---     SELECT CART_ID INTO v_cart_id FROM CART
---     WHERE USER_ID = p_user_id AND IS_DELETED = 0;
---
---     -- 2. Tính Subtotal từ bảng CART_ITEM của bạn
---     SELECT SUM(TOTAL) INTO v_subtotal FROM CART_ITEM WHERE CART_ID = v_cart_id;
---
---     IF v_subtotal IS NULL OR v_subtotal = 0 THEN
---         RAISE_APPLICATION_ERROR(-20002, 'Giỏ hàng trống!');
---     END IF;
---
---     -- 3. Xử lý Coupon dựa trên bảng COUPON bạn gửi
---     IF p_coupon_code IS NOT NULL THEN
---         BEGIN
---             SELECT COUPON_ID, DISCOUNT_TYPE, DISCOUNT_VALUE, MIN_ORDER_VALUE, MAX_DISCOUNT
---             INTO v_coupon_id, v_discount_type, v_discount_val, v_min_order, v_max_discount
---             FROM COUPON
---             WHERE CODE = p_coupon_code
---               AND IS_ACTIVE = 1
---               AND IS_DELETED = 0
---               AND SYSDATE BETWEEN START_AT AND END_AT;
---
---             -- Kiểm tra giá trị đơn hàng tối thiểu
---             IF v_subtotal >= v_min_order THEN
---                 IF v_discount_type = 'PERCENTAGE' THEN
---                     v_discount_amount := v_subtotal * (v_discount_val / 100);
---                     -- Giới hạn mức giảm tối đa nếu có
---                     IF v_max_discount IS NOT NULL AND v_discount_amount > v_max_discount THEN
---                         v_discount_amount := v_max_discount;
---                     END IF;
---                 ELSE -- AMOUNT
---                     v_discount_amount := v_discount_val;
---                 END IF;
---             ELSE
---                 DBMS_OUTPUT.PUT_LINE('Đơn hàng chưa đạt giá trị tối thiểu để dùng Coupon.');
---                 v_discount_amount := 0;
---                 v_coupon_id := NULL;
---             END IF;
---         EXCEPTION
---             WHEN NO_DATA_FOUND THEN
---                 DBMS_OUTPUT.PUT_LINE('Mã giảm giá không tồn tại hoặc hết hạn.');
---         END;
---     END IF;
---
---     -- 4. Tính toán tổng cuối cùng (Total = Subtotal - Discount + Shipping Fee)
---     -- Giả sử phí ship mặc định là 0 như trong bảng bạn để DEFAULT 0
---     v_total := v_subtotal - v_discount_amount;
---     IF v_total < 0 THEN v_total := 0; END IF;
---
---     -- 5. Chèn vào bảng ORDERS
---     INSERT INTO ORDERS (
---         USER_ID, COUPON_ID, SUBTOTAL, DISCOUNT_AMOUNT, SHIPPING_FEE, TOTAL,
---         STATUS, RECEIVER_NAME, RECEIVER_PHONE, SHIPPING_ADDRESS, CREATED_AT
---     ) VALUES (
---         p_user_id, v_coupon_id, v_subtotal, v_discount_amount, 0, v_total,
---         'PENDING', p_receiver_name, p_receiver_phone, p_address, SYSDATE
---     ) RETURNING ORDER_ID INTO v_order_id;
---
---     -- 6. Chèn vào bảng ORDER_DETAIL (Lấy giá từ PRODUCT)
---     INSERT INTO ORDER_DETAIL (ORDER_ID, PRODUCT_ID, QUANTITY, PRICE, LINE_TOTAL)
---     SELECT v_order_id, ci.PRODUCT_ID, ci.QUANTITY, p.PRICE, ci.TOTAL
---     FROM CART_ITEM ci
---     JOIN PRODUCT p ON ci.PRODUCT_ID = p.PRODUCT_ID
---     WHERE ci.CART_ID = v_cart_id;
---
---     -- 7. Xóa sạch giỏ hàng sau khi chốt đơn
---     DELETE FROM CART_ITEM WHERE CART_ID = v_cart_id;
---
---     -- Xuất thông báo
---     DBMS_OUTPUT.PUT_LINE('------------------------------------');
---     DBMS_OUTPUT.PUT_LINE('Thanh toán thành công!');
---     DBMS_OUTPUT.PUT_LINE('Đơn hàng ID: ' || v_order_id);
---     DBMS_OUTPUT.PUT_LINE('Tạm tính: ' || v_subtotal);
---     DBMS_OUTPUT.PUT_LINE('Giảm giá: ' || v_discount_amount);
---     DBMS_OUTPUT.PUT_LINE('Tổng cộng: ' || v_total);
---     DBMS_OUTPUT.PUT_LINE('------------------------------------');
---
---     COMMIT;
--- EXCEPTION
---     WHEN OTHERS THEN
---         ROLLBACK;
---         DBMS_OUTPUT.PUT_LINE('Lỗi: ' || SQLERRM);
--- END;
--- /
---
---
--- INSERT INTO COUPON (CODE, DISCOUNT_TYPE, DISCOUNT_VALUE, MIN_ORDER_VALUE, START_AT, END_AT, IS_ACTIVE)
--- VALUES ('SALE10', 'PERCENTAGE', 10, 100000, SYSDATE-1, SYSDATE+7, 1);
--- BEGIN
---     sp_PlaceOrder(1, 'Lê Văn Tám', '0988777666', 'Số 1 Đại Cồ Việt', 'SALE10');
--- END;
--- /
---
--- SELECT * FROM ORDERS ORDER BY CREATED_AT DESC;
 
+
+
+
+
+
+
+CREATE OR REPLACE PROCEDURE sp_delete_cart (
+    p_cart_id IN NUMBER
+) IS
+BEGIN
+    -- Xóa toàn bộ các sản phẩm thuộc giỏ hàng này
+    DELETE FROM CART_ITEM
+    WHERE CART_ID = p_cart_id;
+
+    -- Cập nhật lại thời gian của giỏ hàng (tùy chọn)
+    UPDATE CART
+    SET UPDATED_AT = SYSDATE
+    WHERE CART_ID = p_cart_id;
+
+    DBMS_OUTPUT.PUT_LINE('Giỏ hàng ' || p_cart_id || ' đã được dọn dẹp.');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Lỗi khi xóa giỏ hàng: ' || SQLERRM);
+        RAISE;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE sp_PlaceOrder (
+    p_user_id        IN NUMBER,
+    p_receiver_name  IN VARCHAR2,
+    p_receiver_phone IN VARCHAR2,
+    p_address        IN VARCHAR2,
+    p_payment_method IN VARCHAR2, -- 'COD' hoặc 'BANK'
+    p_coupon_code    IN VARCHAR2 DEFAULT NULL
+) IS
+    v_cart_id         NUMBER(10);
+    v_order_id        NUMBER(10);
+    v_subtotal        NUMBER(18,2) := 0;
+    v_coupon_id       NUMBER := NULL;
+    v_discount_amount NUMBER(18,2) := 0;
+    v_total           NUMBER(18,2) := 0;
+    v_pay_status      VARCHAR2(20);
+BEGIN
+    -- 1. Tìm giỏ hàng & Tính tiền (Gọi Function giảm giá của bạn)
+    SELECT CART_ID INTO v_cart_id FROM CART WHERE USER_ID = p_user_id AND IS_DELETED = 0;
+    SELECT SUM(TOTAL) INTO v_subtotal FROM CART_ITEM WHERE CART_ID = v_cart_id;
+
+    IF p_coupon_code IS NOT NULL THEN
+        SELECT COUPON_ID INTO v_coupon_id FROM COUPON WHERE CODE = p_coupon_code;
+        v_discount_amount := fn_calculate_discount_amount(v_subtotal, v_coupon_id);
+    END IF;
+
+    v_total := v_subtotal - v_discount_amount;
+
+    -- 2. Logic xử lý trạng thái thanh toán
+    IF p_payment_method = 'COD' THEN
+        v_pay_status := 'PENDING'; -- Khách chưa trả tiền
+    ELSE
+        v_pay_status := 'COMPLETED'; -- Giả sử thanh toán online đã xong
+    END IF;
+
+    -- 3. Tạo đơn hàng
+    INSERT INTO ORDERS (
+        USER_ID, COUPON_ID, SUBTOTAL, DISCOUNT_AMOUNT, TOTAL,
+        STATUS, RECEIVER_NAME, RECEIVER_PHONE, SHIPPING_ADDRESS
+    ) VALUES (
+        p_user_id, v_coupon_id, v_subtotal, v_discount_amount, v_total,
+        'CONFIRMED', p_receiver_name, p_receiver_phone, p_address
+    ) RETURNING ORDER_ID INTO v_order_id;
+
+    -- 4. Tạo bản ghi Thanh toán (PAYMENT)
+    INSERT INTO PAYMENT (
+        ORDER_ID, PAYMENT_METHOD, AMOUNT, PAYMENT_STATUS, CREATED_AT
+    ) VALUES (
+        v_order_id, p_payment_method, v_total, v_pay_status, SYSDATE
+    );
+
+    -- 5. Chép chi tiết & Xóa giỏ hàng (Gọi Proc của bạn)
+    INSERT INTO ORDER_DETAIL (ORDER_ID, PRODUCT_ID, QUANTITY, PRICE, LINE_TOTAL)
+    SELECT v_order_id, ci.PRODUCT_ID, ci.QUANTITY, p.PRICE, ci.TOTAL
+    FROM CART_ITEM ci JOIN PRODUCT p ON ci.PRODUCT_ID = p.PRODUCT_ID
+    WHERE ci.CART_ID = v_cart_id;
+
+    sp_delete_cart(v_cart_id);
+
+    -- In thông báo đầy đủ các con số
+    DBMS_OUTPUT.PUT_LINE('------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Đặt hàng thành công! (Hình thức: ' || p_payment_method || ')');
+    DBMS_OUTPUT.PUT_LINE('Trạng thái thanh toán: ' || v_pay_status);
+    DBMS_OUTPUT.PUT_LINE('Tạm tính: ' || TO_CHAR(v_subtotal, '999,999,999,999'));
+    DBMS_OUTPUT.PUT_LINE('Giảm giá: ' || TO_CHAR(v_discount_amount, '999,999,999,999'));
+    DBMS_OUTPUT.PUT_LINE('Tổng cộng: ' || TO_CHAR(v_total, '999,999,999,999'));
+    DBMS_OUTPUT.PUT_LINE('------------------------------------');
+
+    COMMIT;
+END;
+/
 CREATE OR REPLACE PROCEDURE sp_GetUserOrderHistory (
     p_user_id IN NUMBER
 ) IS
@@ -580,5 +565,65 @@ END;
 
 BEGIN
     sp_GetUserOrderHistory(1); -- Lấy lịch sử của User có ID là 1
+END;
+/
+
+
+begin
+    AddToCart(p_user_id => 2, p_product_id => 1, p_quantity => 1);
+end;
+
+SELECT * FROM CART_ITEM;
+
+BEGIN
+    sp_PlaceOrder(
+        p_user_id        => 1,
+        p_receiver_name  => 'Lê Văn Tám',
+        p_receiver_phone => '0988777666',
+        p_address        => 'Số 123, Phố đi bộ, Quận 1',
+        p_payment_method => 'COD',         -- Hình thức COD
+        p_coupon_code    => 'HE_RUC_RO'    -- Áp dụng mã giảm giá
+    );
+END;
+/
+
+INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, USER_TYPE)
+VALUES ('Người dùng thử nghiệm', '0900000000', 'CUSTOMER');
+COMMIT;
+
+select * from APP_USER;
+
+-- Tạo User
+INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, ADDRESS, USER_TYPE)
+VALUES ('Nguyễn Văn Test', '0901234569', '123 Đường Số 1, HCM', 'CUSTOMER');
+
+-- Lấy ID vừa tạo (thường là 1 nếu bảng trống)
+-- Tạo tài khoản đăng nhập cho User đó
+INSERT INTO ACCOUNT (USER_ID, USERNAME, PASSWORD_HASH, STATUS)
+VALUES (4, 'testuser', 'hashed_password_123', 'ACTIVE');
+
+
+INSERT INTO CART (USER_ID) VALUES (2);
+
+-- Tạo mã giảm giá (Giảm 10% tối đa 1 triệu cho đơn từ 5 triệu)
+INSERT INTO COUPON (CODE, DISCOUNT_TYPE, DISCOUNT_VALUE, MIN_ORDER_VALUE, MAX_DISCOUNT, START_AT, END_AT, IS_ACTIVE)
+VALUES ('HELLOMAY', 'PERCENTAGE', 10, 5000000, 1000000, SYSDATE-1, SYSDATE+30, 1);
+
+select * from cart;
+BEGIN
+    -- Mua 2 cái iPhone 15 Pro (Tổng: 50.000.000)
+    AddToCart(p_user_id => 4, p_product_id => 1, p_quantity => 2);
+END;
+/
+select * from CART_ITEM;
+BEGIN
+    sp_PlaceOrder(
+        p_user_id        => 1,
+        p_receiver_name  => 'Nguyễn Văn Test',
+        p_receiver_phone => '0901234567',
+        p_address        => '123 Đường Số 1, HCM',
+        p_payment_method => 'COD',
+        p_coupon_code    => 'HELLOMAY' -- Sẽ được giảm 1.000.000 (do chạm trần MAX_DISCOUNT)
+    );
 END;
 /
