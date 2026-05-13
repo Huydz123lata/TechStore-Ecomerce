@@ -345,8 +345,10 @@ CREATE OR REPLACE PROCEDURE AddToCart (
     p_quantity   IN NUMBER
 ) IS
     v_cart_id    NUMBER(10);
+    v_price      NUMBER(18,2);
+    v_count      NUMBER(10);
 BEGIN
-    -- 1. Lấy hoặc tạo mã giỏ hàng
+    -- BƯỚC 1 & 2: Lấy mã giỏ hàng và giá sản phẩm
     BEGIN
         SELECT CART_ID INTO v_cart_id
         FROM CART
@@ -357,19 +359,30 @@ BEGIN
             RETURNING CART_ID INTO v_cart_id;
     END;
 
-    -- 2. Thêm hoặc cập nhật chi tiết giỏ hàng
-    MERGE INTO CART_ITEM ci
-    USING DUAL ON (ci.CART_ID = v_cart_id AND ci.PRODUCT_ID = p_product_id)
-    WHEN MATCHED THEN
-        UPDATE SET ci.QUANTITY = ci.QUANTITY + p_quantity
-    WHEN NOT MATCHED THEN
-        INSERT (CART_ID, PRODUCT_ID, QUANTITY)
-        VALUES (v_cart_id, p_product_id, p_quantity);
+    -- Lấy giá sản phẩm từ bảng PRODUCT
+    SELECT PRICE INTO v_price FROM PRODUCT WHERE PRODUCT_ID = p_product_id;
 
-    -- 3. Cập nhật thời gian cho giỏ hàng
+    -- BƯỚC 3: Kiểm tra sản phẩm đã có trong giỏ chưa
+    SELECT COUNT(*) INTO v_count
+    FROM CART_ITEM
+    WHERE CART_ID = v_cart_id AND PRODUCT_ID = p_product_id;
+
+    IF v_count > 0 THEN
+        -- Nếu đã có: Cập nhật cộng dồn QUANTITY và tính lại TOTAL
+        UPDATE CART_ITEM
+        SET QUANTITY = QUANTITY + p_quantity,
+            TOTAL = (QUANTITY + p_quantity) * v_price
+        WHERE CART_ID = v_cart_id AND PRODUCT_ID = p_product_id;
+    ELSE
+        -- Nếu chưa có: Thêm mới dòng vào chi tiết giỏ hàng
+        INSERT INTO CART_ITEM (CART_ID, PRODUCT_ID, QUANTITY, TOTAL)
+        VALUES (v_cart_id, p_product_id, p_quantity, p_quantity * v_price);
+    END IF;
+
+    -- BƯỚC 4: Cập nhật lại thời gian cập nhật giỏ hàng
     UPDATE CART SET UPDATED_AT = SYSDATE WHERE CART_ID = v_cart_id;
 
-    -- 4. HIỂN THỊ THEO ĐÚNG MẪU ẢNH CỦA BẠN
+    -- BƯỚC 5: Hiển thị thông báo (Khớp 100% mẫu ảnh bạn gửi)
     DBMS_OUTPUT.PUT_LINE('Sản phẩm đã được thêm vào giỏ hàng.');
     DBMS_OUTPUT.PUT_LINE('Mã sản phẩm: ' || p_product_id);
     DBMS_OUTPUT.PUT_LINE('Số lượng: ' || p_quantity);
@@ -411,3 +424,75 @@ BEGIN
     );
 END;
 /
+select * from PRODUCT;
+select * from CART_ITEM;
+CREATE OR REPLACE PROCEDURE sp_PlaceOrder (
+    p_user_id        IN NUMBER,
+    p_receiver_name  IN VARCHAR2,
+    p_receiver_phone IN VARCHAR2,
+    p_address        IN VARCHAR2
+) IS
+    v_cart_id   NUMBER(10);
+    v_order_id  NUMBER(10);
+    v_subtotal  NUMBER(18,2) := 0;
+BEGIN
+    -- 1. Tìm giỏ hàng hiện tại của người dùng
+    SELECT CART_ID INTO v_cart_id
+    FROM CART
+    WHERE USER_ID = p_user_id AND IS_DELETED = 0;
+
+    -- 2. Tính toán tổng trị giá giỏ hàng
+    SELECT SUM(TOTAL) INTO v_subtotal
+    FROM CART_ITEM
+    WHERE CART_ID = v_cart_id;
+
+    -- Kiểm tra nếu giỏ hàng trống
+    IF v_subtotal IS NULL OR v_subtotal = 0 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Gio hang dang trong, vui long them san pham!');
+    END IF;
+
+    -- 3. Lap don hang moi (ORDERS)
+    INSERT INTO ORDERS (
+        USER_ID, SUBTOTAL, TOTAL, STATUS,
+        RECEIVER_NAME, RECEIVER_PHONE, SHIPPING_ADDRESS,
+        CREATED_AT
+    ) VALUES (
+        p_user_id, v_subtotal, v_subtotal, 'PENDING',
+        p_receiver_name, p_receiver_phone, p_address,
+        SYSDATE
+    ) RETURNING ORDER_ID INTO v_order_id;
+
+    -- 4. Chuyen chi tiet tu Cart sang Order_Detail
+    INSERT INTO ORDER_DETAIL (ORDER_ID, PRODUCT_ID, QUANTITY, PRICE, LINE_TOTAL)
+    SELECT v_order_id, ci.PRODUCT_ID, p.PRICE, p.PRICE, ci.TOTAL
+    FROM CART_ITEM ci
+    JOIN PRODUCT p ON ci.PRODUCT_ID = p.PRODUCT_ID
+    WHERE ci.CART_ID = v_cart_id;
+
+    -- 5. Lam trong gio hang (Sau khi da dat hang thanh cong)
+    DELETE FROM CART_ITEM WHERE CART_ID = v_cart_id;
+
+    -- Thong bao (Log Output)
+    DBMS_OUTPUT.PUT_LINE('Don hang ' || v_order_id || ' da duoc tao thanh cong.');
+    DBMS_OUTPUT.PUT_LINE('Tong gia tri thanh toan: ' || v_subtotal);
+
+    COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Khong tim thay gio hang cho nguoi dung nay.');
+        ROLLBACK;
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+BEGIN
+    -- Gọi thủ tục đặt hàng
+    sp_PlaceOrder(
+        p_user_id        => 1,                    -- ID người dùng đã tạo ở các bước trước
+        p_receiver_name  => 'Nguyễn Văn A',        -- Tên người nhận hàng
+        p_receiver_phone => '0908123456',         -- Số điện thoại người nhận
+        p_address        => '99 Tô Hiến Thành, Quận 10, TP.HCM' -- Địa chỉ giao hàng
+    );
+END;
