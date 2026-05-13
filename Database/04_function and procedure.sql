@@ -411,4 +411,3 @@ BEGIN
     );
 END;
 /
-select * from CART_ITEM;
