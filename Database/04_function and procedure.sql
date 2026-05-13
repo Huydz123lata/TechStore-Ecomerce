@@ -539,3 +539,46 @@ select * from CART_ITEM;
 -- /
 --
 -- SELECT * FROM ORDERS ORDER BY CREATED_AT DESC;
+
+CREATE OR REPLACE PROCEDURE sp_GetUserOrderHistory (
+    p_user_id IN NUMBER
+) IS
+    -- Cursor lấy danh sách đơn hàng
+    CURSOR c_orders IS
+        SELECT ORDER_ID, TOTAL, STATUS, CREATED_AT
+        FROM ORDERS
+        WHERE USER_ID = p_user_id AND IS_DELETED = 0
+        ORDER BY CREATED_AT DESC;
+
+    -- Cursor lấy chi tiết từng món trong đơn hàng đó
+    CURSOR c_details(p_order_id NUMBER) IS
+        SELECT p.NAME, od.QUANTITY, od.PRICE, od.LINE_TOTAL
+        FROM ORDER_DETAIL od
+        JOIN PRODUCT p ON od.PRODUCT_ID = p.PRODUCT_ID
+        WHERE od.ORDER_ID = p_order_id;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('LỊCH SỬ ĐƠN HÀNG CỦA USER ID: ' || p_user_id);
+    DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+
+    FOR r_order IN c_orders LOOP
+        DBMS_OUTPUT.PUT_LINE('Đơn hàng: ' || r_order.ORDER_ID ||
+                             ' | Ngày: ' || TO_CHAR(r_order.CREATED_AT, 'DD/MM/YY') ||
+                             ' | Trạng thái: ' || r_order.STATUS);
+
+        -- Duyệt chi tiết sản phẩm của đơn hàng này
+        FOR r_detail IN c_details(r_order.ORDER_ID) LOOP
+            DBMS_OUTPUT.PUT_LINE('  + ' || r_detail.NAME ||
+                                 ' | SL: ' || r_detail.QUANTITY ||
+                                 ' | Thành tiền: ' || r_detail.LINE_TOTAL);
+        END LOOP;
+
+        DBMS_OUTPUT.PUT_LINE('=> TỔNG CỘNG ĐƠN HÀNG: ' || r_order.TOTAL);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+    END LOOP;
+END;
+/
+
+BEGIN
+    sp_GetUserOrderHistory(1); -- Lấy lịch sử của User có ID là 1
+END;
+/
