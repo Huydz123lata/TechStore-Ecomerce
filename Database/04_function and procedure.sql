@@ -104,33 +104,59 @@ BEGIN
 
 END;
 
---UPDATE KHI SỬA BẢNG [2]
+
 CREATE OR REPLACE PROCEDURE insert_product(
-    p_name IN VARCHAR2, p_description IN VARCHAR2, p_price IN NUMBER,
-    p_brand IN VARCHAR2, p_category_id IN NUMBER, p_warranty IN NUMBER,
-    p_stock IN NUMBER -- Thêm tham số này
+    p_name        IN VARCHAR2,
+    p_image       IN VARCHAR2, -- Thêm vì IMAGE_NAME là NOT NULL
+    p_description IN VARCHAR2,
+    p_price       IN NUMBER,
+    p_brand_id    IN NUMBER,   -- Sửa từ p_brand thành p_brand_id
+    p_category_id IN NUMBER,
+    p_warranty    IN NUMBER,
+    p_stock       IN NUMBER
 ) IS
 BEGIN
-    INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE, BRAND, CATEGORY_ID, WARRANTY_MONTH, STATUS, STOCK_QUANTITY)
-    VALUES (p_name, p_description, p_price, p_brand, p_category_id, p_warranty, 1, p_stock);
+    INSERT INTO PRODUCT (
+        NAME, IMAGE_NAME, DESCRIPTION, PRICE,
+        BRAND_ID, CATEGORY_ID, WARRANTY_MONTH,
+        STATUS, STOCK_QUANTITY
+    )
+    VALUES (
+        p_name, p_image, p_description, p_price,
+        p_brand_id, p_category_id, p_warranty,
+        1, p_stock
+    );
     COMMIT;
 END;
+/
 
---UPDATE KHI SỬA BẢNG [3]
 CREATE OR REPLACE PROCEDURE update_product (
-    prod_id IN NUMBER, p_name IN VARCHAR2, p_description IN VARCHAR2,
-    p_price IN NUMBER, p_brand IN VARCHAR2, p_cat_id IN NUMBER,
-    p_warranty IN NUMBER, p_status IN NUMBER, p_stock IN NUMBER
+    prod_id       IN NUMBER,
+    p_name        IN VARCHAR2,
+    p_description IN VARCHAR2,
+    p_price       IN NUMBER,
+    p_brand_id    IN NUMBER,  -- Đồng bộ tên cột BRAND_ID
+    p_cat_id      IN NUMBER,
+    p_warranty    IN NUMBER,
+    p_status      IN NUMBER,
+    p_stock       IN NUMBER
 ) IS
 BEGIN
     UPDATE PRODUCT
-    SET NAME = p_name, DESCRIPTION = p_description, PRICE = p_price,
-        BRAND = p_brand, CATEGORY_ID = p_cat_id, WARRANTY_MONTH = p_warranty,
-        STATUS = p_status, STOCK_QUANTITY = p_stock,
-        UPDATED_AT = SYSDATE
+    SET NAME            = p_name,
+        DESCRIPTION     = p_description,
+        PRICE           = p_price,
+        BRAND_ID        = p_brand_id,
+        CATEGORY_ID     = p_cat_id,
+        WARRANTY_MONTH  = p_warranty,
+        STATUS          = p_status,
+        STOCK_QUANTITY  = p_stock,
+        UPDATED_AT      = SYSDATE -- Cập nhật thời gian sửa đổi
     WHERE PRODUCT_ID = prod_id;
+
     COMMIT;
 END;
+/
 
 CREATE OR REPLACE PROCEDURE sp_delete_product (
     prod_id IN NUMBER
@@ -144,37 +170,7 @@ BEGIN
 END;
 
 
-CREATE OR REPLACE PROCEDURE insert_category (
-	p_name IN VARCHAR2, parent_id IN NUMBER
-) IS
-BEGIN
-	INSERT INTO CATEGORY (NAME, PARENT_CATEGORY_ID)
-	VALUES (p_name, parent_id);
-	COMMIT;
-END;
 
-
-CREATE OR REPLACE PROCEDURE update_category(
-p_cat_id IN NUMBER, p_name IN VARCHAR2, p_parent_id IN NUMBER
-) IS
-BEGIN
-	UPDATE CATEGORY
-	SET NAME = p_name, PARENT_CATEGORY_ID = p_parent_id, UPDATED_AT = SYSDATE
-	WHERE CATEGORY_ID = p_cat_id;
-	COMMIT;
-END;
-
-
-CREATE OR REPLACE PROCEDURE sp_delete_category (
-    cat_id IN NUMBER
-) IS
-BEGIN
-    UPDATE CATEGORY
-    SET IS_DELETED = 1, UPDATED_AT = SYSDATE
-    WHERE CATEGORY_ID = cat_id;
-
-    COMMIT;
-END;
 
 --UPDATE KHI SỬA BẢNG [4]
 CREATE OR REPLACE PROCEDURE insert_coupon (
