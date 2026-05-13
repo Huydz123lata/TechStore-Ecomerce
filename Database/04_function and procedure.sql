@@ -107,10 +107,10 @@ END;
 
 CREATE OR REPLACE PROCEDURE insert_product(
     p_name        IN VARCHAR2,
-    p_image       IN VARCHAR2, -- Thêm vì IMAGE_NAME là NOT NULL
+    p_image       IN VARCHAR2,
     p_description IN VARCHAR2,
     p_price       IN NUMBER,
-    p_brand_id    IN NUMBER,   -- Sửa từ p_brand thành p_brand_id
+    p_brand_id    IN NUMBER,
     p_category_id IN NUMBER,
     p_warranty    IN NUMBER,
     p_stock       IN NUMBER
@@ -135,7 +135,7 @@ CREATE OR REPLACE PROCEDURE update_product (
     p_name        IN VARCHAR2,
     p_description IN VARCHAR2,
     p_price       IN NUMBER,
-    p_brand_id    IN NUMBER,  -- Đồng bộ tên cột BRAND_ID
+    p_brand_id    IN NUMBER,
     p_cat_id      IN NUMBER,
     p_warranty    IN NUMBER,
     p_status      IN NUMBER,
@@ -339,3 +339,76 @@ BEGIN
     COMMIT;
 END;
 
+CREATE OR REPLACE PROCEDURE AddToCart (
+    p_user_id    IN NUMBER,
+    p_product_id IN NUMBER,
+    p_quantity   IN NUMBER
+) IS
+    v_cart_id    NUMBER(10);
+BEGIN
+    -- 1. Lấy hoặc tạo mã giỏ hàng
+    BEGIN
+        SELECT CART_ID INTO v_cart_id
+        FROM CART
+        WHERE USER_ID = p_user_id AND IS_DELETED = 0;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            INSERT INTO CART (USER_ID) VALUES (p_user_id)
+            RETURNING CART_ID INTO v_cart_id;
+    END;
+
+    -- 2. Thêm hoặc cập nhật chi tiết giỏ hàng
+    MERGE INTO CART_ITEM ci
+    USING DUAL ON (ci.CART_ID = v_cart_id AND ci.PRODUCT_ID = p_product_id)
+    WHEN MATCHED THEN
+        UPDATE SET ci.QUANTITY = ci.QUANTITY + p_quantity
+    WHEN NOT MATCHED THEN
+        INSERT (CART_ID, PRODUCT_ID, QUANTITY)
+        VALUES (v_cart_id, p_product_id, p_quantity);
+
+    -- 3. Cập nhật thời gian cho giỏ hàng
+    UPDATE CART SET UPDATED_AT = SYSDATE WHERE CART_ID = v_cart_id;
+
+    -- 4. HIỂN THỊ THEO ĐÚNG MẪU ẢNH CỦA BẠN
+    DBMS_OUTPUT.PUT_LINE('Sản phẩm đã được thêm vào giỏ hàng.');
+    DBMS_OUTPUT.PUT_LINE('Mã sản phẩm: ' || p_product_id);
+    DBMS_OUTPUT.PUT_LINE('Số lượng: ' || p_quantity);
+    DBMS_OUTPUT.PUT_LINE('Giỏ hàng ID: ' || v_cart_id);
+
+    COMMIT;
+END;
+/
+
+DROP PROCEDURE AddToCart;
+
+-- 1. Thêm Thương hiệu
+INSERT INTO BRAND (NAME) VALUES ('Apple');
+INSERT INTO BRAND (NAME) VALUES ('Samsung');
+
+-- 2. Thêm Danh mục
+INSERT INTO CATEGORY (NAME) VALUES ('Điện thoại');
+INSERT INTO CATEGORY (NAME) VALUES ('Phụ kiện');
+
+-- 3. Thêm Sản phẩm (Để ý ID thường sẽ là 1 và 2)
+INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
+VALUES ('iPhone 15 Pro', 'iphone15.jpg', 'Chính hãng VN/A', 28000000, 50, 12, 1, 1);
+
+INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
+VALUES ('Ốp lưng MagSafe', 'op-magsafe.jpg', 'Chống sốc tốt', 1500000, 100, 6, 2, 1);
+
+-- 4. Thêm Người dùng
+INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, ADDRESS, GENDER)
+VALUES ('Nguyễn Văn A', '0901234567', 'TP. Hồ Chí Minh', 'Nam');
+
+COMMIT;
+
+BEGIN
+    -- Thêm 2 chiếc iPhone (ID = 1) cho người dùng (ID = 1)
+    AddToCart(
+        p_user_id    => 1,
+        p_product_id => 2,
+        p_quantity   => 2
+    );
+END;
+/
+select * from CART_ITEM;
