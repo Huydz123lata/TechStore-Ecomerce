@@ -7,6 +7,7 @@ public class ProductModel {
     private String description;
     private double price;
     private int stockQuantity;
+    private int soldQuantity;
     private int status;
     private int warrantyMonth;
     private String image;
@@ -107,6 +108,14 @@ public class ProductModel {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getSoldQuantity() {
+        return soldQuantity;
+    }
+
+    public void setSoldQuantity(int soldQuantity) {
+        this.soldQuantity = soldQuantity;
     }
 
     @Override

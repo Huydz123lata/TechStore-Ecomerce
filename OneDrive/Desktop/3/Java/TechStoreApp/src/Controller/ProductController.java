@@ -8,6 +8,7 @@ import DAO.ProductDAO;
 import Model.BrandModel;
 import Model.CategoryModel;
 import Model.ProductModel;
+import View.panel.admin.panelSanpham;
 import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.*;
@@ -111,35 +112,79 @@ public class ProductController {
                 pm.getCategory().getName(),
                 pm.getBrand().getName(),
                 pm.getWarrantyMonth(),
+                pm.getImage(),
                 pm.getDescription()
             });
         }
     }
 
-    public void loadAllProductsToTable(JTable table) {
+    public void loadAllProductsToTable(JTable table, panelSanpham panel) {
         List<ProductModel> list = productDAO.getAllProducts();
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
 
-        // Định dạng tiền tệ cho đẹp
         DecimalFormat df = new DecimalFormat("#,###");
+
         if (list != null && !list.isEmpty()) {
             for (ProductModel p : list) {
-                // Logic Trạng thái
-                String trangThaiText;
-                if (p.getStatus() == 0) {
-                    trangThaiText = "Ngừng kinh doanh";
-                } else {
-                    trangThaiText = (p.getStockQuantity() > 0) ? "Đang bán" : "Hết hàng";
-                }
+                String trangThaiText = (p.getStatus() == 0) ? "Ngừng kinh doanh"
+                        : (p.getStockQuantity() > 0 ? "Đang bán" : "Hết hàng");
+
                 model.addRow(new Object[]{
                     p.getProductId(),
                     p.getName(),
                     p.getCategory().getName(),
+                    p.getBrand().getName(),
                     df.format(p.getPrice()),
                     p.getStockQuantity(),
-                    "0",
-                    trangThaiText
+                    p.getSoldQuantity(),
+                    trangThaiText,
+                    p.getImage(),
+                    p.getDescription()
+                });
+            }
+        }
+        if (panel != null) {
+            panel.updateSummaryLabels(list); // Cập nhật Dashboard
+            panel.setCurrentList(list);
+        }
+    }
+
+    public void filterProducts(JTable table, List<ProductModel> currentList, String searchText, String categoryName, String statusText) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        DecimalFormat df = new DecimalFormat("#,###");
+
+        if (currentList == null) {
+            return;
+        }
+
+        for (ProductModel p : currentList) {
+            // 1. Kiểm tra Tìm kiếm (Tên sản phẩm)
+            boolean matchesSearch = p.getName().toLowerCase().contains(searchText.toLowerCase());
+
+            // 2. Kiểm tra Danh mục (Hiện hết nếu là dòng mặc định)
+            boolean matchesCategory = categoryName.equals("--Chọn danh mục SP--")
+                    || (p.getCategory() != null && p.getCategory().getName().equals(categoryName));
+
+            // 3. Kiểm tra Trạng thái (Hiện hết nếu là dòng mặc định)
+            String pStatus = (p.getStatus() == 0) ? "Ngừng kinh doanh" : (p.getStockQuantity() > 0 ? "Đang bán" : "Hết hàng");
+            boolean matchesStatus = statusText.equals("--Lọc theo trạng thái--")
+                    || pStatus.equals(statusText);
+
+            // Chỉ thêm vào bảng nếu thỏa mãn cả 3 điều kiện
+            if (matchesSearch && matchesCategory && matchesStatus) {
+                model.addRow(new Object[]{
+                    p.getProductId(), // Cột 0
+                    p.getName(), // Cột 1
+                    p.getCategory().getName(), // Cột 2
+                    p.getBrand().getName(), // Cột 3
+                    df.format(p.getPrice()),// Cột 4
+                    p.getStockQuantity(), // Cột 5
+                    p.getSoldQuantity(), // Cột 6
+                    pStatus, // Cột 7
+                    p.getImage(), // CỘT 8: THÊM DÒNG NÀY (Để hiện ảnh)
+                    p.getDescription() // CỘT 9: THÊM DÒNG NÀY (Để hiện mô tả)
                 });
             }
         }

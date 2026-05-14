@@ -10,7 +10,7 @@ import Util.TokenMonitorManager;
 import Util.UserSession;
 import View.auth.LoginForm;
 import View.panel.admin.panelBanhang;
-import View.panel.admin.panelDanhmuc;
+import View.panel.admin.panelKhachHang;
 import View.panel.admin.panelGiaodich;
 import View.panel.admin.panelDonhang;
 import View.panel.admin.panelKho;
@@ -399,7 +399,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnKho.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKho.setForeground(new java.awt.Color(153, 153, 153));
         btnKho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/stock.png"))); // NOI18N
-        btnKho.setText("Quản lý Kho Hàng");
+        btnKho.setText("Quản lý ...");
         btnKho.setFocusable(false);
         btnKho.setIconTextGap(15);
         btnKho.setOpaque(true);
@@ -708,7 +708,7 @@ public class AdminForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRoleMouseExited
     private boolean isTrangChuExpanded = false;
     private void btnDanhMucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseClicked
-        showPanel(new panelDanhmuc()); // Đảm bảo tên class Panel này đúng
+        showPanel(new panelKhachHang()); // Đảm bảo tên class Panel này đúng
         currentSelectedLabel = btnDanhMuc;
         resetMenuButtons(btnDanhMuc);
     }//GEN-LAST:event_btnDanhMucMouseClicked

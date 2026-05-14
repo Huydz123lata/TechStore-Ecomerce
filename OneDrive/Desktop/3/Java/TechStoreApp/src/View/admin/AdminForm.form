@@ -518,7 +518,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/Resource/stock.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; Kho H&#xe0;ng"/>
+                <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xfd; ..."/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="iconTextGap" type="int" value="15"/>
                 <Property name="opaque" type="boolean" value="true"/>

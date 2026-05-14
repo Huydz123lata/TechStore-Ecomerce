@@ -11,7 +11,6 @@ import config.ConnectionUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,14 +166,14 @@ public class ProductDAO {
 
     public List<ProductModel> getAllProducts() {
         List<ProductModel> list = new ArrayList<>();
-
         String sql = "SELECT p.PRODUCT_ID, p.NAME AS PRO_NAME, p.PRICE, p.STOCK_QUANTITY, "
-                + "p.IMAGE_NAME, p.WARRANTY_MONTH, p.DESCRIPTION, p.STATUS, " // Đã thêm p.STATUS
+                + "p.IMAGE_NAME, p.WARRANTY_MONTH, p.DESCRIPTION, p.STATUS, "
                 + "p.CATEGORY_ID, p.BRAND_ID, "
-                + "c.NAME AS CAT_NAME, b.NAME AS BRAND_NAME "
+                + "c.NAME AS CAT_NAME, b.NAME AS BRAND_NAME, "
+                + "(SELECT COALESCE(SUM(od.QUANTITY), 0) FROM ORDER_DETAIL od WHERE od.PRODUCT_ID = p.PRODUCT_ID) AS SOLD_QUANTITY "
                 + "FROM PRODUCT p "
-                + "JOIN CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID "
-                + "JOIN BRAND b ON p.BRAND_ID = b.BRAND_ID "
+                + "INNER JOIN CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID "
+                + "INNER JOIN BRAND b ON p.BRAND_ID = b.BRAND_ID "
                 + "ORDER BY p.PRODUCT_ID DESC";
 
         try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -182,6 +181,7 @@ public class ProductDAO {
             while (rs.next()) {
                 ProductModel p = new ProductModel();
 
+                // 1. Đổ dữ liệu sản phẩm cơ bản
                 p.setProductId(rs.getInt("PRODUCT_ID"));
                 p.setName(rs.getString("PRO_NAME"));
                 p.setPrice(rs.getDouble("PRICE"));
@@ -190,13 +190,14 @@ public class ProductDAO {
                 p.setWarrantyMonth(rs.getInt("WARRANTY_MONTH"));
                 p.setDescription(rs.getString("DESCRIPTION"));
                 p.setStatus(rs.getInt("STATUS"));
-
+                p.setSoldQuantity(rs.getInt("SOLD_QUANTITY"));
+                // 3. Đóng gói Category (Danh mục)
                 CategoryModel cat = new CategoryModel();
                 cat.setCategoryId(rs.getInt("CATEGORY_ID"));
                 cat.setName(rs.getString("CAT_NAME"));
                 p.setCategory(cat);
 
-                // Đóng gói Brand
+                // 4. Đóng gói Brand (Thương hiệu)
                 BrandModel brand = new BrandModel();
                 brand.setBrandId(rs.getInt("BRAND_ID"));
                 brand.setName(rs.getString("BRAND_NAME"));
@@ -209,6 +210,20 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    //ChiTietSanPhamdialog
+    public boolean updateStatus(int productId, int statusValue) {
+        String sql = "UPDATE PRODUCT SET STATUS = ? WHERE PRODUCT_ID = ?";
+        try (Connection conn = ConnectionUtils.getMyConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, statusValue); // Số 1 hoặc 0
+            pstmt.setInt(2, productId);   // ID sản phẩm
+
+            return pstmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
