@@ -300,7 +300,6 @@ INSERT INTO FUNCTION (NAME_FUNCTION) VALUES ('Quản lý tài khoản');
 commit;
 
 
-
 select * from PRODUCT;
 
 select * from CATEGORY;
