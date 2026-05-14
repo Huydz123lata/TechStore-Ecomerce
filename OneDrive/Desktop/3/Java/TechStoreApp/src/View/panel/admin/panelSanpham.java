@@ -4,6 +4,7 @@
  */
 package View.panel.admin;
 
+import Controller.ProductController;
 import Controller.adminPageController;
 import DAO.ProductDAO;
 import Model.ProductModel;
@@ -21,10 +22,13 @@ public class panelSanpham extends javax.swing.JPanel {
     /**
      * Creates new form pnlSanPham
      */
+    private ProductController productController = new ProductController();
     private adminPageController adminController = new adminPageController();
 
     public panelSanpham() {
         initComponents();
+        productController.loadAllProductsToTable(tblProduct);
+        adminController.setUpTable(tblProduct, 6);
 //        checkPermission();
 
     }
@@ -37,6 +41,7 @@ public class panelSanpham extends javax.swing.JPanel {
         this.revalidate();
         this.repaint();
     }
+
 //    public void checkPermission() {
 //        // 1. Lấy tên chức năng của Panel này (Ví dụ: Quản lý sản phẩm)
 //        String feature = AppConst.QL_SAN_PHAM;
@@ -53,7 +58,6 @@ public class panelSanpham extends javax.swing.JPanel {
 //        btnEditProduct.setEnabled(UserSession.canDo(feature, AppConst.ACTION_EDIT) == 1);
 //        btnDeleteProduct.setEnabled(UserSession.canDo(feature, AppConst.ACTION_DELETE) == 1);
 //
-
     ////        // Nếu có nút Xuất Excel/PDF thì check quyền DOWNLOAD
 ////        if (btnExport != null) {
 ////            btnExport.setEnabled(UserSession.canDo(feature, AppConst.ACTION_DOWNLOAD) == 1);
@@ -93,6 +97,7 @@ public class panelSanpham extends javax.swing.JPanel {
         jLabel14 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         myButton1 = new Custom_Component.MyButton();
+        lblReload = new javax.swing.JLabel();
 
         myTextField2.setText("myTextField2");
 
@@ -119,17 +124,14 @@ public class panelSanpham extends javax.swing.JPanel {
         tblProduct.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
-                "Mã sản phẩm", "Tên sản phẩm", "Danh mục", "Số lượng tồn kho", "Số lượng đã bán", "Trạng thái"
+                "Mã sản phẩm", "Tên sản phẩm", "Danh mục", "Giá bán", "Số lượng tồn kho", "Số lượng đã bán", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -155,7 +157,7 @@ public class panelSanpham extends javax.swing.JPanel {
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(146, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,6 +277,15 @@ public class panelSanpham extends javax.swing.JPanel {
         myButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         myButton1.addActionListener(this::myButton1ActionPerformed);
 
+        lblReload.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblReload.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblReload.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-reload-24.png"))); // NOI18N
+        lblReload.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReloadMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlAdminAccountLayout = new javax.swing.GroupLayout(pnlAdminAccount);
         pnlAdminAccount.setLayout(pnlAdminAccountLayout);
         pnlAdminAccountLayout.setHorizontalGroup(
@@ -289,7 +300,11 @@ public class panelSanpham extends javax.swing.JPanel {
                     .addGroup(pnlAdminAccountLayout.createSequentialGroup()
                         .addGroup(pnlAdminAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlAdminAccountLayout.createSequentialGroup()
+                                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(527, 527, 527)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(lblReload, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -304,13 +319,15 @@ public class panelSanpham extends javax.swing.JPanel {
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlAdminAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlAdminAccountLayout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlAdminAccountLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlAdminAccountLayout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addGroup(pnlAdminAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblReload, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE))
         );
@@ -336,6 +353,10 @@ public class panelSanpham extends javax.swing.JPanel {
         showPanel(pnlNhap);
     }//GEN-LAST:event_myButton1ActionPerformed
 
+    private void lblReloadMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReloadMouseClicked
+        productController.loadAllProductsToTable(tblProduct);
+    }//GEN-LAST:event_lblReloadMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
@@ -356,6 +377,7 @@ public class panelSanpham extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblReload;
     private Custom_Component.MyButton myButton1;
     private Custom_Component.MyTextField myTextField1;
     private Custom_Component.MyTextField myTextField2;

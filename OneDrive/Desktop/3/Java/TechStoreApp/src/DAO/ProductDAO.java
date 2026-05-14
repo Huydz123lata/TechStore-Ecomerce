@@ -21,134 +21,6 @@ import java.util.List;
  */
 public class ProductDAO {
 
-//    public boolean insertProduct(ProductModel p, String categoryName) {
-//        Connection con = null;
-//        try {
-//            con = ConnectionUtils.getMyConnection();
-//            con.setAutoCommit(false); // Bắt đầu Transaction
-//
-//            // --- BƯỚC 1: XỬ LÝ DANH MỤC (Lấy ID cũ hoặc chèn mới) ---
-//            int categoryId = 0;
-//            String sqlCheckCat = "SELECT CATEGORY_ID FROM CATEGORY WHERE NAME = ?";
-//
-//            try (PreparedStatement psCheck = con.prepareStatement(sqlCheckCat)) {
-//                psCheck.setString(1, categoryName);
-//                try (ResultSet rs = psCheck.executeQuery()) {
-//                    if (rs.next()) {
-//                        categoryId = rs.getInt("CATEGORY_ID");
-//                    }
-//                }
-//            }
-//
-//            // Nếu chưa có danh mục này thì chèn mới để lấy ID
-//            if (categoryId == 0) {
-//                String sqlInsertCat = "INSERT INTO CATEGORY (NAME) VALUES (?)";
-//                String[] colID = {"CATEGORY_ID"};
-//                try (PreparedStatement psInsCat = con.prepareStatement(sqlInsertCat, colID)) {
-//                    psInsCat.setString(1, categoryName);
-//                    psInsCat.executeUpdate();
-//                    try (ResultSet rsCat = psInsCat.getGeneratedKeys()) {
-//                        if (rsCat.next()) {
-//                            categoryId = rsCat.getInt(1);
-//                        }
-//                    }
-//                }
-//            }
-//
-//            if (categoryId == 0) {
-//                throw new Exception("Lỗi: Không xử lý được Category ID");
-//            }
-//
-//            // --- BƯỚC 2: THÊM SẢN PHẨM VỚI CATEGORY_ID VỪA LẤY ---
-//            String sqlProd = "INSERT INTO PRODUCT (NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, BRAND, STATUS, WARRANTY_MONTH, CATEGORY_ID) "
-//                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-//
-//            try (PreparedStatement psProd = con.prepareStatement(sqlProd)) {
-//                psProd.setString(1, p.getName());
-//                psProd.setString(2, p.getDescription());
-//                psProd.setDouble(3, p.getPrice());
-//                psProd.setInt(4, p.getStockQuantity());
-//                psProd.setString(5, p.getBrand());
-//                psProd.setInt(6, p.getStatus()); // 0 hoặc 1
-//                psProd.setInt(7, p.getWarrantyMonth());
-//                psProd.setInt(8, categoryId); // Dùng ID vừa xử lý ở bước 1
-//
-//                psProd.executeUpdate();
-//            }
-//
-//            con.commit(); // Hoàn tất mọi thứ thành công
-//            return true;
-//
-//        } catch (Exception e) {
-//            if (con != null) {
-//                try {
-//                    con.rollback();
-//                } catch (SQLException ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//            e.printStackTrace();
-//            return false;
-//        } finally {
-//            if (con != null) {
-//                try {
-//                    con.close();
-//                } catch (SQLException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
-//
-//    public List<ProductModel> getAllProduct() {
-//        List<ProductModel> list = new ArrayList<>();
-//        String sql = "SELECT p.*, c.NAME AS CATEGORY_NAME "
-//                + "FROM PRODUCT p "
-//                + "JOIN CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID "
-//                + "WHERE p.IS_DELETED = 0 "
-//                + "ORDER BY p.PRODUCT_ID DESC";
-//
-//        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-//
-//            while (rs.next()) {
-//                ProductModel p = new ProductModel();
-//
-//                // Đọc dữ liệu từ các cột trong Database
-//                p.setProductId(rs.getInt("PRODUCT_ID"));
-//                p.setName(rs.getString("NAME"));
-//                p.setDescription(rs.getString("DESCRIPTION"));
-//                p.setPrice(rs.getDouble("PRICE"));
-//                p.setStockQuantity(rs.getInt("STOCK_QUANTITY"));
-//                p.setBrand(rs.getString("BRAND"));
-//                p.setStatus(rs.getInt("STATUS"));
-//                p.setWarrantyMonth(rs.getInt("WARRANTY_MONTH"));
-//                p.setCategoryId(rs.getInt("CATEGORY_ID"));
-//
-//                // ĐÂY LÀ CHỖ QUAN TRỌNG: Lấy tên danh mục từ cột đã JOIN
-//                p.setCategoryName(rs.getString("CATEGORY_NAME"));
-//
-//                // Thêm vào danh sách trả về
-//                list.add(p);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return list;
-//    }
-//
-//    public boolean deleteProduct(int productId) {
-//        String sql = "DELETE FROM PRODUCT WHERE PRODUCT_ID = ?";
-//        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-//
-//            ps.setInt(1, productId);
-//            int rowsDeleted = ps.executeUpdate();
-//
-//            return rowsDeleted > 0;
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
     //CATEGORY
     public List<CategoryModel> getAllCategoryName() {
         List<CategoryModel> list = new ArrayList<>();
@@ -262,6 +134,81 @@ public class ProductDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean upsertProduct(ProductModel pm) {
+        // 1. Kiểm tra xem sản phẩm đã tồn tại theo TÊN chưa
+        String sqlCheck = "SELECT STOCK_QUANTITY FROM PRODUCT WHERE UPPER(NAME) = UPPER(?)";
+
+        try (Connection con = ConnectionUtils.getMyConnection(); // Sử dụng hàm kết nối của ba
+                 PreparedStatement psCheck = con.prepareStatement(sqlCheck)) {
+
+            psCheck.setString(1, pm.getName());
+            ResultSet rs = psCheck.executeQuery();
+
+            if (rs.next()) {
+                // TRƯỜNG HỢP 1: ĐÃ CÓ TRONG DATABASE -> CỘNG DỒN STOCK
+                String sqlUpdate = "UPDATE PRODUCT SET STOCK_QUANTITY = STOCK_QUANTITY + ? WHERE NAME = ?";
+                try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
+                    psUpdate.setInt(1, pm.getStockQuantity());
+                    psUpdate.setString(2, pm.getName());
+                    return psUpdate.executeUpdate() > 0;
+                }
+            } else {
+                // TRƯỜNG HỢP 2: CHƯA CÓ TRONG DATABASE -> INSERT MỚI
+                // Gọi lại cái hàm insertProduct cũ mà ba đã viết
+                return insertProduct(pm);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<ProductModel> getAllProducts() {
+        List<ProductModel> list = new ArrayList<>();
+
+        String sql = "SELECT p.PRODUCT_ID, p.NAME AS PRO_NAME, p.PRICE, p.STOCK_QUANTITY, "
+                + "p.IMAGE_NAME, p.WARRANTY_MONTH, p.DESCRIPTION, p.STATUS, " // Đã thêm p.STATUS
+                + "p.CATEGORY_ID, p.BRAND_ID, "
+                + "c.NAME AS CAT_NAME, b.NAME AS BRAND_NAME "
+                + "FROM PRODUCT p "
+                + "JOIN CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID "
+                + "JOIN BRAND b ON p.BRAND_ID = b.BRAND_ID "
+                + "ORDER BY p.PRODUCT_ID DESC";
+
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ProductModel p = new ProductModel();
+
+                p.setProductId(rs.getInt("PRODUCT_ID"));
+                p.setName(rs.getString("PRO_NAME"));
+                p.setPrice(rs.getDouble("PRICE"));
+                p.setStockQuantity(rs.getInt("STOCK_QUANTITY"));
+                p.setImage(rs.getString("IMAGE_NAME"));
+                p.setWarrantyMonth(rs.getInt("WARRANTY_MONTH"));
+                p.setDescription(rs.getString("DESCRIPTION"));
+                p.setStatus(rs.getInt("STATUS"));
+
+                CategoryModel cat = new CategoryModel();
+                cat.setCategoryId(rs.getInt("CATEGORY_ID"));
+                cat.setName(rs.getString("CAT_NAME"));
+                p.setCategory(cat);
+
+                // Đóng gói Brand
+                BrandModel brand = new BrandModel();
+                brand.setBrandId(rs.getInt("BRAND_ID"));
+                brand.setName(rs.getString("BRAND_NAME"));
+                p.setBrand(brand);
+
+                list.add(p);
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi tại getAllProducts: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
     }
 
 }
