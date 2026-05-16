@@ -11,61 +11,60 @@ import javax.swing.border.LineBorder;
 
 public class ProductCard extends JPanel {
 
-    public ProductCard(String imageUrl, String brand, String name, String price, String oldPrice) {
-        // Cài đặt bố cục và viền cho thẻ
+    private JLabel lblName, lblPrice, lblOldPrice;
+
+    // Hàm khởi tạo nhận dữ liệu
+    public ProductCard(String name, String price, String oldPrice) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
         setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(230, 230, 230), 1, true), // Viền bo góc nhẹ
-                new EmptyBorder(10, 10, 10, 10) // Padding bên trong
+                new LineBorder(new Color(230, 230, 230), 1, true),
+                new EmptyBorder(15, 15, 15, 15)
         ));
-        setPreferredSize(new Dimension(220, 350));
 
-        // 1. Hình ảnh sản phẩm (Dùng JLabel chứa ImageIcon)
-        JLabel lblImage = new JLabel(new ImageIcon(imageUrl));
-        lblImage.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Cố định kích thước thẻ
+        setPreferredSize(new Dimension(220, 280));
+        setMaximumSize(new Dimension(220, 280));
 
-        // 2. Tên thương hiệu
-        JLabel lblBrand = new JLabel(brand);
-        lblBrand.setForeground(Color.GRAY);
-        lblBrand.setFont(new Font("Arial", Font.BOLD, 11));
+        // 1. Hình ảnh (Giả lập bằng một ô màu xám nếu chưa có ảnh)
+        JPanel imagePlaceholder = new JPanel();
+        imagePlaceholder.setBackground(new Color(240, 240, 240));
+        imagePlaceholder.setPreferredSize(new Dimension(180, 120));
+        imagePlaceholder.setMaximumSize(new Dimension(180, 120));
+        imagePlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 3. Tên sản phẩm
-        JLabel lblName = new JLabel(name);
+        // 2. Tên sản phẩm
+        lblName = new JLabel(name);
         lblName.setFont(new Font("Arial", Font.BOLD, 14));
+        lblName.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 4. Giá bán
-        JLabel lblPrice = new JLabel(price);
-        lblPrice.setForeground(new Color(230, 80, 0)); // Màu cam
+        // 3. Giá bán
+        lblPrice = new JLabel(price);
+        lblPrice.setForeground(new Color(230, 80, 0)); // Màu cam TechStore
         lblPrice.setFont(new Font("Arial", Font.BOLD, 16));
+        lblPrice.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 5. Giá cũ (gạch ngang - dùng HTML trong JLabel)
-        JLabel lblOldPrice = new JLabel("<html><strike>" + oldPrice + "</strike></html>");
-        lblOldPrice.setForeground(Color.LIGHT_GRAY);
-
-        // 6. Khu vực nút bấm (Thêm giỏ & Mua ngay)
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 5, 0));
+        // 4. Các nút bấm
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         buttonPanel.setBackground(Color.WHITE);
         JButton btnAddCart = new JButton("Thêm giỏ");
-        btnAddCart.setBackground(new Color(20, 30, 50));
-        btnAddCart.setForeground(Color.WHITE);
-
         JButton btnBuy = new JButton("Mua ngay");
+
+        // Tuỳ chỉnh màu nút (nếu có FlatLaf sẽ tự đẹp, đây là fallback)
         btnBuy.setBackground(new Color(255, 120, 0));
         btnBuy.setForeground(Color.WHITE);
 
         buttonPanel.add(btnAddCart);
         buttonPanel.add(btnBuy);
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Thêm tất cả vào Card
-        add(lblImage);
-        add(Box.createRigidArea(new Dimension(0, 10))); // Khoảng cách
-        add(lblBrand);
+        // Ghép các thành phần lại
+        add(imagePlaceholder);
+        add(Box.createRigidArea(new Dimension(0, 15)));
         add(lblName);
         add(Box.createRigidArea(new Dimension(0, 5)));
         add(lblPrice);
-        add(lblOldPrice);
-        add(Box.createVerticalGlue()); // Đẩy các nút xuống dưới cùng
+        add(Box.createVerticalGlue()); // Đẩy nút xuống đáy
         add(buttonPanel);
     }
 }
