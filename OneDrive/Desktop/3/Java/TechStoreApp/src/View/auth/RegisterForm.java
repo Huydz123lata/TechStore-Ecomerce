@@ -10,6 +10,7 @@ import Util.HashUtil;
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 /**
  *
@@ -25,6 +26,9 @@ public class RegisterForm extends javax.swing.JFrame {
     public RegisterForm() {
         initComponents();
         initComboBoxData();
+        AutoCompleteDecorator.decorate(cboNgay);
+        AutoCompleteDecorator.decorate(cboThang);
+        AutoCompleteDecorator.decorate(cboNam);
         this.setSize(1100, 650);
         this.setResizable(true);
         this.setLocationRelativeTo(null);
@@ -114,6 +118,8 @@ public class RegisterForm extends javax.swing.JFrame {
         rbNam = new javax.swing.JRadioButton();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        txtEmail = new Custom_Component.MyTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 153, 153));
@@ -198,7 +204,7 @@ public class RegisterForm extends javax.swing.JFrame {
                 phoneNumberFieldKeyTyped(evt);
             }
         });
-        roundPanel1.add(phoneNumberField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, -1, -1));
+        roundPanel1.add(phoneNumberField, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 370, 130, -1));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel5.setText("Nhập lại mật khẩu");
@@ -211,7 +217,7 @@ public class RegisterForm extends javax.swing.JFrame {
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel9.setText("Số điện thoại");
-        roundPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 350, 400, 20));
+        roundPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 350, 120, 20));
         roundPanel1.add(cboNam, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 440, 110, 40));
 
         cboNgay.setToolTipText("");
@@ -243,6 +249,18 @@ public class RegisterForm extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         jLabel12.setText("Tháng sinh");
         roundPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 420, 90, 20));
+
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        jLabel13.setText("Email");
+        roundPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 350, 120, 20));
+
+        txtEmail.setPreferredSize(new java.awt.Dimension(400, 40));
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtEmailKeyTyped(evt);
+            }
+        });
+        roundPanel1.add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 370, 250, -1));
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -306,6 +324,10 @@ public class RegisterForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_phoneNumberFieldKeyTyped
 
+    private void txtEmailKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEmailKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEmailKeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -342,6 +364,7 @@ public class RegisterForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -356,6 +379,7 @@ public class RegisterForm extends javax.swing.JFrame {
     public javax.swing.JRadioButton rbNu;
     private Custom_Component.RoundPanel roundPanel1;
     private javax.swing.JLabel signInText;
+    public Custom_Component.MyTextField txtEmail;
     public Custom_Component.MyTextField userNameField;
     // End of variables declaration//GEN-END:variables
 }

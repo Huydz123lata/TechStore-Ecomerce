@@ -16,6 +16,7 @@ public class UserModel {
     private int userId;
     private String fullName;
     private String SDT;
+    private String Email;
     private Date ngaySinh;
     private String gioiTinh;
     private String address;
@@ -25,9 +26,10 @@ public class UserModel {
     }
 
     // Constructor cho đăng ký 
-    public UserModel(String fullName, String SDT, String gioiTinh) {
+    public UserModel(String fullName, String SDT, String Email, String gioiTinh) {
         this.fullName = fullName;
         this.SDT = SDT;
+        this.Email = Email;
         this.gioiTinh = gioiTinh;
     }
 
@@ -109,4 +111,11 @@ public class UserModel {
         return userType;
     }
 
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String Email) {
+        this.Email = Email;
+    }
 }

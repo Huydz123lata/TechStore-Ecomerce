@@ -74,8 +74,8 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
         txtMoTa = new javax.swing.JTextArea();
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnLuu = new Custom_Component.MyButton();
         btnThoat = new Custom_Component.MyButton();
+        btnLuu = new Custom_Component.MyButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thông tin chi tiết sản phẩm");
@@ -228,7 +228,7 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtThuongHieu, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
             .addGroup(pnlInfoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1)
@@ -295,19 +295,19 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnLuu.setBackground(new java.awt.Color(204, 204, 204));
-        btnLuu.setForeground(new java.awt.Color(255, 255, 255));
-        btnLuu.setText("Thoát");
-        btnLuu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnLuu.addActionListener(this::btnLuuActionPerformed);
-
-        btnThoat.setBackground(new java.awt.Color(255, 102, 0));
+        btnThoat.setBackground(new java.awt.Color(204, 204, 204));
         btnThoat.setForeground(new java.awt.Color(255, 255, 255));
-        btnThoat.setText("Lưu thay đổi");
-        btnThoat.setColorClick(new java.awt.Color(204, 82, 0));
-        btnThoat.setColorHover(new java.awt.Color(255, 128, 51));
+        btnThoat.setText("Thoát");
         btnThoat.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnThoat.addActionListener(this::btnThoatActionPerformed);
+
+        btnLuu.setBackground(new java.awt.Color(255, 102, 0));
+        btnLuu.setForeground(new java.awt.Color(255, 255, 255));
+        btnLuu.setText("Lưu thay đổi");
+        btnLuu.setColorClick(new java.awt.Color(204, 82, 0));
+        btnLuu.setColorHover(new java.awt.Color(255, 128, 51));
+        btnLuu.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnLuu.addActionListener(this::btnLuuActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -323,9 +323,9 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
                         .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -339,15 +339,15 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
                     .addComponent(pnlAnh, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLuu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
+    private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
         // 1. Lấy trạng thái ba vừa chọn trong ComboBox
         String statusText = cbxTrangThai.getSelectedItem().toString();
 
@@ -363,11 +363,11 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Lỗi khi lưu vào Database!");
         }
-    }//GEN-LAST:event_btnThoatActionPerformed
-
-    private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
-        this.dispose();
     }//GEN-LAST:event_btnLuuActionPerformed
+
+    private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnThoatActionPerformed
 
     /**
      * @param args the command line arguments

@@ -174,59 +174,6 @@ public class adminPageController {
         }
     }
 
-    //Account
-    public void loadDataToTableAdminAccount(JTable table) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0);
-
-        AccountDAO dao = new AccountDAO();
-        List<AccountModel> list = dao.getAllAdminAccounts();
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
-
-        for (AccountModel acc : list) {
-            String ngayHienThi = "";
-            if (acc.getUserInfo().getNgaySinh() != null) {
-                ngayHienThi = sdf.format(acc.getUserInfo().getNgaySinh());
-            }
-            Object[] row = new Object[]{
-                acc.getUsername(),
-                acc.getAccountId(),
-                acc.getUserInfo().getFullName(),
-                acc.getUserInfo().getSDT(),
-                acc.getUserInfo().getAddress(),
-                ngayHienThi,
-                acc.getUserInfo().getGioiTinh(),
-                acc.getRoleGroup().getRoleGroupName() != null ? acc.getRoleGroup().getRoleGroupName() : "Chưa gán",
-                acc.getStatus()
-
-            };
-            model.addRow(row);
-        }
-    }
-
-    public void loadDataToTableCustomerAccount(JTable table) {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0);
-
-        AccountDAO dao = new AccountDAO();
-        List<AccountModel> list = dao.getAllCustomerAccounts();
-
-        for (AccountModel acc : list) {
-            Object[] row = new Object[]{
-                acc.getUsername(),
-                acc.getAccountId(),
-                acc.getUserInfo().getFullName(),
-                acc.getUserInfo().getSDT(),
-                acc.getUserInfo().getAddress(),
-                acc.getUserInfo().getNgaySinh(),
-                acc.getUserInfo().getGioiTinh(),
-                acc.getStatus()
-
-            };
-            model.addRow(row);
-        }
-    }
-
     //Account Assign Role_Group & Account Assign Role
     public void updateAccountNameToComboBox(JComboBox comboBox) {
         List<AccountModel> list = accountDAO.getAllAdminAccounts();
@@ -286,36 +233,4 @@ public class adminPageController {
         }
     }
 
-    //product
-//    public void loadDataToTableProduct(JTable table) {
-//        // 1. Lấy Model của bảng và xóa sạch dữ liệu cũ
-//        DefaultTableModel model = (DefaultTableModel) table.getModel();
-//        model.setRowCount(0);
-//
-//        // 2. Gọi DAO lấy danh sách
-//        ProductDAO dao = new ProductDAO();
-//        List<ProductModel> list = dao.getAllProduct();
-//
-//        // 3. Đổ dữ liệu
-//        int stt = 1;
-//        for (ProductModel p : list) {
-//            // Trạng thái hiển thị Tiếng Việt
-//            String statusText = (p.getStatus() == 1) ? "Đang bán" : "Tạm ngưng";
-//
-//            // Định dạng giá tiền (VD: 1500000 -> 1,500,000)
-//            // Nếu Huy muốn để số thô thì dùng: String.valueOf(p.getPrice())
-//            String formattedPrice = String.format("%,.0f", p.getPrice());
-//
-//            Object[] row = {
-//                stt++, // Cột STT
-//                p.getProductId(), // HIỂN THỊ SỐ THUẦN TÚY TỪ DB
-//                p.getName(),
-//                p.getCategoryName(),
-//                p.getStockQuantity(),
-//                formattedPrice,
-//                statusText
-//            };
-//            model.addRow(row);
-//        }
-//    }
 }

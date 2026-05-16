@@ -20,21 +20,21 @@ public class AuthDAO {
     public AccountModel checkLogin(String user, String pass) {
         String SQL = "SELECT ACCOUNT_ID, USER_ID, USERNAME, STATUS "
                 + "FROM ACCOUNT "
-                + "WHERE USERNAME = ? AND PASSWORD_HASH = ? AND IS_DELETED = 0";
-
+                + "WHERE USERNAME = ? AND PASSWORD_HASH = ? AND IS_DELETED = 0 AND STATUS = 1";
+        
         try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(SQL)) {
-
+            
             ps.setString(1, user);
             ps.setString(2, pass);
             ResultSet rs = ps.executeQuery();
-
+            
             if (rs.next()) {
-
+                
                 return new AccountModel(
                         rs.getInt("ACCOUNT_ID"),
                         rs.getInt("USER_ID"),
                         rs.getString("USERNAME"),
-                        rs.getString("STATUS")
+                        rs.getInt("STATUS")
                 );
             }
         } catch (Exception ex) {
@@ -45,35 +45,36 @@ public class AuthDAO {
 
     // xử lý đăng ký
     public boolean register(AccountModel acc) throws Exception {
-
+        
         Connection con = null;
-
+        
         try {
             con = ConnectionUtils.getMyConnection();
             con.setAutoCommit(false);
 
             // INSERT USER
             String sqlUser
-                    = "INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, BIRTH, GENDER) "
-                    + "VALUES (?, ?, ?, ?)";
-
+                    = "INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, EMAIL, BIRTH, GENDER) "
+                    + "VALUES (?, ?, ?, ?, ?)";
+            
             int userId = -1;
-
+            
             try (PreparedStatement ps1 = con.prepareStatement(sqlUser, new String[]{"USER_ID"})) {
-
+                
                 ps1.setString(1, acc.getUserInfo().getFullName());
                 ps1.setString(2, acc.getUserInfo().getSDT());
-
+                ps1.setString(3, acc.getUserInfo().getEmail());
+                
                 if (acc.getUserInfo().getNgaySinh() != null) {
-                    ps1.setDate(3, acc.getUserInfo().getNgaySinh());
+                    ps1.setDate(4, acc.getUserInfo().getNgaySinh());
                 } else {
-                    ps1.setNull(3, Types.DATE);
+                    ps1.setNull(4, Types.DATE);
                 }
-
-                ps1.setString(4, acc.getUserInfo().getGioiTinh());
-
+                
+                ps1.setString(5, acc.getUserInfo().getGioiTinh());
+                
                 ps1.executeUpdate();
-
+                
                 try (ResultSet rs = ps1.getGeneratedKeys()) {
                     if (rs.next()) {
                         userId = rs.getInt(1);
@@ -85,29 +86,29 @@ public class AuthDAO {
             String sqlAcc
                     = "INSERT INTO ACCOUNT "
                     + "(USER_ID, USERNAME, PASSWORD_HASH, STATUS) "
-                    + "VALUES (?, ?, ?, 'ACTIVE')";
-
+                    + "VALUES (?, ?, ?, 1)";
+            
             try (PreparedStatement ps2 = con.prepareStatement(sqlAcc)) {
-
+                
                 ps2.setInt(1, userId);
                 ps2.setString(2, acc.getUsername());
                 ps2.setString(3, acc.getPassword());
-
+                
                 ps2.executeUpdate();
             }
-
+            
             con.commit();
             return true;
-
+            
         } catch (Exception e) {
-
+            
             if (con != null) {
                 con.rollback();
             }
             throw e;
-
+            
         } finally {
-
+            
             if (con != null) {
                 con.close();
             }

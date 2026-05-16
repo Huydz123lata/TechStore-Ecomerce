@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package View.admin;
+package View.User;
 
 import DAO.TokenDAO;
 import Util.AppConst;
@@ -62,7 +62,7 @@ public class AdminForm extends javax.swing.JFrame {
         } else {
             btnArrowTrangchu.setOpaque(false);
         }
-        javax.swing.JLabel[] labels = {btnTrangchu, btnDoanhSo, btnThongke, btnBanhang, btnSanpham, btnHoadon, btnKhuyenmai, btnTaikhoan, btnRole, btnDanhMuc, btnKho};
+        javax.swing.JLabel[] labels = {btnTrangchu, btnDoanhSo, btnThongke, btnBanhang, btnSanpham, btnHoadon, btnKhuyenmai, btnTaikhoan, btnRole, btnKhachHang, btnKho};
 
         for (javax.swing.JLabel lbl : labels) {
             if (lbl == activeLabel) {
@@ -128,7 +128,7 @@ public class AdminForm extends javax.swing.JFrame {
         btnDoanhSo = new javax.swing.JLabel();
         btnThongke = new javax.swing.JLabel();
         btnRole = new javax.swing.JLabel();
-        btnDanhMuc = new javax.swing.JLabel();
+        btnKhachHang = new javax.swing.JLabel();
         btnKho = new javax.swing.JLabel();
         myButton1 = new Custom_Component.MyButton();
 
@@ -148,7 +148,7 @@ public class AdminForm extends javax.swing.JFrame {
         title.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         title.setForeground(new java.awt.Color(255, 102, 0));
         title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        title.setText("SMART HUB");
+        title.setText("ADMIN PORTAL");
 
         jPanel3.setBackground(new java.awt.Color(102, 102, 102));
         jPanel3.setPreferredSize(new java.awt.Dimension(0, 4));
@@ -374,24 +374,24 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnDanhMuc.setBackground(new java.awt.Color(0, 0, 51));
-        btnDanhMuc.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        btnDanhMuc.setForeground(new java.awt.Color(153, 153, 153));
-        btnDanhMuc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/6.png"))); // NOI18N
-        btnDanhMuc.setText("Quản lý khách hàng");
-        btnDanhMuc.setFocusable(false);
-        btnDanhMuc.setIconTextGap(15);
-        btnDanhMuc.setOpaque(true);
-        btnDanhMuc.setPreferredSize(new java.awt.Dimension(82, 50));
-        btnDanhMuc.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnKhachHang.setBackground(new java.awt.Color(0, 0, 51));
+        btnKhachHang.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnKhachHang.setForeground(new java.awt.Color(153, 153, 153));
+        btnKhachHang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/6.png"))); // NOI18N
+        btnKhachHang.setText("Quản lý khách hàng");
+        btnKhachHang.setFocusable(false);
+        btnKhachHang.setIconTextGap(15);
+        btnKhachHang.setOpaque(true);
+        btnKhachHang.setPreferredSize(new java.awt.Dimension(82, 50));
+        btnKhachHang.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnDanhMucMouseClicked(evt);
+                btnKhachHangMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnDanhMucMouseEntered(evt);
+                btnKhachHangMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnDanhMucMouseExited(evt);
+                btnKhachHangMouseExited(evt);
             }
         });
 
@@ -445,15 +445,15 @@ public class AdminForm extends javax.swing.JFrame {
                             .addGroup(MenuLayout.createSequentialGroup()
                                 .addComponent(btnTrangchu, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, 0)
-                                .addComponent(btnArrowTrangchu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btnArrowTrangchu, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE))
                             .addComponent(btnThongke, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())
-                    .addComponent(btnDanhMuc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnKhachHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnKho, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37))
+                .addGap(25, 25, 25))
         );
         MenuLayout.setVerticalGroup(
             MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -477,7 +477,7 @@ public class AdminForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSanpham, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnDanhMuc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnKhachHang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnKho, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -707,26 +707,26 @@ public class AdminForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnRoleMouseExited
     private boolean isTrangChuExpanded = false;
-    private void btnDanhMucMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseClicked
+    private void btnKhachHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhachHangMouseClicked
         showPanel(new panelKhachHang()); // Đảm bảo tên class Panel này đúng
-        currentSelectedLabel = btnDanhMuc;
-        resetMenuButtons(btnDanhMuc);
-    }//GEN-LAST:event_btnDanhMucMouseClicked
+        currentSelectedLabel = btnKhachHang;
+        resetMenuButtons(btnKhachHang);
+    }//GEN-LAST:event_btnKhachHangMouseClicked
 
-    private void btnDanhMucMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseEntered
-        if (btnDanhMuc != currentSelectedLabel) {
-            btnDanhMuc.setOpaque(true);
-            btnDanhMuc.setBackground(new Color(30, 30, 80));
-            btnDanhMuc.setForeground(Color.WHITE);
+    private void btnKhachHangMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhachHangMouseEntered
+        if (btnKhachHang != currentSelectedLabel) {
+            btnKhachHang.setOpaque(true);
+            btnKhachHang.setBackground(new Color(30, 30, 80));
+            btnKhachHang.setForeground(Color.WHITE);
         }
-    }//GEN-LAST:event_btnDanhMucMouseEntered
+    }//GEN-LAST:event_btnKhachHangMouseEntered
 
-    private void btnDanhMucMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDanhMucMouseExited
-        if (btnDanhMuc != currentSelectedLabel) {
-            btnDanhMuc.setOpaque(false); // Trả về trong suốt
-            btnDanhMuc.setForeground(new Color(153, 153, 153));
+    private void btnKhachHangMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhachHangMouseExited
+        if (btnKhachHang != currentSelectedLabel) {
+            btnKhachHang.setOpaque(false); // Trả về trong suốt
+            btnKhachHang.setForeground(new Color(153, 153, 153));
         }
-    }//GEN-LAST:event_btnDanhMucMouseExited
+    }//GEN-LAST:event_btnKhachHangMouseExited
 
     private void btnKhoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnKhoMouseClicked
         showPanel(new panelKho()); // Đảm bảo tên class Panel này đúng
@@ -787,25 +787,22 @@ public class AdminForm extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        // 1. Bật khử răng cưa để chữ Segoe UI mượt, không bị đứt nét
-        System.setProperty("awt.useSystemAAFontSettings", "on");
-        System.setProperty("swing.aatext", "true");
+//        // 1. Bật khử răng cưa để chữ Segoe UI mượt, không bị đứt nét
+//        System.setProperty("awt.useSystemAAFontSettings", "on");
+//        System.setProperty("swing.aatext", "true");
 
         // 2. Khởi tạo FlatLaf (Giao diện phẳng hiện đại)
         try {
-            // Cách gọi nhanh nhất của FlatLaf
             com.formdev.flatlaf.FlatLightLaf.setup();
-
-            // (Tùy chọn) Muốn màu so le của bảng rõ hơn thì thêm dòng này
             javax.swing.UIManager.put("Table.alternateRowColor", new java.awt.Color(242, 242, 242));
-
         } catch (Exception ex) {
             System.err.println("Không thể khởi tạo FlatLaf, sẽ dùng giao diện mặc định");
         }
 
-        // 3. Chạy giao diện
+        // 3. Chạy giao diện ĐĂNG NHẬP đầu tiên
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                // Đổi AdminForm thành LoginForm ở đây nhé
                 new AdminForm().setVisible(true);
             }
         });
@@ -817,9 +814,9 @@ public class AdminForm extends javax.swing.JFrame {
     private javax.swing.JLabel Title2;
     private javax.swing.JLabel btnArrowTrangchu;
     private javax.swing.JLabel btnBanhang;
-    private javax.swing.JLabel btnDanhMuc;
     private javax.swing.JLabel btnDoanhSo;
     private javax.swing.JLabel btnHoadon;
+    private javax.swing.JLabel btnKhachHang;
     private javax.swing.JLabel btnKho;
     private javax.swing.JLabel btnKhuyenmai;
     private javax.swing.JLabel btnRole;

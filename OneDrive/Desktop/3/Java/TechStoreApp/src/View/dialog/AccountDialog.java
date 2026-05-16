@@ -153,7 +153,7 @@ public class AccountDialog extends JDialog {
             accountData.setUserInfo(u);
             accountData.setUsername(txtUsername.getText().trim());
             accountData.setPasswordHash(new String(txtPassword.getPassword()));
-            accountData.setStatus("ACTIVE"); // Mặc định khi lưu/sửa
+            accountData.setStatus(1); // Mặc định khi lưu/sửa
 
             isSucceeded = true;
             dispose();

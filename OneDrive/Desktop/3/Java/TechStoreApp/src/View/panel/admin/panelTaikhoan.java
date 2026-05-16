@@ -4,13 +4,15 @@
  */
 package View.panel.admin;
 
+import Controller.AdminAccountController;
 import Util.TableDecorate;
 import Controller.adminPageController;
 import DAO.AccountDAO;
 import Model.AccountModel;
 import Model.UserModel;
-import View.admin.AdminForm;
+import View.User.AdminForm;
 import View.dialog.AccountDialog;
+import View.dialog.TaiKhoanAdminDialog;
 import View.dialog.dialogThemQuyen;
 import java.awt.Frame;
 import java.util.List;
@@ -26,6 +28,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
     private adminPageController adminController = new adminPageController();
     private TableDecorate tableAction = new TableDecorate();
     private AccountDAO accountDAO = new AccountDAO();
+    private AdminAccountController controller = new AdminAccountController();
 
     /**
      * Creates new form panelTaikhoan
@@ -34,17 +37,13 @@ public class panelTaikhoan extends javax.swing.JPanel {
         initComponents();
 
         //Admin account
-        adminController.setUpTable(tblAdminAccount, 8);
-        adminController.loadDataToTableAdminAccount(tblAdminAccount);
-
-        //Customer account
-        adminController.setUpTable(tblCustomerAccount, 7);
-        adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
+        controller.loadDataToTable(tblAdminAccount);
+        adminController.setUpTable(tblAdminAccount, 11);
 
         //Decorate Table
         TableDecorate.StatusRenderer statusRenderer = new TableDecorate.StatusRenderer();
-        tblAdminAccount.getColumnModel().getColumn(8).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
-        tblCustomerAccount.getColumnModel().getColumn(5).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
+        tblAdminAccount.getColumnModel().getColumn(9).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
+
     }
 
     /**
@@ -68,16 +67,6 @@ public class panelTaikhoan extends javax.swing.JPanel {
         btnDeleteAcc = new Custom_Component.MyButton();
         btnAddAcc = new Custom_Component.MyButton();
         btnEditAcc = new Custom_Component.MyButton();
-        pnlCustomerAccount = new javax.swing.JPanel();
-        pnlcus = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblCustomerAccount = new javax.swing.JTable();
-        txtFindCusAccount = new Custom_Component.MyTextField();
-        imagePanel2 = new Custom_Component.ImagePanel();
-        btnDeleteCusAcc = new Custom_Component.MyButton();
-        btnAddCusAcc = new Custom_Component.MyButton();
-        btnEditCusAcc = new Custom_Component.MyButton();
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setText("QUẢN LÝ TÀI KHOẢN");
@@ -96,17 +85,17 @@ public class panelTaikhoan extends javax.swing.JPanel {
         tblAdminAccount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblAdminAccount.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính", "Vai trò", "Trạng thái"
+                "Tên đăng nhập", "Họ và tên", "SĐT", "Email", "Địa chỉ", "Ngày sinh", "Giới tính", "Loại tài khoản", "Vai trò", "Trạng thái", "AccountID", "userId"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, true, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -116,9 +105,12 @@ public class panelTaikhoan extends javax.swing.JPanel {
         tblAdminAccount.setGridColor(new java.awt.Color(204, 204, 204));
         jScrollPane1.setViewportView(tblAdminAccount);
         if (tblAdminAccount.getColumnModel().getColumnCount() > 0) {
-            tblAdminAccount.getColumnModel().getColumn(1).setMinWidth(0);
-            tblAdminAccount.getColumnModel().getColumn(1).setPreferredWidth(0);
-            tblAdminAccount.getColumnModel().getColumn(1).setMaxWidth(0);
+            tblAdminAccount.getColumnModel().getColumn(10).setMinWidth(0);
+            tblAdminAccount.getColumnModel().getColumn(10).setPreferredWidth(0);
+            tblAdminAccount.getColumnModel().getColumn(10).setMaxWidth(0);
+            tblAdminAccount.getColumnModel().getColumn(11).setMinWidth(0);
+            tblAdminAccount.getColumnModel().getColumn(11).setPreferredWidth(0);
+            tblAdminAccount.getColumnModel().getColumn(11).setMaxWidth(0);
         }
 
         imagePanel1.setImage(new javax.swing.ImageIcon(getClass().getResource("/Resource/search.png"))); // NOI18N
@@ -170,7 +162,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
                 .addGap(51, 51, 51))
             .addComponent(jScrollPane1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlAdminAccountLayout.createSequentialGroup()
-                .addContainerGap(274, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAddAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEditAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -180,7 +172,7 @@ public class panelTaikhoan extends javax.swing.JPanel {
             .addGroup(pnlAdminAccountLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(97, Short.MAX_VALUE))
         );
         pnlAdminAccountLayout.setVerticalGroup(
             pnlAdminAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,146 +194,6 @@ public class panelTaikhoan extends javax.swing.JPanel {
         );
 
         jTabbedPane1.addTab("Tài khoản Admin & Nhân viên", pnlAdminAccount);
-
-        pnlcus.setBackground(new java.awt.Color(255, 255, 255));
-        pnlcus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 102, 0));
-        jLabel4.setText("Danh Sách Tài Khoản Khách Hàng Trong Hệ Thống");
-
-        tblCustomerAccount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        tblCustomerAccount.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính", "Trạng thái"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblCustomerAccount.setGridColor(new java.awt.Color(204, 204, 204));
-        jScrollPane2.setViewportView(tblCustomerAccount);
-        if (tblCustomerAccount.getColumnModel().getColumnCount() > 0) {
-            tblCustomerAccount.getColumnModel().getColumn(1).setMinWidth(0);
-            tblCustomerAccount.getColumnModel().getColumn(1).setPreferredWidth(0);
-            tblCustomerAccount.getColumnModel().getColumn(1).setMaxWidth(0);
-        }
-
-        imagePanel2.setImage(new javax.swing.ImageIcon(getClass().getResource("/Resource/search.png"))); // NOI18N
-
-        javax.swing.GroupLayout imagePanel2Layout = new javax.swing.GroupLayout(imagePanel2);
-        imagePanel2.setLayout(imagePanel2Layout);
-        imagePanel2Layout.setHorizontalGroup(
-            imagePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 44, Short.MAX_VALUE)
-        );
-        imagePanel2Layout.setVerticalGroup(
-            imagePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        btnDeleteCusAcc.setBackground(new java.awt.Color(255, 51, 51));
-        btnDeleteCusAcc.setForeground(new java.awt.Color(255, 255, 255));
-        btnDeleteCusAcc.setText("Xóa tài khoản");
-        btnDeleteCusAcc.setColorClick(new java.awt.Color(0, 0, 255));
-        btnDeleteCusAcc.setColorHover(new java.awt.Color(51, 102, 255));
-        btnDeleteCusAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDeleteCusAcc.addActionListener(this::btnDeleteCusAccActionPerformed);
-
-        btnAddCusAcc.setBackground(new java.awt.Color(51, 51, 255));
-        btnAddCusAcc.setForeground(new java.awt.Color(255, 255, 255));
-        btnAddCusAcc.setText("Thêm tài khoản");
-        btnAddCusAcc.setColorClick(new java.awt.Color(0, 0, 255));
-        btnAddCusAcc.setColorHover(new java.awt.Color(51, 102, 255));
-        btnAddCusAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAddCusAcc.addActionListener(this::btnAddCusAccActionPerformed);
-
-        btnEditCusAcc.setBackground(new java.awt.Color(51, 51, 255));
-        btnEditCusAcc.setForeground(new java.awt.Color(255, 255, 255));
-        btnEditCusAcc.setText("Sửa tài khoản");
-        btnEditCusAcc.setColorClick(new java.awt.Color(0, 0, 255));
-        btnEditCusAcc.setColorHover(new java.awt.Color(51, 102, 255));
-        btnEditCusAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnEditCusAcc.addActionListener(this::btnEditCusAccActionPerformed);
-
-        javax.swing.GroupLayout pnlcusLayout = new javax.swing.GroupLayout(pnlcus);
-        pnlcus.setLayout(pnlcusLayout);
-        pnlcusLayout.setHorizontalGroup(
-            pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlcusLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlcusLayout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(imagePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtFindCusAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(51, 51, 51))
-                    .addGroup(pnlcusLayout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(129, Short.MAX_VALUE))))
-            .addComponent(jScrollPane2)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlcusLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAddCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEditCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDeleteCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
-        );
-        pnlcusLayout.setVerticalGroup(
-            pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlcusLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtFindCusAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(imagePanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDeleteCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEditCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
-        );
-
-        javax.swing.GroupLayout pnlCustomerAccountLayout = new javax.swing.GroupLayout(pnlCustomerAccount);
-        pnlCustomerAccount.setLayout(pnlCustomerAccountLayout);
-        pnlCustomerAccountLayout.setHorizontalGroup(
-            pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 736, Short.MAX_VALUE)
-            .addGroup(pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlCustomerAccountLayout.createSequentialGroup()
-                    .addGap(0, 0, 0)
-                    .addComponent(pnlcus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(0, 0, 0)))
-        );
-        pnlCustomerAccountLayout.setVerticalGroup(
-            pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 734, Short.MAX_VALUE)
-            .addGroup(pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(pnlCustomerAccountLayout.createSequentialGroup()
-                    .addGap(0, 0, 0)
-                    .addComponent(pnlcus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(0, 0, 0)))
-        );
-
-        jTabbedPane1.addTab("Tài khoản khách hàng", pnlCustomerAccount);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -384,244 +236,86 @@ public class panelTaikhoan extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnEditCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCusAccActionPerformed
-        int row = tblAdminAccount.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần sửa!");
-            return;
-        }
-
-        try {
-            // 1. Bốc dữ liệu trực tiếp từ các cột theo hình Huy gửi
-            String username = tblAdminAccount.getValueAt(row, 0).toString();
-            int accountId = Integer.parseInt(tblAdminAccount.getValueAt(row, 1).toString());
-            String fullName = tblAdminAccount.getValueAt(row, 2).toString();
-            String sdt = tblAdminAccount.getValueAt(row, 3).toString();
-            String diaChi = tblAdminAccount.getValueAt(row, 4).toString();
-            String ngaySinhStr = tblAdminAccount.getValueAt(row, 5).toString();
-            String gioiTinh = tblAdminAccount.getValueAt(row, 6).toString();
-            String trangThai = tblAdminAccount.getValueAt(row, 8).toString();
-
-            // 2. Tạo đối tượng tạm thời để đổ lên Dialog
-            UserModel u = new UserModel();
-            u.setFullName(fullName);
-            u.setSDT(sdt);
-            u.setAddress(diaChi);
-            u.setGioiTinh(gioiTinh);
-
-            try {
-                u.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr));
-            } catch (Exception e) {
-
-            }
-
-            AccountModel selectedAcc = new AccountModel();
-            selectedAcc.setAccountId(accountId);
-            selectedAcc.setUsername(username);
-            selectedAcc.setUserInfo(u);
-            selectedAcc.setStatus(trangThai);
-
-            // 3. Mở Dialog
-            AccountDialog dialog = new AccountDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this));
-            dialog.setModel(selectedAcc);
-            dialog.setVisible(true);
-
-            // 4. Xử lý sau khi người dùng bấm "CẬP NHẬT"
-            if (dialog.isSucceeded()) {
-                AccountModel updatedData = dialog.getAccountData();
-
-                // QUAN TRỌNG: Vì bốc từ bảng không có USER_ID, Huy cần lấy nó từ listAccount hoặc DB
-                // Để đơn giản và chính xác nhất, mình tìm lại USER_ID dựa vào AccountID trong DB
-                int realUserId = accountDAO.getUserIdByAccountId(accountId);
-                updatedData.setUserId(realUserId);
-                updatedData.setAccountId(accountId);
-
-                if (accountDAO.updateAccount(updatedData)) {
-                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-                    adminController.loadDataToTableAdminAccount(tblAdminAccount);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ bảng!");
-        }
-    }//GEN-LAST:event_btnEditCusAccActionPerformed
-
-    private void btnAddCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCusAccActionPerformed
-        // 1. Khởi tạo dialog (truyền vào Frame cha)
-        Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
-        AccountDialog dialog = new AccountDialog(parent);
-
-        // 2. Hiển thị dialog (nó sẽ dừng code ở đây cho đến khi dialog đóng)
-        dialog.setVisible(true);
-
-        // 3. Nếu bấm "Lưu" thành công thì mới xử lý tiếp
-        if (dialog.isSucceeded()) {
-            AccountModel newAcc = dialog.getAccountData();
-
-            // 4. Gọi DAO để lưu vào 2 bảng (Dùng hàm insertAccount mình đã viết ở trên)
-            if (accountDAO.insertAccount(newAcc)) {
-                JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
-                // Load lại bảng
-                adminController.loadDataToTableAdminAccount(tblAdminAccount);
-                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất bại! Kiểm tra lại SĐT hoặc Username.");
-            }
-        }
-    }//GEN-LAST:event_btnAddCusAccActionPerformed
-
-    private void btnDeleteCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCusAccActionPerformed
-        int selectedRow = tblCustomerAccount.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần xóa!");
-            return;
-        }
-
-        // 1. Lấy Username từ cột đầu tiên (Index 0) để hiển thị thông báo
-        String username = tblCustomerAccount.getValueAt(selectedRow, 0).toString();
-
-        // 2. Lấy AccountID từ cột thứ hai (Index 1) để dùng làm điều kiện xóa trong SQL
-        int accountId = Integer.parseInt(tblCustomerAccount.getValueAt(selectedRow, 1).toString());
-
-        // 3. Thông báo hiển thị tên Username cho thân thiện
-        int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn xóa tài khoản: " + username + " không?",
-                "Xác nhận xóa",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            AccountDAO dao = new AccountDAO();
-
-            // Gọi hàm xóa vĩnh viễn bằng ID
-            if (dao.deleteAccount(accountId)) {
-                JOptionPane.showMessageDialog(this, "Đã xóa tài khoản " + username + " thành công!");
-                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
-            } else {
-                JOptionPane.showMessageDialog(this, "Lỗi! Không thể xóa tài khoản này.");
-            }
-        }
-    }//GEN-LAST:event_btnDeleteCusAccActionPerformed
-
     private void btnEditAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditAccActionPerformed
         int row = tblAdminAccount.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần sửa!");
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Ba vui lòng chọn 1 tài khoản trong bảng để sửa!");
             return;
         }
 
+        // 1. Lấy dữ liệu từ bảng nhét vào Model (Dựa trên 12 cột ba đã set)
+        AccountModel acc = new AccountModel();
+        UserModel user = new UserModel();
+
+        acc.setUsername(tblAdminAccount.getValueAt(row, 0).toString());
+        user.setFullName(tblAdminAccount.getValueAt(row, 1).toString());
+        user.setSDT(tblAdminAccount.getValueAt(row, 2).toString());
+        user.setEmail(tblAdminAccount.getValueAt(row, 3).toString());
+        user.setAddress(tblAdminAccount.getValueAt(row, 4).toString());
+
+        // Xử lý ngày sinh từ bảng (String -> Date)
         try {
-            // 1. Bốc dữ liệu trực tiếp từ các cột theo hình Huy gửi
-            String username = tblAdminAccount.getValueAt(row, 0).toString();
-            int accountId = Integer.parseInt(tblAdminAccount.getValueAt(row, 1).toString());
-            String fullName = tblAdminAccount.getValueAt(row, 2).toString();
-            String sdt = tblAdminAccount.getValueAt(row, 3).toString();
-            String diaChi = tblAdminAccount.getValueAt(row, 4).toString();
-            String ngaySinhStr = tblAdminAccount.getValueAt(row, 5).toString();
-            String gioiTinh = tblAdminAccount.getValueAt(row, 6).toString();
-            String vaiTro = tblAdminAccount.getValueAt(row, 7).toString();
-            String trangThai = tblAdminAccount.getValueAt(row, 8).toString();
-
-            // 2. Tạo đối tượng tạm thời để đổ lên Dialog
-            UserModel u = new UserModel();
-            u.setFullName(fullName);
-            u.setSDT(sdt);
-            u.setAddress(diaChi);
-            u.setGioiTinh(gioiTinh);
-            u.setUserType(vaiTro);
-
-            try {
-                u.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr));
-            } catch (Exception e) {
-
-            }
-
-            AccountModel selectedAcc = new AccountModel();
-            selectedAcc.setAccountId(accountId);
-            selectedAcc.setUsername(username);
-            selectedAcc.setUserInfo(u);
-            selectedAcc.setStatus(trangThai);
-
-            // 3. Mở Dialog
-            AccountDialog dialog = new AccountDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this));
-            dialog.setModel(selectedAcc);
-            dialog.setVisible(true);
-
-            // 4. Xử lý sau khi người dùng bấm "CẬP NHẬT"
-            if (dialog.isSucceeded()) {
-                AccountModel updatedData = dialog.getAccountData();
-
-                // QUAN TRỌNG: Vì bốc từ bảng không có USER_ID, Huy cần lấy nó từ listAccount hoặc DB
-                // Để đơn giản và chính xác nhất, mình tìm lại USER_ID dựa vào AccountID trong DB
-                int realUserId = accountDAO.getUserIdByAccountId(accountId);
-                updatedData.setUserId(realUserId);
-                updatedData.setAccountId(accountId);
-
-                if (accountDAO.updateAccount(updatedData)) {
-                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-                    adminController.loadDataToTableAdminAccount(tblAdminAccount);
-                }
-            }
+            String dateStr = tblAdminAccount.getValueAt(row, 5).toString();
+            java.util.Date d = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(dateStr);
+            user.setNgaySinh(new java.sql.Date(d.getTime()));
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ bảng!");
         }
+
+        user.setGioiTinh(tblAdminAccount.getValueAt(row, 6).toString());
+        user.setUserType(tblAdminAccount.getValueAt(row, 7).toString().equals("Quản trị viên") ? "ADMIN" : "STAFF");
+        acc.setStatus(tblAdminAccount.getValueAt(row, 9).toString().equals("Hoạt động") ? 1 : 0);
+
+        // Lấy 2 ID ẩn ở cuối bảng
+        acc.setAccountId((int) tblAdminAccount.getValueAt(row, 10));
+        user.setUserId((int) tblAdminAccount.getValueAt(row, 11));
+
+        acc.setUserInfo(user);
+
+        // 2. Mở Dialog ở chế độ Sửa
+        TaiKhoanAdminDialog dialog = new TaiKhoanAdminDialog(null, true);
+        dialog.setEditMode(acc); // Truyền model vào để đổ dữ liệu lên form
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+
+        // 3. Load lại bảng
+        controller.loadDataToTable(tblAdminAccount);
     }//GEN-LAST:event_btnEditAccActionPerformed
 
     private void btnAddAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddAccActionPerformed
-        // 1. Khởi tạo dialog (truyền vào Frame cha)
-        Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
-        AccountDialog dialog = new AccountDialog(parent);
-
-        // 2. Hiển thị dialog (nó sẽ dừng code ở đây cho đến khi dialog đóng)
+        TaiKhoanAdminDialog dialog = new TaiKhoanAdminDialog(null, true);
+        dialog.setAddMode(); // Gọi hàm xóa trắng form
+        dialog.setLocationRelativeTo(null);
         dialog.setVisible(true);
 
-        // 3. Nếu bấm "Lưu" thành công thì mới xử lý tiếp
-        if (dialog.isSucceeded()) {
-            AccountModel newAcc = dialog.getAccountData();
-
-            // 4. Gọi DAO để lưu vào 2 bảng (Dùng hàm insertAccount mình đã viết ở trên)
-            if (accountDAO.insertAccount(newAcc)) {
-                JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
-                // Load lại bảng
-                adminController.loadDataToTableAdminAccount(tblAdminAccount);
-                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất bại! Kiểm tra lại SĐT hoặc Username.");
-            }
-        }
+        // Sau khi đóng dialog, load lại bảng
+        controller.loadDataToTable(tblAdminAccount);
     }//GEN-LAST:event_btnAddAccActionPerformed
 
     private void btnDeleteAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteAccActionPerformed
-        int selectedRow = tblAdminAccount.getSelectedRow();
-
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần xóa!");
+// 1. Kiểm tra xem người dùng đã chọn dòng nào chưa
+        int row = tblAdminAccount.getSelectedRow();
+        if (row < 0) {
+            JOptionPane.showMessageDialog(this, "Ba vui lòng chọn một tài khoản trong bảng để xóa!");
             return;
         }
 
-        // 1. Lấy Username từ cột đầu tiên (Index 0) để hiển thị thông báo
-        String username = tblAdminAccount.getValueAt(selectedRow, 0).toString();
+        // 2. Lấy thông tin để hiển thị xác nhận
+        String username = tblAdminAccount.getValueAt(row, 0).toString();
+        int accountId = (int) tblAdminAccount.getValueAt(row, 10); // Lấy ID từ cột ẩn số 10
 
-        // 2. Lấy AccountID từ cột thứ hai (Index 1) để dùng làm điều kiện xóa trong SQL
-        int accountId = Integer.parseInt(tblAdminAccount.getValueAt(selectedRow, 1).toString());
-
-        // 3. Thông báo hiển thị tên Username cho thân thiện
+        // 3. Hỏi xác nhận trước khi xóa (Cho chắc ăn ba ạ)
         int confirm = JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn xóa tài khoản: " + username + " không?",
+                "Ba có chắc chắn muốn xóa tài khoản [" + username + "] không?",
                 "Xác nhận xóa",
                 JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+                JOptionPane.WARNING_MESSAGE);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            AccountDAO dao = new AccountDAO();
-
-            // Gọi hàm xóa vĩnh viễn bằng ID
-            if (dao.deleteAccount(accountId)) {
-                JOptionPane.showMessageDialog(this, "Đã xóa tài khoản " + username + " thành công!");
-                adminController.loadDataToTableAdminAccount(tblAdminAccount);
+            // 4. Gọi Controller thực hiện xóa
+            if (accountDAO.deleteAccount(accountId)) {
+                JOptionPane.showMessageDialog(this, "Đã xóa tài khoản thành công!");
+                // 5. Load lại bảng để cập nhật dữ liệu mới
+                controller.loadDataToTable(tblAdminAccount);
             } else {
                 JOptionPane.showMessageDialog(this, "Lỗi! Không thể xóa tài khoản này.");
             }
@@ -630,26 +324,16 @@ public class panelTaikhoan extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private Custom_Component.MyButton btnAddAcc;
-    private Custom_Component.MyButton btnAddCusAcc;
     private Custom_Component.MyButton btnDeleteAcc;
-    private Custom_Component.MyButton btnDeleteCusAcc;
     private Custom_Component.MyButton btnEditAcc;
-    private Custom_Component.MyButton btnEditCusAcc;
     private Custom_Component.ImagePanel imagePanel1;
-    private Custom_Component.ImagePanel imagePanel2;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel pnlAdminAccount;
-    private javax.swing.JPanel pnlCustomerAccount;
-    private javax.swing.JPanel pnlcus;
     private javax.swing.JTable tblAdminAccount;
-    private javax.swing.JTable tblCustomerAccount;
     private Custom_Component.MyTextField txtFindAccount;
-    private Custom_Component.MyTextField txtFindCusAccount;
     // End of variables declaration//GEN-END:variables
 }

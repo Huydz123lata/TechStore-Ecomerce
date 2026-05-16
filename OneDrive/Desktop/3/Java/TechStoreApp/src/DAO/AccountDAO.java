@@ -16,202 +16,169 @@ import java.util.Vector;
 
 public class AccountDAO {
 
-    public boolean insertAccount(AccountModel acc) {
+    public boolean addAdminStaffAccount(AccountModel acc) {
+        UserModel user = acc.getUserInfo();
+        // Chèn SYSDATE vào CREATED_AT nếu ba có cột đó
+        String sqlUser = "INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, EMAIL, ADDRESS, BIRTH, GENDER, USER_TYPE, CREATED_AT) VALUES (?, ?, ?, ?, ?, ?, ?, SYSDATE)";
+        String sqlAcc = "INSERT INTO ACCOUNT (USER_ID, USERNAME, PASSWORD_HASH, STATUS, CREATED_AT) VALUES (?, ?, ?, ?, SYSDATE)";
+
         Connection con = null;
         try {
             con = ConnectionUtils.getMyConnection();
             con.setAutoCommit(false);
 
-            // Bước 1: Thêm vào bảng APP_USER
-            String sqlUser = "INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, ADDRESS, BIRTH, GENDER, USER_TYPE) VALUES (?, ?, ?, ?, ?, ?)";
-            String[] generatedColumns = {"USER_ID"};
+            // Oracle yêu cầu chỉ định rõ tên cột ID để trả về
+            PreparedStatement psUser = con.prepareStatement(sqlUser, new String[]{"USER_ID"});
+            psUser.setString(1, user.getFullName());
+            psUser.setString(2, user.getSDT());
+            psUser.setString(3, user.getEmail());
+            psUser.setString(4, user.getAddress());
+            psUser.setDate(5, user.getNgaySinh());
+            psUser.setString(6, user.getGioiTinh());
+            psUser.setString(7, user.getUserType());
+            psUser.executeUpdate();
+
+            ResultSet rsUser = psUser.getGeneratedKeys();
             int generatedUserId = 0;
+            if (rsUser.next()) {
+                // Dùng getBigDecimal cho chắc ăn với Oracle
+                generatedUserId = rsUser.getBigDecimal(1).intValue();
+            }
 
-            try (PreparedStatement psUser = con.prepareStatement(sqlUser, generatedColumns)) {
-                UserModel u = acc.getUserInfo();
-                psUser.setString(1, u.getFullName());
-                psUser.setString(2, u.getSDT());
-                psUser.setString(3, u.getAddress());
-                psUser.setDate(4, u.getNgaySinh());
-                psUser.setString(5, u.getGioiTinh());
-                psUser.setString(6, u.getUserType());
+            PreparedStatement psAcc = con.prepareStatement(sqlAcc);
+            psAcc.setInt(1, generatedUserId);
+            psAcc.setString(2, acc.getUsername());
+            psAcc.setString(3, acc.getPasswordHash());
+            psAcc.setInt(4, acc.getStatus());
+            psAcc.executeUpdate();
 
-                psUser.executeUpdate();
-                ResultSet rs = psUser.getGeneratedKeys();
-                if (rs.next()) {
-                    generatedUserId = rs.getInt(1);
+            con.commit();
+            return true;
+        } catch (Exception e) {
+            try {
+                if (con != null) {
+                    con.rollback();
                 }
-            }
-
-            if (generatedUserId == 0) {
-                throw new Exception("Lỗi: Không lấy được USER_ID");
-            }
-
-            // Bước 2: Thêm vào bảng ACCOUNT
-            String sqlAcc = "INSERT INTO ACCOUNT (USER_ID, USERNAME, PASSWORD_HASH, STATUS) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement psAcc = con.prepareStatement(sqlAcc)) {
-                psAcc.setInt(1, generatedUserId);
-                psAcc.setString(2, acc.getUsername());
-                psAcc.setString(3, acc.getPasswordHash());
-                psAcc.setString(4, "ACTIVE");
-                psAcc.executeUpdate();
-            }
-
-            con.commit();
-            return true;
-        } catch (Exception e) {
-            if (con != null) try {
-                con.rollback();
-            } catch (SQLException ex) {
-            }
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (con != null) try {
-                con.close();
-            } catch (SQLException e) {
-            }
-        }
-    }
-
-    public boolean updateAccount(AccountModel acc) {
-        Connection con = null;
-        try {
-            con = ConnectionUtils.getMyConnection();
-            con.setAutoCommit(false);
-
-            // 1. Cập nhật bảng APP_USER
-            String sqlUser = "UPDATE APP_USER SET FULL_NAME = ?, PHONE_NUMBER = ?, ADDRESS = ?, BIRTH = ?, GENDER = ? WHERE USER_ID = ?";
-            try (PreparedStatement psU = con.prepareStatement(sqlUser)) {
-                UserModel u = acc.getUserInfo();
-                psU.setString(1, u.getFullName());
-                psU.setString(2, u.getSDT());
-                psU.setString(3, u.getAddress());
-                psU.setDate(4, u.getNgaySinh());
-                psU.setString(5, u.getGioiTinh());
-                psU.setInt(6, acc.getUserId());
-                psU.executeUpdate();
-            }
-
-            String sqlAcc = "UPDATE ACCOUNT SET STATUS = ? WHERE USER_ID = ?";
-            try (PreparedStatement psA = con.prepareStatement(sqlAcc)) {
-                psA.setString(1, acc.getStatus());
-                psA.setInt(2, acc.getUserId());
-                psA.executeUpdate();
-            }
-
-            con.commit();
-            return true;
-        } catch (Exception e) {
-            if (con != null) try {
-                con.rollback();
             } catch (Exception ex) {
             }
             e.printStackTrace();
             return false;
         } finally {
-            if (con != null) try {
-                con.close();
+            try {
+                if (con != null) {
+                    con.close();
+                }
             } catch (Exception e) {
             }
         }
     }
 
-    public boolean deleteAccount(int userId) {
+    public boolean updateAdminStaffAccount(AccountModel acc) {
+        UserModel user = acc.getUserInfo();
+        // Oracle dùng SYSDATE để lấy thời gian hiện tại
+        String sqlUser = "UPDATE APP_USER SET FULL_NAME=?, PHONE_NUMBER=?, EMAIL=?, ADDRESS=?, BIRTH=?, GENDER=?, USER_TYPE=?, UPDATED_AT=SYSDATE WHERE USER_ID=?";
+        String sqlAcc = "UPDATE ACCOUNT SET USERNAME=?, STATUS=?, UPDATED_AT=SYSDATE WHERE ACCOUNT_ID=?";
+
         Connection con = null;
         try {
             con = ConnectionUtils.getMyConnection();
-            con.setAutoCommit(false);
+            con.setAutoCommit(false); // Chạy giao dịch (Transaction) để đảm bảo sửa là sửa cả hai bảng
 
-            String sqlAcc = "DELETE FROM ACCOUNT WHERE USER_ID = ?";
-            String sqlUser = "DELETE FROM APP_USER WHERE USER_ID = ?";
+            // 1. Cập nhật thông tin cá nhân ở bảng APP_USER
+            PreparedStatement psUser = con.prepareStatement(sqlUser);
+            psUser.setString(1, user.getFullName());
+            psUser.setString(2, user.getSDT());
+            psUser.setString(3, user.getEmail());
+            psUser.setString(4, user.getAddress());
+            psUser.setDate(5, user.getNgaySinh());
+            psUser.setString(6, user.getGioiTinh());
+            psUser.setString(7, user.getUserType());
+            psUser.setInt(8, user.getUserId());
+            psUser.executeUpdate();
 
-            try (PreparedStatement psAcc = con.prepareStatement(sqlAcc); PreparedStatement psUser = con.prepareStatement(sqlUser)) {
+            // 2. Cập nhật thông tin đăng nhập ở bảng ACCOUNT
+            PreparedStatement psAcc = con.prepareStatement(sqlAcc);
+            psAcc.setString(1, acc.getUsername());
+            psAcc.setInt(2, acc.getStatus());
+            psAcc.setInt(3, acc.getAccountId());
+            psAcc.executeUpdate();
 
-                psAcc.setInt(1, userId);
-                psAcc.executeUpdate();
-
-                psUser.setInt(1, userId);
-                psUser.executeUpdate();
-            }
-
-            con.commit();
+            con.commit(); // Chốt dữ liệu
             return true;
         } catch (Exception e) {
-            if (con != null) try {
-                con.rollback();
-            } catch (SQLException ex) {
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (Exception ex) {
             }
             e.printStackTrace();
             return false;
         } finally {
-            if (con != null) try {
-                con.close();
-            } catch (SQLException e) {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (Exception e) {
             }
+        }
+    }
+
+    public boolean deleteAccount(int accountId) {
+        // Chỉ cập nhật cờ IS_DELETED thành 1 và ghi nhận thời gian xóa
+        String sql = "UPDATE ACCOUNT SET IS_DELETED = 1, UPDATED_AT = SYSDATE WHERE ACCOUNT_ID = ?";
+
+        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, accountId);
+
+            int rowAffected = ps.executeUpdate();
+            return rowAffected > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
     public List<AccountModel> getAllAdminAccounts() {
-        List<AccountModel> list = new ArrayList();
+        List<AccountModel> list = new ArrayList<>();
+        // Đã bổ sung u.EMAIL và u.USER_TYPE vào câu lệnh SELECT
         String sql = "SELECT a.ACCOUNT_ID, a.USER_ID, a.USERNAME, a.STATUS, "
-                + "u.FULL_NAME, u.PHONE_NUMBER, u.GENDER, u.BIRTH, u.ADDRESS, rg.NAME_ROLE_GROUP "
+                + "u.FULL_NAME, u.PHONE_NUMBER, u.EMAIL, u.GENDER, u.BIRTH, u.ADDRESS, u.USER_TYPE, rg.NAME_ROLE_GROUP "
                 + "FROM ACCOUNT a "
                 + "JOIN APP_USER u ON a.USER_ID = u.USER_ID "
                 + "LEFT JOIN ACCOUNT_ASSIGN_ROLE_GROUP aarg ON aarg.ACCOUNT_ID = a.ACCOUNT_ID "
                 + "LEFT JOIN ROLE_GROUP rg ON rg.ROLE_GROUP_ID = aarg.ROLE_GROUP_ID "
-                + "WHERE a.IS_DELETED = 0 AND u.USER_TYPE IN ('ADMIN','STAFF')";
+                + "WHERE a.IS_DELETED = 0 AND u.USER_TYPE IN ('ADMIN','STAFF') "
+                + "ORDER BY a.ACCOUNT_ID DESC"; // Thêm Order By để tài khoản mới tạo lên đầu cho dễ nhìn nha ba
+
         try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserModel u = new UserModel();
                 u.setFullName(rs.getString("FULL_NAME"));
                 u.setSDT(rs.getString("PHONE_NUMBER"));
+                u.setEmail(rs.getString("EMAIL"));         // Thêm lấy Email
                 u.setAddress(rs.getString("ADDRESS"));
                 u.setNgaySinh(rs.getDate("BIRTH"));
                 u.setGioiTinh(rs.getString("GENDER"));
+                u.setUserType(rs.getString("USER_TYPE"));  // Thêm lấy Loại tài khoản
 
                 RoleGroupModel rgm = new RoleGroupModel();
-                rgm.setRoleGroupName(rs.getString("NAME_ROLE_GROUP"));
+                rgm.setRoleGroupName(rs.getString("NAME_ROLE_GROUP")); // Null an toàn
 
                 AccountModel acc = new AccountModel(
                         rs.getInt("ACCOUNT_ID"),
                         rs.getInt("USER_ID"),
                         rs.getString("USERNAME"),
-                        rs.getString("STATUS")
+                        rs.getInt("STATUS")
                 );
+
                 acc.setUserInfo(u);
                 acc.setRoleGroup(rgm);
-                list.add(acc);
-            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    public List<AccountModel> getAllCustomerAccounts() {
-        List<AccountModel> list = new ArrayList();
-        String sql = "SELECT a.ACCOUNT_ID, a.USER_ID, a.USERNAME, a.STATUS,u.FULL_NAME, u.PHONE_NUMBER, u.ADDRESS "
-                + "FROM ACCOUNT a "
-                + "JOIN APP_USER u ON a.USER_ID = u.USER_ID "
-                + "WHERE a.IS_DELETED = 0 AND USER_TYPE IN('CUSTOMER')";
-        try (Connection con = ConnectionUtils.getMyConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                UserModel u = new UserModel();
-                u.setFullName(rs.getString("FULL_NAME"));
-                u.setSDT(rs.getString("PHONE_NUMBER"));
-                u.setAddress(rs.getString("ADDRESS"));
-
-                AccountModel acc = new AccountModel(
-                        rs.getInt("ACCOUNT_ID"),
-                        rs.getInt("USER_ID"),
-                        rs.getString("USERNAME"),
-                        rs.getString("STATUS")
-                );
-                acc.setUserInfo(u);
                 list.add(acc);
             }
 

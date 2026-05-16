@@ -4,17 +4,69 @@
  */
 package View.panel.admin;
 
+import Controller.CustomerController;
+import Controller.adminPageController;
+import DAO.CustomerDAO;
+import Model.CustomerManageModel;
+import Util.TableDecorate;
+import View.dialog.ChiTietKhachHangDialog;
+import java.util.List;
+
 /**
  *
  * @author phamd
  */
 public class panelKhachHang extends javax.swing.JPanel {
 
+    private CustomerController controller = new CustomerController();
+    private adminPageController adminController = new adminPageController();
+    private TableDecorate.StatusRenderer statusRenderer = new TableDecorate.StatusRenderer();
+    private List<CustomerManageModel> currentCustomerList;
+    private CustomerDAO cusDAO = new CustomerDAO();
+
     /**
      * Creates new form panelDanhmuc
      */
     public panelKhachHang() {
         initComponents();
+        currentCustomerList = cusDAO.getAllCustomers();
+
+        adminController.setUpTable(tblCustomerAccount, 10);
+        controller.loadDataToTable(tblCustomerAccount);
+        tblCustomerAccount.getColumnModel().getColumn(10).setCellRenderer(statusRenderer); //cho cột trạng thái đẹp hơn
+
+        loadSummaryData();
+    }
+
+    private void executeFilterCustomer() {
+        if (currentCustomerList == null) {
+            return;
+        }
+
+        // Chỉ lấy text từ ô tìm kiếm
+        String search = txtSearchCustomer.getText();
+
+        // Gọi controller lọc
+        controller.filterCustomers(tblCustomerAccount, currentCustomerList, search);
+    }
+
+    public void loadSummaryData() {
+        CustomerDAO customerDao = new CustomerDAO();
+
+        // Đổ số lượng vào nhãn (Label) số 1
+        int count = customerDao.getTotalCustomerCount();
+        lblTotalCustomers.setText(String.valueOf(count)); // Ví dụ: 1
+
+        // Đổ thông tin khách hàng chi tiêu nhiều nhất
+        Object[] topSpender = customerDao.getTopSpenderInfo();
+        String name = topSpender[0].toString();
+        double amount = (double) topSpender[1];
+
+        lblTopSpenderName.setText(name); // Ví dụ: Nguyễn Quốc Huy
+
+        // Định dạng tiền tệ cho dễ nhìn
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#,###");
+        lblTopSpenderAmount.setText("Số tiền đã chi: " + df.format(amount) + " VNĐ");
     }
 
     /**
@@ -31,33 +83,40 @@ public class panelKhachHang extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblCustomerAccount = new javax.swing.JTable();
-        txtFindCusAccount = new Custom_Component.MyTextField();
         imagePanel2 = new Custom_Component.ImagePanel();
-        btnDeleteCusAcc = new Custom_Component.MyButton();
-        btnAddCusAcc = new Custom_Component.MyButton();
-        btnEditCusAcc = new Custom_Component.MyButton();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lblTotalCustomers = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        lblTopSpenderAmount = new javax.swing.JLabel();
+        lblTopSpenderName = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        txtSearchCustomer = new Custom_Component.MyTextField();
 
         pnlcus.setBackground(new java.awt.Color(255, 255, 255));
         pnlcus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 32)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 102, 0));
-        jLabel4.setText("Danh Sách Tài Khoản Khách Hàng Trong Hệ Thống");
+        jLabel4.setText("Quản lý tài khoản khách hàng");
 
         tblCustomerAccount.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tblCustomerAccount.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Tên đăng nhập", "AccountID", "Họ và tên", "SĐT", "Địa chỉ", "Ngày sinh", "Giới tính", "Trạng thái"
+                "AccountID", "Tên đăng nhập", "Họ và tên", "Email", "SĐT", "Ngày sinh", "Giới tính", "Số đơn hàng đã mua", "Số tiền đã chi", "Điểm thành viên", "Trạng thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -65,7 +124,23 @@ public class panelKhachHang extends javax.swing.JPanel {
             }
         });
         tblCustomerAccount.setGridColor(new java.awt.Color(204, 204, 204));
+        tblCustomerAccount.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCustomerAccountMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblCustomerAccount);
+        if (tblCustomerAccount.getColumnModel().getColumnCount() > 0) {
+            tblCustomerAccount.getColumnModel().getColumn(0).setMinWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(0).setMaxWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(5).setMinWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(5).setPreferredWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(5).setMaxWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(6).setMinWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(6).setPreferredWidth(0);
+            tblCustomerAccount.getColumnModel().getColumn(6).setMaxWidth(0);
+        }
 
         imagePanel2.setImage(new javax.swing.ImageIcon(getClass().getResource("/Resource/search.png"))); // NOI18N
 
@@ -80,80 +155,142 @@ public class panelKhachHang extends javax.swing.JPanel {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        btnDeleteCusAcc.setBackground(new java.awt.Color(255, 51, 51));
-        btnDeleteCusAcc.setForeground(new java.awt.Color(255, 255, 255));
-        btnDeleteCusAcc.setText("Xóa tài khoản");
-        btnDeleteCusAcc.setColorClick(new java.awt.Color(0, 0, 255));
-        btnDeleteCusAcc.setColorHover(new java.awt.Color(51, 102, 255));
-        btnDeleteCusAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnDeleteCusAcc.addActionListener(this::btnDeleteCusAccActionPerformed);
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        btnAddCusAcc.setBackground(new java.awt.Color(51, 51, 255));
-        btnAddCusAcc.setForeground(new java.awt.Color(255, 255, 255));
-        btnAddCusAcc.setText("Thêm tài khoản");
-        btnAddCusAcc.setColorClick(new java.awt.Color(0, 0, 255));
-        btnAddCusAcc.setColorHover(new java.awt.Color(51, 102, 255));
-        btnAddCusAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAddCusAcc.addActionListener(this::btnAddCusAccActionPerformed);
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Số liệu tổng quát"));
+        jPanel1.setPreferredSize(new java.awt.Dimension(600, 165));
 
-        btnEditCusAcc.setBackground(new java.awt.Color(51, 51, 255));
-        btnEditCusAcc.setForeground(new java.awt.Color(255, 255, 255));
-        btnEditCusAcc.setText("Sửa tài khoản");
-        btnEditCusAcc.setColorClick(new java.awt.Color(0, 0, 255));
-        btnEditCusAcc.setColorHover(new java.awt.Color(51, 102, 255));
-        btnEditCusAcc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnEditCusAcc.addActionListener(this::btnEditCusAccActionPerformed);
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setText("Tổng số tài khoản khách hàng ");
+
+        lblTotalCustomers.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lblTotalCustomers.setText("1");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        jLabel6.setText("Tài khoản");
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel8.setText("Khách hàng chi tiêu nhiều nhất");
+
+        lblTopSpenderAmount.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lblTopSpenderAmount.setText("Số tiền đã chi: xxx VNĐ");
+
+        lblTopSpenderName.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTopSpenderName.setText("Tên khách hàng");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lblTotalCustomers, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTopSpenderAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTopSpenderName, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(14, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTopSpenderName, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTotalCustomers, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblTopSpenderAmount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(30, 30, 30))
+        );
+
+        jPanel3.add(jPanel1, new java.awt.GridBagConstraints());
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel12.setText("Tìm kiếm tài khoản khách hàng:");
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
+        txtSearchCustomer.addActionListener(this::txtSearchCustomerActionPerformed);
+        txtSearchCustomer.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchCustomerKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(txtSearchCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 617, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 114, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(txtSearchCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(16, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout pnlcusLayout = new javax.swing.GroupLayout(pnlcus);
         pnlcus.setLayout(pnlcusLayout);
         pnlcusLayout.setHorizontalGroup(
             pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2)
             .addGroup(pnlcusLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlcusLayout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(imagePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtFindCusAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(51, 51, 51))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 775, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlcusLayout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(129, Short.MAX_VALUE))))
-            .addComponent(jScrollPane2)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlcusLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAddCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEditCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDeleteCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(imagePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         pnlcusLayout.setVerticalGroup(
             pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlcusLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtFindCusAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(imagePanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(12, 12, 12)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDeleteCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEditCusAcc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
+                .addComponent(jLabel12)
+                .addGroup(pnlcusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlcusLayout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(imagePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlcusLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlCustomerAccountLayout = new javax.swing.GroupLayout(pnlCustomerAccount);
         pnlCustomerAccount.setLayout(pnlCustomerAccountLayout);
         pnlCustomerAccountLayout.setHorizontalGroup(
             pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 736, Short.MAX_VALUE)
+            .addGap(0, 789, Short.MAX_VALUE)
             .addGroup(pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlCustomerAccountLayout.createSequentialGroup()
                     .addGap(0, 0, 0)
@@ -162,7 +299,7 @@ public class panelKhachHang extends javax.swing.JPanel {
         );
         pnlCustomerAccountLayout.setVerticalGroup(
             pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 734, Short.MAX_VALUE)
+            .addGap(0, 786, Short.MAX_VALUE)
             .addGroup(pnlCustomerAccountLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(pnlCustomerAccountLayout.createSequentialGroup()
                     .addGap(0, 0, 0)
@@ -174,155 +311,80 @@ public class panelKhachHang extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 736, Short.MAX_VALUE)
+            .addGap(0, 789, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(pnlCustomerAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 0, 0)
+                    .addComponent(pnlCustomerAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(0, 0, 0)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 734, Short.MAX_VALUE)
+            .addGap(0, 786, Short.MAX_VALUE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(pnlCustomerAccount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGap(0, 0, 0)
+                    .addComponent(pnlCustomerAccount, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGap(0, 0, 0)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnDeleteCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCusAccActionPerformed
-//        int selectedRow = tblCustomerAccount.getSelectedRow();
-//
-//        if (selectedRow == -1) {
-//            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần xóa!");
-//            return;
-//        }
-//
-//        // 1. Lấy Username từ cột đầu tiên (Index 0) để hiển thị thông báo
-//        String username = tblCustomerAccount.getValueAt(selectedRow, 0).toString();
-//
-//        // 2. Lấy AccountID từ cột thứ hai (Index 1) để dùng làm điều kiện xóa trong SQL
-//        int accountId = Integer.parseInt(tblCustomerAccount.getValueAt(selectedRow, 1).toString());
-//
-//        // 3. Thông báo hiển thị tên Username cho thân thiện
-//        int confirm = JOptionPane.showConfirmDialog(this,
-//                "Bạn có chắc chắn muốn xóa tài khoản: " + username + " không?",
-//                "Xác nhận xóa",
-//                JOptionPane.YES_NO_OPTION,
-//                JOptionPane.QUESTION_MESSAGE);
-//
-//        if (confirm == JOptionPane.YES_OPTION) {
-//            AccountDAO dao = new AccountDAO();
-//
-//            // Gọi hàm xóa vĩnh viễn bằng ID
-//            if (dao.deleteAccount(accountId)) {
-//                JOptionPane.showMessageDialog(this, "Đã xóa tài khoản " + username + " thành công!");
-//                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
-//            } else {
-//                JOptionPane.showMessageDialog(this, "Lỗi! Không thể xóa tài khoản này.");
-//            }
-//        }
-    }//GEN-LAST:event_btnDeleteCusAccActionPerformed
+    private void tblCustomerAccountMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCustomerAccountMouseClicked
+        // Kiểm tra xem có phải là click đúp (2 lần) không
+        if (evt.getClickCount() == 2) {
+            int row = tblCustomerAccount.getSelectedRow();
+            if (row != -1) {
+                // Lấy dữ liệu từ 11 cột (Đếm đúng từ 0 đến 10)
+                int accountId = Integer.parseInt(tblCustomerAccount.getValueAt(row, 0).toString());
+                String username = tblCustomerAccount.getValueAt(row, 1).toString();
+                String fullName = tblCustomerAccount.getValueAt(row, 2).toString();
+                String email = tblCustomerAccount.getValueAt(row, 3).toString();
+                String phone = tblCustomerAccount.getValueAt(row, 4).toString();
+                String birth = tblCustomerAccount.getValueAt(row, 5).toString(); // Cột ẩn
+                String gender = tblCustomerAccount.getValueAt(row, 6).toString(); // Cột ẩn
+                String orderCount = tblCustomerAccount.getValueAt(row, 7).toString();
+                String totalSpent = tblCustomerAccount.getValueAt(row, 8).toString();
+                String loyaltyPoints = tblCustomerAccount.getValueAt(row, 9).toString();
+                String status = tblCustomerAccount.getValueAt(row, 10).toString();
 
-    private void btnAddCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCusAccActionPerformed
-        // 1. Khởi tạo dialog (truyền vào Frame cha)
-        Frame parent = (Frame) SwingUtilities.getWindowAncestor(this);
-        AccountDialog dialog = new AccountDialog(parent);
+                ChiTietKhachHangDialog dialog = new ChiTietKhachHangDialog(null, true);
 
-        // 2. Hiển thị dialog (nó sẽ dừng code ở đây cho đến khi dialog đóng)
-        dialog.setVisible(true);
+                // Truyền toàn bộ dữ liệu vào hàm fillData của form Chi tiết
+                dialog.fillData(accountId, username, fullName, email, phone, birth, gender, orderCount, totalSpent, loyaltyPoints, status);
+                // Hiển thị Dialog
+                dialog.setLocationRelativeTo(null);
+                dialog.setVisible(true);
 
-        // 3. Nếu bấm "Lưu" thành công thì mới xử lý tiếp
-        if (dialog.isSucceeded()) {
-            AccountModel newAcc = dialog.getAccountData();
-
-            // 4. Gọi DAO để lưu vào 2 bảng (Dùng hàm insertAccount mình đã viết ở trên)
-            if (accountDAO.insertAccount(newAcc)) {
-                JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
-                // Load lại bảng
-                adminController.loadDataToTableAdminAccount(tblAdminAccount);
-                adminController.loadDataToTableCustomerAccount(tblCustomerAccount);
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất bại! Kiểm tra lại SĐT hoặc Username.");
+                controller.loadDataToTable(tblCustomerAccount);
             }
         }
-    }//GEN-LAST:event_btnAddCusAccActionPerformed
+    }//GEN-LAST:event_tblCustomerAccountMouseClicked
 
-    private void btnEditCusAccActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditCusAccActionPerformed
-        int row = tblAdminAccount.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn tài khoản cần sửa!");
-            return;
-        }
+    private void txtSearchCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchCustomerActionPerformed
+        executeFilterCustomer();
+    }//GEN-LAST:event_txtSearchCustomerActionPerformed
 
-        try {
-            // 1. Bốc dữ liệu trực tiếp từ các cột theo hình Huy gửi
-            String username = tblAdminAccount.getValueAt(row, 0).toString();
-            int accountId = Integer.parseInt(tblAdminAccount.getValueAt(row, 1).toString());
-            String fullName = tblAdminAccount.getValueAt(row, 2).toString();
-            String sdt = tblAdminAccount.getValueAt(row, 3).toString();
-            String diaChi = tblAdminAccount.getValueAt(row, 4).toString();
-            String ngaySinhStr = tblAdminAccount.getValueAt(row, 5).toString();
-            String gioiTinh = tblAdminAccount.getValueAt(row, 6).toString();
-            String trangThai = tblAdminAccount.getValueAt(row, 8).toString();
+    private void txtSearchCustomerKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchCustomerKeyReleased
 
-            // 2. Tạo đối tượng tạm thời để đổ lên Dialog
-            UserModel u = new UserModel();
-            u.setFullName(fullName);
-            u.setSDT(sdt);
-            u.setAddress(diaChi);
-            u.setGioiTinh(gioiTinh);
-
-            try {
-                u.setNgaySinh(java.sql.Date.valueOf(ngaySinhStr));
-            } catch (Exception e) {
-
-            }
-
-            AccountModel selectedAcc = new AccountModel();
-            selectedAcc.setAccountId(accountId);
-            selectedAcc.setUsername(username);
-            selectedAcc.setUserInfo(u);
-            selectedAcc.setStatus(trangThai);
-
-            // 3. Mở Dialog
-            AccountDialog dialog = new AccountDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this));
-            dialog.setModel(selectedAcc);
-            dialog.setVisible(true);
-
-            // 4. Xử lý sau khi người dùng bấm "CẬP NHẬT"
-            if (dialog.isSucceeded()) {
-                AccountModel updatedData = dialog.getAccountData();
-
-                // QUAN TRỌNG: Vì bốc từ bảng không có USER_ID, Huy cần lấy nó từ listAccount hoặc DB
-                // Để đơn giản và chính xác nhất, mình tìm lại USER_ID dựa vào AccountID trong DB
-                int realUserId = accountDAO.getUserIdByAccountId(accountId);
-                updatedData.setUserId(realUserId);
-                updatedData.setAccountId(accountId);
-
-                if (accountDAO.updateAccount(updatedData)) {
-                    JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-                    adminController.loadDataToTableAdminAccount(tblAdminAccount);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu từ bảng!");
-        }
-    }//GEN-LAST:event_btnEditCusAccActionPerformed
+    }//GEN-LAST:event_txtSearchCustomerKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private Custom_Component.MyButton btnAddCusAcc;
-    private Custom_Component.MyButton btnDeleteCusAcc;
-    private Custom_Component.MyButton btnEditCusAcc;
     private Custom_Component.ImagePanel imagePanel2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblTopSpenderAmount;
+    private javax.swing.JLabel lblTopSpenderName;
+    private javax.swing.JLabel lblTotalCustomers;
     private javax.swing.JPanel pnlCustomerAccount;
     private javax.swing.JPanel pnlcus;
     private javax.swing.JTable tblCustomerAccount;
-    private Custom_Component.MyTextField txtFindCusAccount;
+    private Custom_Component.MyTextField txtSearchCustomer;
     // End of variables declaration//GEN-END:variables
 }

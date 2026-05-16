@@ -47,8 +47,7 @@ public class TableDecorate {
 
             // LOGIC TỐI ƯU: Kiểm tra các từ khóa tích cực
             // Ba có thể thêm bất kỳ chữ nào muốn hiện màu xanh vào đây
-            if (status.equalsIgnoreCase("ACTIVE")
-                    || status.equalsIgnoreCase("Đang bán")
+            if (status.equalsIgnoreCase("Đang bán")
                     || status.equalsIgnoreCase("Hoạt động")) {
 
                 label.setIcon(activeIcon);

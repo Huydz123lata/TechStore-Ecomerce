@@ -14,7 +14,7 @@ public class AccountModel {
     private int userId;
     private String username;
     private String password;
-    private String status;
+    private int status;
     private String passwordHash;
     private RoleGroupModel roleGroup;
     private RoleModel role;
@@ -31,7 +31,7 @@ public class AccountModel {
     }
 
     // Constructor 2: Dùng cho ĐĂNG NHẬP 
-    public AccountModel(int accountId, int userId, String username, String status) {
+    public AccountModel(int accountId, int userId, String username, int status) {
         this.accountId = accountId;
         this.userId = userId;
         this.username = username;
@@ -55,7 +55,7 @@ public class AccountModel {
         return password;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
@@ -79,7 +79,7 @@ public class AccountModel {
         this.password = password;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

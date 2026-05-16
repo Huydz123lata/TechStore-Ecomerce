@@ -30,6 +30,7 @@ public class RegisterController {
         String pass = view.passwordField.getText();
         String pass2 = view.password2Field.getText();
         String sdt = view.phoneNumberField.getText();
+        String email = view.txtEmail.getText();
 
         String gioiTinh = "Nam";
         if (view.rbNu.isSelected()) {
@@ -40,7 +41,7 @@ public class RegisterController {
         String thang = view.cboThang.getSelectedItem().toString();
         String nam = view.cboNam.getSelectedItem().toString();
 
-        if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || sdt.isEmpty()) {
+        if (name.isEmpty() || user.isEmpty() || pass.isEmpty() || sdt.isEmpty() || email.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(view, "Vui lòng nhập đầy đủ thông tin!");
             return;
         }
@@ -52,7 +53,7 @@ public class RegisterController {
         String passwordHash = HashUtil.hashPassword(pass);
         try {
             AuthService registerProcess = new AuthService();
-            registerProcess.excuteRegister(name, sdt, gioiTinh, ngay, thang, nam, user, passwordHash);
+            registerProcess.excuteRegister(name, sdt, email, gioiTinh, ngay, thang, nam, user, passwordHash);
 
             JOptionPane.showMessageDialog(view, "Đăng ký thành công!");
             LoginForm login = new LoginForm();
@@ -61,7 +62,7 @@ public class RegisterController {
 
         } catch (java.sql.SQLException e) {
             if (e.getErrorCode() == 1) {
-                JOptionPane.showMessageDialog(view, "Số điện thoại này đã tồn tại trong hệ thống!");
+                JOptionPane.showMessageDialog(view, "Số điện thoại / Email này đã tồn tại trong hệ thống!");
             } else {
                 JOptionPane.showMessageDialog(view, "Lỗi Database: " + e.getMessage());
             }

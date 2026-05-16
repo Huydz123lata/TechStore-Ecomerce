@@ -9,7 +9,7 @@ import Service.AuthService;
 import Util.HashUtil;
 import Util.TokenMonitorManager;
 import Model.AccountModel;
-import View.admin.AdminForm;
+import View.User.AdminForm;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
@@ -186,25 +186,29 @@ public class LoginForm extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+        // 1. PHẢI CÓ: Làm mượt font Segoe UI (khử răng cưa)
+        // Đặt dòng này đầu tiên để các chữ bạn đã cài không bị đứt nét
+//        System.setProperty("awt.useSystemAAFontSettings", "on");
+//        System.setProperty("swing.aatext", "true");
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new LoginForm().setVisible(true));
+        try {
+            // 2. Kích hoạt giao diện FlatLaf
+            // Không có dòng này thì mọi cài đặt font của bạn nhìn vẫn sẽ rất "cổ"
+            com.formdev.flatlaf.FlatLightLaf.setup();
+
+            // (Tùy chọn) Chỉ chỉnh màu nền bảng cho chuyên nghiệp, không đụng đến font
+            javax.swing.UIManager.put("Table.alternateRowColor", new java.awt.Color(242, 242, 242));
+
+        } catch (Exception ex) {
+            System.err.println("Lỗi khởi tạo giao diện");
+        }
+
+        // 3. Mở Form
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new LoginForm().setVisible(true);
+            }
+        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

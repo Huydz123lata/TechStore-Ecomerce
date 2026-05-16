@@ -8,7 +8,7 @@ import Model.AccountModel;
 import Service.AuthService;
 import Util.HashUtil;
 import Util.TokenMonitorManager;
-import View.admin.AdminForm;
+import View.User.AdminForm;
 import View.auth.LoginForm;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;

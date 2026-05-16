@@ -32,7 +32,7 @@ public class AuthService {
 
         AccountModel acc = authDAO.checkLogin(user, pass);
 
-        if (acc != null && "ACTIVE".equalsIgnoreCase(acc.getStatus())) {
+        if (acc != null && 1 == acc.getStatus()) {
             String token = java.util.UUID.randomUUID().toString().replace("-", "");
             tokenDAO.createToken(acc.getAccountId(), token);
             List<RoleModel> perms = roleDAO.getPermissionsByAccountId(acc.getAccountId());
@@ -43,11 +43,11 @@ public class AuthService {
     }
 
     //xử lý đăng ký
-    public boolean excuteRegister(String fullname, String sdt, String gioiTinh,
+    public boolean excuteRegister(String fullname, String sdt, String email, String gioiTinh,
             String ngay, String thang, String nam,
             String userName, String pass) throws Exception {
 
-        UserModel u = new UserModel(fullname, sdt, gioiTinh);
+        UserModel u = new UserModel(fullname, sdt, email, gioiTinh);
         u.setNgaySinhFromPicker(ngay, thang, nam);
 
         AccountModel acc = new AccountModel(u, userName, pass);
