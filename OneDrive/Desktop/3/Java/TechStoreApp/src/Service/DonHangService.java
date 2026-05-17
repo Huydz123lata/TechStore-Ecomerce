@@ -17,4 +17,11 @@ public class DonHangService {
     // Gọi xuống tầng DAO để thực thi SQL
     return dao.updateStatus(orderId, newStatus);
     }
+    public Object[] getOrderInfo(int orderId) {
+        return dao.getOrderInfoForDialog(orderId);
+    }
+
+    public List<Object[]> getOrderDetails(int orderId) {
+        return dao.getOrderDetailProducts(orderId);
+    }
 }

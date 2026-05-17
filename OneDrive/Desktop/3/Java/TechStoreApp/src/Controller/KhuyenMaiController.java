@@ -87,7 +87,7 @@ public class KhuyenMaiController {
 
     public void handleAdd() {
         javax.swing.JDialog dialog = new javax.swing.JDialog((java.awt.Frame) null, "Tạo Khuyến Mãi Mới", true);
-        View.panel.admin.panelFormKhuyenMai form = new View.panel.admin.panelFormKhuyenMai(this, dialog);
+        View.dialog.panelFormKhuyenMai form = new View.dialog.panelFormKhuyenMai(this, dialog);
         dialog.add(form);
         dialog.pack();
         dialog.setLocationRelativeTo(null);
