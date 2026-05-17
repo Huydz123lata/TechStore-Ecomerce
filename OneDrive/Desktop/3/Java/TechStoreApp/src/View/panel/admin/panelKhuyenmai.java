@@ -20,7 +20,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
     public int currentPagePro = 1;
     public int totalPagesPro = 1;
     private boolean isRenderingPro = false;
-
+    
     public panelKhuyenmai() {
         initComponents();
 
@@ -183,6 +183,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         tblCoupon = new javax.swing.JTable();
         cbxKhuyenmai = new javax.swing.JComboBox<>();
         btnAdd = new javax.swing.JButton();
+        btnChange = new javax.swing.JButton();
         panelPromotion = new javax.swing.JPanel();
         ChuyenPageSp1 = new javax.swing.JPanel();
         btnPrev1 = new javax.swing.JButton();
@@ -197,9 +198,10 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         cbxKhuyenmai1 = new javax.swing.JComboBox<>();
         btnAddPro = new javax.swing.JButton();
 
-        jPanel2.setBackground(new java.awt.Color(204, 255, 204));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 32)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 102, 0));
         jLabel1.setText("QUẢN LÝ KHUYẾN MÃI");
 
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
@@ -211,28 +213,28 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(37, 37, 37)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel2))
-                    .addComponent(jLabel1))
+                        .addContainerGap()
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(45, 45, 45)
+                        .addComponent(jLabel2)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap(14, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(jLabel2)
-                .addContainerGap())
+                .addGap(18, 18, 18))
         );
 
         jTabbedPane4.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
 
         panelCoupon.setBackground(new java.awt.Color(255, 255, 255));
-        panelCoupon.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 20, 20, 20));
 
         ChuyenPageSp.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -252,7 +254,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         ChuyenPageSpLayout.setHorizontalGroup(
             ChuyenPageSpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ChuyenPageSpLayout.createSequentialGroup()
-                .addComponent(btnPrev)
+                .addComponent(btnPrev, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPage)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -262,20 +264,22 @@ public class panelKhuyenmai extends javax.swing.JPanel {
             ChuyenPageSpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ChuyenPageSpLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(ChuyenPageSpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnPrev)
-                    .addComponent(lblPage)
-                    .addComponent(btnNext))
+                .addGroup(ChuyenPageSpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(btnPrev, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ChuyenPageSpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblPage)
+                        .addComponent(btnNext)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         btnDelete.setBackground(new java.awt.Color(0, 153, 153));
-        btnDelete.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Xoá Mã");
+        btnDelete.setPreferredSize(new java.awt.Dimension(100, 35));
         btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
-        jLabel6.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel6.setText("Trạng thái mã");
 
@@ -330,50 +334,62 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         cbxKhuyenmai.addActionListener(this::cbxKhuyenmaiActionPerformed);
 
         btnAdd.setBackground(new java.awt.Color(0, 51, 204));
-        btnAdd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        btnAdd.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
         btnAdd.setText("Thêm Mã");
+        btnAdd.setPreferredSize(new java.awt.Dimension(100, 35));
         btnAdd.addActionListener(this::btnAddActionPerformed);
+
+        btnChange.setBackground(new java.awt.Color(255, 102, 0));
+        btnChange.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnChange.setForeground(new java.awt.Color(255, 255, 255));
+        btnChange.setText("Sửa Mã");
+        btnChange.setPreferredSize(new java.awt.Dimension(100, 35));
+        btnChange.addActionListener(this::btnChangeActionPerformed);
 
         javax.swing.GroupLayout panelCouponLayout = new javax.swing.GroupLayout(panelCoupon);
         panelCoupon.setLayout(panelCouponLayout);
         panelCouponLayout.setHorizontalGroup(
             panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCouponLayout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(myTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxKhuyenmai, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCouponLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(ChuyenPageSp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelCouponLayout.createSequentialGroup()
-                .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panelCouponLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panelCouponLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(myTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbxKhuyenmai, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(btnAdd)
-                .addGap(18, 18, 18)
-                .addComponent(btnDelete))
+                .addComponent(ChuyenPageSp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17))
         );
         panelCouponLayout.setVerticalGroup(
             panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelCouponLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel6)
-                .addGap(1, 1, 1)
-                .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(myTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbxKhuyenmai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnDelete)
-                        .addComponent(btnAdd)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panelCouponLayout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(1, 1, 1)
+                        .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbxKhuyenmai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelCouponLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3)
+                        .addComponent(myTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ChuyenPageSp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -486,7 +502,7 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         panelPromotion.setLayout(panelPromotionLayout);
         panelPromotionLayout.setHorizontalGroup(
             panelPromotionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPromotionLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(ChuyenPageSp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -619,11 +635,18 @@ public class panelKhuyenmai extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnAddProActionPerformed
 
+    private void btnChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeActionPerformed
+        if (controller != null) {
+            controller.handleEdit();
+        }
+    }//GEN-LAST:event_btnChangeActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ChuyenPageSp;
     private javax.swing.JPanel ChuyenPageSp1;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddPro;
+    private javax.swing.JButton btnChange;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnDeletePro;
     private javax.swing.JButton btnNext;

@@ -39,4 +39,8 @@ public class KhuyenMaiService {
     public boolean deletePro(String proCode) {
         return dao.deletePromotionPro(proCode);
     }
+
+    public boolean updateCouponData(String oldCode, String newCode, String name, String type, double value, double minOrder, double maxDiscount, java.util.Date startDate, java.util.Date endDate) {
+        return dao.updateCoupon(oldCode, newCode, name, type, value, minOrder, maxDiscount, startDate, endDate);
+    }
 }

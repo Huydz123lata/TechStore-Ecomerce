@@ -277,4 +277,31 @@ public class KhuyenMaiDAO {
             return ps.executeUpdate() > 0;
         } catch (Exception e) { e.printStackTrace(); return false; }
     }
+    // Thêm hàm này vào KhuyenMaiDAO.java
+    public boolean updateCoupon(String oldCode, String newCode, String name, String type, double value, double minOrder, double maxDiscount, java.util.Date startDate, java.util.Date endDate) {
+        // Chuyển đổi định dạng Type cho khớp với Database
+        String dbType = "PERCENTAGE".equals(type) ? "PERCENTAGE" : "AMOUNT";
+        
+        // Câu lệnh SQL cập nhật dữ liệu. Lưu ý điều kiện WHERE TRIM(CODE)=? là lấy mã cũ để tìm
+        String sql = "UPDATE COUPON SET CODE=?, DESCRIPTION=?, DISCOUNT_TYPE=?, DISCOUNT_VALUE=?, MIN_ORDER_VALUE=?, MAX_DISCOUNT=?, START_AT=?, END_AT=?, UPDATED_AT=SYSDATE WHERE TRIM(CODE)=?";
+        
+        try (java.sql.Connection conn = config.ConnectionOracle.getOracleConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, newCode.trim().toUpperCase());
+            ps.setString(2, name.trim());
+            ps.setString(3, dbType);
+            ps.setDouble(4, value);
+            ps.setDouble(5, minOrder);
+            ps.setDouble(6, maxDiscount);
+            ps.setDate(7, new java.sql.Date(startDate.getTime()));
+            ps.setDate(8, new java.sql.Date(endDate.getTime()));
+            ps.setString(9, oldCode.trim()); // Mã cũ nằm ở vị trí dấu ? thứ 9
+            
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
