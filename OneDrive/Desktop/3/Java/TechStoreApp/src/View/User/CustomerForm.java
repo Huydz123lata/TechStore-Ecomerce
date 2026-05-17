@@ -31,13 +31,14 @@ public class CustomerForm extends javax.swing.JFrame {
 
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        myTextField1 = new Custom_Component.MyTextField();
-        myButton2 = new Custom_Component.MyButton();
-        myButton1 = new Custom_Component.MyButton();
+        txtSearch = new Custom_Component.MyTextField();
+        Cart = new Custom_Component.MyButton();
+        MyAccount = new Custom_Component.MyButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        myButton3 = new Custom_Component.MyButton();
+        btnSearch = new Custom_Component.MyButton();
+        btnPoint = new Custom_Component.MyButton();
         scrollPaneMain = new javax.swing.JScrollPane();
         pnlWrapper = new javax.swing.JPanel();
         pnlBanner = new javax.swing.JPanel();
@@ -75,31 +76,31 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel22 = new javax.swing.JLabel();
         pnlShopContent = new javax.swing.JPanel();
         pnlCategory = new Custom_Component.RoundPanel();
-        roundPanel4 = new Custom_Component.RoundPanel();
+        all = new Custom_Component.RoundPanel();
         jLabel23 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
-        roundPanel5 = new Custom_Component.RoundPanel();
+        Laptop = new Custom_Component.RoundPanel();
         jLabel27 = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
-        roundPanel10 = new Custom_Component.RoundPanel();
+        SmartPhone = new Custom_Component.RoundPanel();
         jLabel29 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
-        roundPanel11 = new Custom_Component.RoundPanel();
+        HeadPhone = new Custom_Component.RoundPanel();
         jLabel31 = new javax.swing.JLabel();
         jLabel32 = new javax.swing.JLabel();
-        roundPanel12 = new Custom_Component.RoundPanel();
+        Screen = new Custom_Component.RoundPanel();
         jLabel33 = new javax.swing.JLabel();
         jLabel34 = new javax.swing.JLabel();
-        roundPanel13 = new Custom_Component.RoundPanel();
+        SmartWatch = new Custom_Component.RoundPanel();
         jLabel35 = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
-        roundPanel15 = new Custom_Component.RoundPanel();
+        GamingHand = new Custom_Component.RoundPanel();
         jLabel37 = new javax.swing.JLabel();
         jLabel38 = new javax.swing.JLabel();
-        roundPanel16 = new Custom_Component.RoundPanel();
+        PhuKien = new Custom_Component.RoundPanel();
         jLabel39 = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
+        DanhMucText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cửa Hàng Công Nghệ TechStore");
@@ -112,18 +113,18 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Smart");
 
-        myTextField1.addActionListener(this::myTextField1ActionPerformed);
+        txtSearch.addActionListener(this::txtSearchActionPerformed);
 
-        myButton2.setBackground(new java.awt.Color(23, 37, 84));
-        myButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-cart-48.png"))); // NOI18N
-        myButton2.setColorClick(new java.awt.Color(23, 37, 84));
-        myButton2.setColorHover(new java.awt.Color(23, 37, 84));
-        myButton2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        Cart.setBackground(new java.awt.Color(23, 37, 84));
+        Cart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-cart-48.png"))); // NOI18N
+        Cart.setColorClick(new java.awt.Color(23, 37, 84));
+        Cart.setColorHover(new java.awt.Color(23, 37, 84));
+        Cart.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        myButton1.setBackground(new java.awt.Color(23, 37, 84));
-        myButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-user-32.png"))); // NOI18N
-        myButton1.setColorClick(new java.awt.Color(23, 37, 84));
-        myButton1.setColorHover(new java.awt.Color(23, 37, 84));
+        MyAccount.setBackground(new java.awt.Color(23, 37, 84));
+        MyAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-user-32.png"))); // NOI18N
+        MyAccount.setColorClick(new java.awt.Color(23, 37, 84));
+        MyAccount.setColorHover(new java.awt.Color(23, 37, 84));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -138,8 +139,16 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Hub");
 
-        myButton3.setBackground(new java.awt.Color(255, 102, 0));
-        myButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-search-16.png"))); // NOI18N
+        btnSearch.setBackground(new java.awt.Color(255, 102, 0));
+        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-search-16.png"))); // NOI18N
+
+        btnPoint.setBackground(new java.awt.Color(255, 102, 0));
+        btnPoint.setForeground(new java.awt.Color(255, 255, 255));
+        btnPoint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-gift-26.png"))); // NOI18N
+        btnPoint.setText("Đổi điểm thưởng");
+        btnPoint.setColorClick(new java.awt.Color(204, 82, 0));
+        btnPoint.setColorHover(new java.awt.Color(255, 128, 51));
+        btnPoint.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
         javax.swing.GroupLayout pnlHeaderLayout = new javax.swing.GroupLayout(pnlHeader);
         pnlHeader.setLayout(pnlHeaderLayout);
@@ -151,15 +160,17 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
-                .addComponent(myTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 707, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 707, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(myButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 347, Short.MAX_VALUE)
+                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
+                .addComponent(btnPoint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlHeaderLayout.createSequentialGroup()
-                        .addComponent(myButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Cart, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(MyAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(pnlHeaderLayout.createSequentialGroup()
                         .addGap(30, 30, 30)
@@ -177,21 +188,25 @@ public class CustomerForm extends javax.swing.JFrame {
                         .addGap(11, 11, 11)
                         .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(myTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(myButton3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(16, 16, 16))
                     .addGroup(pnlHeaderLayout.createSequentialGroup()
                         .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(myButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(myButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(MyAccount, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(Cart, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
                         .addContainerGap())))
+            .addGroup(pnlHeaderLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(btnPoint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         getContentPane().add(pnlHeader, java.awt.BorderLayout.NORTH);
@@ -299,7 +314,7 @@ public class CustomerForm extends javax.swing.JFrame {
                         .addComponent(jLabel8))
                     .addComponent(jLabel6)
                     .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(imagePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36))
         );
@@ -571,8 +586,8 @@ public class CustomerForm extends javax.swing.JFrame {
         pnlCategory.setPreferredSize(new java.awt.Dimension(0, 100));
         pnlCategory.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
 
-        roundPanel4.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel4.setPreferredSize(new java.awt.Dimension(140, 80));
+        all.setBackground(new java.awt.Color(255, 255, 255));
+        all.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-opened-folder-36.png"))); // NOI18N
@@ -581,20 +596,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel24.setText("Tất cả");
 
-        javax.swing.GroupLayout roundPanel4Layout = new javax.swing.GroupLayout(roundPanel4);
-        roundPanel4.setLayout(roundPanel4Layout);
-        roundPanel4Layout.setHorizontalGroup(
-            roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout allLayout = new javax.swing.GroupLayout(all);
+        all.setLayout(allLayout);
+        allLayout.setHorizontalGroup(
+            allLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(allLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(allLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel4Layout.setVerticalGroup(
-            roundPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel4Layout.createSequentialGroup()
+        allLayout.setVerticalGroup(
+            allLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(allLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -602,10 +617,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel4);
+        pnlCategory.add(all);
 
-        roundPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel5.setPreferredSize(new java.awt.Dimension(140, 80));
+        Laptop.setBackground(new java.awt.Color(255, 255, 255));
+        Laptop.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-laptop-36.png"))); // NOI18N
@@ -614,20 +629,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel28.setText("Laptop");
 
-        javax.swing.GroupLayout roundPanel5Layout = new javax.swing.GroupLayout(roundPanel5);
-        roundPanel5.setLayout(roundPanel5Layout);
-        roundPanel5Layout.setHorizontalGroup(
-            roundPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel5Layout.createSequentialGroup()
+        javax.swing.GroupLayout LaptopLayout = new javax.swing.GroupLayout(Laptop);
+        Laptop.setLayout(LaptopLayout);
+        LaptopLayout.setHorizontalGroup(
+            LaptopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LaptopLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(LaptopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel28, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel5Layout.setVerticalGroup(
-            roundPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel5Layout.createSequentialGroup()
+        LaptopLayout.setVerticalGroup(
+            LaptopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(LaptopLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -635,10 +650,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel5);
+        pnlCategory.add(Laptop);
 
-        roundPanel10.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel10.setPreferredSize(new java.awt.Dimension(140, 80));
+        SmartPhone.setBackground(new java.awt.Color(255, 255, 255));
+        SmartPhone.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-phone-36_1.png"))); // NOI18N
@@ -647,20 +662,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel30.setText("Điện thoại");
 
-        javax.swing.GroupLayout roundPanel10Layout = new javax.swing.GroupLayout(roundPanel10);
-        roundPanel10.setLayout(roundPanel10Layout);
-        roundPanel10Layout.setHorizontalGroup(
-            roundPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel10Layout.createSequentialGroup()
+        javax.swing.GroupLayout SmartPhoneLayout = new javax.swing.GroupLayout(SmartPhone);
+        SmartPhone.setLayout(SmartPhoneLayout);
+        SmartPhoneLayout.setHorizontalGroup(
+            SmartPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SmartPhoneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(SmartPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel30, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel29, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel10Layout.setVerticalGroup(
-            roundPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel10Layout.createSequentialGroup()
+        SmartPhoneLayout.setVerticalGroup(
+            SmartPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SmartPhoneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -668,10 +683,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel10);
+        pnlCategory.add(SmartPhone);
 
-        roundPanel11.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel11.setPreferredSize(new java.awt.Dimension(140, 80));
+        HeadPhone.setBackground(new java.awt.Color(255, 255, 255));
+        HeadPhone.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel31.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-headphone-36.png"))); // NOI18N
@@ -680,20 +695,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel32.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel32.setText("Tai nghe");
 
-        javax.swing.GroupLayout roundPanel11Layout = new javax.swing.GroupLayout(roundPanel11);
-        roundPanel11.setLayout(roundPanel11Layout);
-        roundPanel11Layout.setHorizontalGroup(
-            roundPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel11Layout.createSequentialGroup()
+        javax.swing.GroupLayout HeadPhoneLayout = new javax.swing.GroupLayout(HeadPhone);
+        HeadPhone.setLayout(HeadPhoneLayout);
+        HeadPhoneLayout.setHorizontalGroup(
+            HeadPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HeadPhoneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(HeadPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel31, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel11Layout.setVerticalGroup(
-            roundPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel11Layout.createSequentialGroup()
+        HeadPhoneLayout.setVerticalGroup(
+            HeadPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HeadPhoneLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -701,10 +716,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel11);
+        pnlCategory.add(HeadPhone);
 
-        roundPanel12.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel12.setPreferredSize(new java.awt.Dimension(140, 80));
+        Screen.setBackground(new java.awt.Color(255, 255, 255));
+        Screen.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel33.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-screen-36.png"))); // NOI18N
@@ -713,20 +728,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel34.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel34.setText("Màn hình");
 
-        javax.swing.GroupLayout roundPanel12Layout = new javax.swing.GroupLayout(roundPanel12);
-        roundPanel12.setLayout(roundPanel12Layout);
-        roundPanel12Layout.setHorizontalGroup(
-            roundPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel12Layout.createSequentialGroup()
+        javax.swing.GroupLayout ScreenLayout = new javax.swing.GroupLayout(Screen);
+        Screen.setLayout(ScreenLayout);
+        ScreenLayout.setHorizontalGroup(
+            ScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ScreenLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel12Layout.setVerticalGroup(
-            roundPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel12Layout.createSequentialGroup()
+        ScreenLayout.setVerticalGroup(
+            ScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ScreenLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -734,10 +749,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel12);
+        pnlCategory.add(Screen);
 
-        roundPanel13.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel13.setPreferredSize(new java.awt.Dimension(140, 80));
+        SmartWatch.setBackground(new java.awt.Color(255, 255, 255));
+        SmartWatch.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel35.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel35.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-smart-watch-36.png"))); // NOI18N
@@ -746,20 +761,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel36.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel36.setText("Đồng hồ thông minh");
 
-        javax.swing.GroupLayout roundPanel13Layout = new javax.swing.GroupLayout(roundPanel13);
-        roundPanel13.setLayout(roundPanel13Layout);
-        roundPanel13Layout.setHorizontalGroup(
-            roundPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel13Layout.createSequentialGroup()
+        javax.swing.GroupLayout SmartWatchLayout = new javax.swing.GroupLayout(SmartWatch);
+        SmartWatch.setLayout(SmartWatchLayout);
+        SmartWatchLayout.setHorizontalGroup(
+            SmartWatchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SmartWatchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(SmartWatchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel13Layout.setVerticalGroup(
-            roundPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel13Layout.createSequentialGroup()
+        SmartWatchLayout.setVerticalGroup(
+            SmartWatchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SmartWatchLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -767,10 +782,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel13);
+        pnlCategory.add(SmartWatch);
 
-        roundPanel15.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel15.setPreferredSize(new java.awt.Dimension(140, 80));
+        GamingHand.setBackground(new java.awt.Color(255, 255, 255));
+        GamingHand.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel37.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel37.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-gaming-hand-36.png"))); // NOI18N
@@ -779,20 +794,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel38.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel38.setText("Máy chơi game");
 
-        javax.swing.GroupLayout roundPanel15Layout = new javax.swing.GroupLayout(roundPanel15);
-        roundPanel15.setLayout(roundPanel15Layout);
-        roundPanel15Layout.setHorizontalGroup(
-            roundPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel15Layout.createSequentialGroup()
+        javax.swing.GroupLayout GamingHandLayout = new javax.swing.GroupLayout(GamingHand);
+        GamingHand.setLayout(GamingHandLayout);
+        GamingHandLayout.setHorizontalGroup(
+            GamingHandLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(GamingHandLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(GamingHandLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel15Layout.setVerticalGroup(
-            roundPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel15Layout.createSequentialGroup()
+        GamingHandLayout.setVerticalGroup(
+            GamingHandLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(GamingHandLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -800,10 +815,10 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel15);
+        pnlCategory.add(GamingHand);
 
-        roundPanel16.setBackground(new java.awt.Color(255, 255, 255));
-        roundPanel16.setPreferredSize(new java.awt.Dimension(140, 80));
+        PhuKien.setBackground(new java.awt.Color(255, 255, 255));
+        PhuKien.setPreferredSize(new java.awt.Dimension(140, 80));
 
         jLabel39.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel39.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-tech-36.png"))); // NOI18N
@@ -812,20 +827,20 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel40.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel40.setText("Phụ kiện");
 
-        javax.swing.GroupLayout roundPanel16Layout = new javax.swing.GroupLayout(roundPanel16);
-        roundPanel16.setLayout(roundPanel16Layout);
-        roundPanel16Layout.setHorizontalGroup(
-            roundPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel16Layout.createSequentialGroup()
+        javax.swing.GroupLayout PhuKienLayout = new javax.swing.GroupLayout(PhuKien);
+        PhuKien.setLayout(PhuKienLayout);
+        PhuKienLayout.setHorizontalGroup(
+            PhuKienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PhuKienLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(roundPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(PhuKienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel40, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        roundPanel16Layout.setVerticalGroup(
-            roundPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(roundPanel16Layout.createSequentialGroup()
+        PhuKienLayout.setVerticalGroup(
+            PhuKienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PhuKienLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -833,21 +848,21 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        pnlCategory.add(roundPanel16);
+        pnlCategory.add(PhuKien);
 
-        jLabel25.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel25.setText("Danh mục sản phẩm");
+        DanhMucText.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        DanhMucText.setText("Danh mục sản phẩm");
 
         javax.swing.GroupLayout pnlProductGridLayout = new javax.swing.GroupLayout(pnlProductGrid);
         pnlProductGrid.setLayout(pnlProductGridLayout);
         pnlProductGridLayout.setHorizontalGroup(
             pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlProductGridLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(85, 85, 85)
                 .addGroup(pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel25)
-                    .addGroup(pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(pnlPolicies, javax.swing.GroupLayout.DEFAULT_SIZE, 1324, Short.MAX_VALUE)
+                    .addComponent(DanhMucText)
+                    .addGroup(pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(pnlPolicies, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addComponent(pnlCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(87, 87, 87))
             .addGroup(pnlProductGridLayout.createSequentialGroup()
@@ -860,12 +875,12 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addGap(17, 17, 17)
                 .addComponent(pnlPolicies, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(13, 13, 13)
-                .addComponent(jLabel25)
+                .addComponent(DanhMucText)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlShopContent, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(1043, Short.MAX_VALUE))
         );
 
         pnlWrapper.add(pnlProductGrid, java.awt.BorderLayout.CENTER);
@@ -877,9 +892,9 @@ public class CustomerForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void myTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myTextField1ActionPerformed
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_myTextField1ActionPerformed
+    }//GEN-LAST:event_txtSearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -902,6 +917,19 @@ public class CustomerForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private Custom_Component.MyButton Cart;
+    private javax.swing.JLabel DanhMucText;
+    private Custom_Component.RoundPanel GamingHand;
+    private Custom_Component.RoundPanel HeadPhone;
+    private Custom_Component.RoundPanel Laptop;
+    private Custom_Component.MyButton MyAccount;
+    private Custom_Component.RoundPanel PhuKien;
+    private Custom_Component.RoundPanel Screen;
+    private Custom_Component.RoundPanel SmartPhone;
+    private Custom_Component.RoundPanel SmartWatch;
+    private Custom_Component.RoundPanel all;
+    private Custom_Component.MyButton btnPoint;
+    private Custom_Component.MyButton btnSearch;
     private Custom_Component.ImagePanel imagePanel2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -920,7 +948,6 @@ public class CustomerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
@@ -942,12 +969,8 @@ public class CustomerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private Custom_Component.MyButton myButton1;
-    private Custom_Component.MyButton myButton2;
-    private Custom_Component.MyButton myButton3;
     private Custom_Component.MyButton myButton4;
     private Custom_Component.MyButton myButton5;
-    private Custom_Component.MyTextField myTextField1;
     private javax.swing.JPanel pnlBanner;
     private Custom_Component.RoundPanel pnlCategory;
     private javax.swing.JPanel pnlHeader;
@@ -960,18 +983,11 @@ public class CustomerForm extends javax.swing.JFrame {
     private javax.swing.JPanel pnlShopContent;
     private javax.swing.JPanel pnlWrapper;
     private Custom_Component.RoundPanel roundPanel1;
-    private Custom_Component.RoundPanel roundPanel10;
-    private Custom_Component.RoundPanel roundPanel11;
-    private Custom_Component.RoundPanel roundPanel12;
-    private Custom_Component.RoundPanel roundPanel13;
-    private Custom_Component.RoundPanel roundPanel15;
-    private Custom_Component.RoundPanel roundPanel16;
-    private Custom_Component.RoundPanel roundPanel4;
-    private Custom_Component.RoundPanel roundPanel5;
     private Custom_Component.RoundPanel roundPanel6;
     private Custom_Component.RoundPanel roundPanel7;
     private Custom_Component.RoundPanel roundPanel8;
     private Custom_Component.RoundPanel roundPanel9;
     private javax.swing.JScrollPane scrollPaneMain;
+    private Custom_Component.MyTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }
