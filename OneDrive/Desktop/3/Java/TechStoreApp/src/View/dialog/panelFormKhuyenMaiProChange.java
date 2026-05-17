@@ -19,30 +19,40 @@ import javax.swing.table.DefaultTableModel;
 
 
 
-public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
+public class panelFormKhuyenMaiProChange extends javax.swing.JPanel {
     private final KhuyenMaiController parentController;
     private final javax.swing.JDialog parentDialog;
     
     private ProductController productController = new ProductController();
     private ProductDAO productDAO = new ProductDAO();
-    
     private List<ProductModel> currentList;
-    
-    // ĐÃ ĐỔI: Dùng Map để lưu [Mã Sản phẩm] đi kèm [Mức Giảm Giá]
     private Map<Integer, Double> selectedProductsMap = new HashMap<>();
+    
+    private int editPromoId = -1; // Biến lưu trữ ID của chương trình đang sửa
 
-    public panelFormKhuyenMaiPro(KhuyenMaiController controller, javax.swing.JDialog dialog) {
+    public panelFormKhuyenMaiProChange(KhuyenMaiController controller, javax.swing.JDialog dialog) {
         initComponents();
         this.parentController = controller;
         this.parentDialog = dialog;
         
         lblMaKM.setText("Tên Chương trình:");
-        
         productController.updateDataCategoryCbx(cbxCategory);
         currentList = productDAO.getAllProducts();
         
-        executeFilter();
-        setupTableListener(); // Đổi tên hàm cho chuẩn vì giờ ta lắng nghe cả cột 2 và 3
+        setupTableListener(); 
+    }
+
+    // Hàm nhận dữ liệu từ Controller bơm vào Form
+    public void setEditData(int promoId, String name, java.util.Date start, java.util.Date end, Map<Integer, Double> currentProducts) {
+        this.editPromoId = promoId;
+        txtPromoCode.setText(name);
+        dateStart.setDate(start);
+        dateEnd.setDate(end);
+        
+        if (currentProducts != null) {
+            this.selectedProductsMap.putAll(currentProducts);
+        }
+        executeFilter(); // Vẽ lại bảng với các sản phẩm đã được tích sẵn
     }
 
     private void closeForm() {
@@ -66,17 +76,15 @@ public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
             return;
         }
 
-        // Bắt buộc phải có SP trong Map
         if (selectedProductsMap.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập mức giảm và tích chọn ít nhất 1 sản phẩm!", "Chưa chọn sản phẩm", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mức giảm và tích chọn ít nhất 1 sản phẩm!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Gọi Controller xử lý và truyền thẳng Map chứa SP+Mức giảm qua
-        if (parentController != null) {
-            boolean success = parentController.createNewPromotionPro(promoName, dateStart.getDate(), dateEnd.getDate(), selectedProductsMap);
+        if (parentController != null && editPromoId != -1) {
+            boolean success = parentController.updatePromotionPro(editPromoId, promoName, dateStart.getDate(), dateEnd.getDate(), selectedProductsMap);
             if (success) {
-                JOptionPane.showMessageDialog(this, "Tạo chương trình Khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Cập nhật chương trình thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 closeForm();
             }
         }
@@ -85,7 +93,7 @@ public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
     private void executeFilter() {
         String search = txtSearch.getText().trim().toLowerCase();
         
-        // 1. Dọn dẹp chữ chìm
+        // 1. Dọn dẹp chữ chìm placeholder
         if (search.contains("tìm kiếm") || search.contains("search") || search.contains("...")) {
             search = "";
         }
@@ -95,66 +103,52 @@ public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
 
         if (currentList == null || currentList.isEmpty()) return;
 
-        // 2. Sắp xếp an toàn (Bắt lỗi null tên sản phẩm)
-        try {
-            currentList.sort((p1, p2) -> {
-                boolean c1 = selectedProductsMap.containsKey(p1.getProductId());
-                boolean c2 = selectedProductsMap.containsKey(p2.getProductId());
-                if (c1 && !c2) return -1; // p1 có KM -> lên đầu
-                if (!c1 && c2) return 1;  // p2 có KM -> lên đầu
-                
-                String name1 = p1.getName() == null ? "" : p1.getName();
-                String name2 = p2.getName() == null ? "" : p2.getName();
-                return name1.compareToIgnoreCase(name2); 
-            });
-        } catch (Exception e) {
-            System.out.println("Lỗi sắp xếp: " + e.getMessage());
-        }
-
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); 
 
         for (ProductModel p : currentList) {
-            if (p.getStatus() == 0 || p.getStockQuantity() <= 0) {
+            // LĂN XỬ LÝ QUAN TRỌNG: Chỉ xét các sản phẩm CÓ trong chương trình khuyến mãi này
+            // Nếu sản phẩm không nằm trong selectedProductsMap -> Bỏ qua luôn, không hiện lên bảng
+            if (!selectedProductsMap.containsKey(p.getProductId())) {
                 continue; 
             }
 
+            // Bộ lọc tìm kiếm theo Tên hoặc Mã sản phẩm
             boolean matchesSearch = search.isEmpty() || 
                                     (p.getName() != null && p.getName().toLowerCase().contains(search)) || 
                                     String.valueOf(p.getProductId()).contains(search);
             
-            // 3. FIX LỖI Ở ĐÂY: Bắt cả chữ "Chọn" và "Lọc" để không bị ẩn nhầm danh sách
+            // Bộ lọc theo Danh mục hàng hóa
             boolean matchesCategory = category.isEmpty() || 
                                       category.contains("Chọn") || 
                                       category.contains("Lọc") || 
                                       (p.getCategory() != null && p.getCategory().getName().equals(category));
 
+            // Nếu thỏa mãn các điều kiện tìm kiếm/lọc danh mục thì mới đưa lên bảng
             if (matchesSearch && matchesCategory) {
-                boolean isChecked = selectedProductsMap.containsKey(p.getProductId());
-                String discountValue = isChecked ? String.format("%.0f", selectedProductsMap.get(p.getProductId())) : "";
+                // Chắc chắn là có trong Map vì đã check ở trên
+                double discountPrice = selectedProductsMap.get(p.getProductId());
+                String discountValue = String.format("%.0f", discountPrice);
                 
                 model.addRow(new Object[]{
                     p.getProductId(),
                     p.getName(),
                     discountValue, 
-                    isChecked      
+                    true // Mặc định luôn là true (đã tích chọn) vì nó thuộc chương trình này
                 });
             }
         }
     }
 
-    // Logic Lắng nghe thông minh: Xử lý cả khi gõ số và khi click Checkbox
     private void setupTableListener() {
         jTable1.getModel().addTableModelListener(e -> {
             int row = e.getFirstRow();
             int col = e.getColumn();
             
-            // Chỉ bắt sự kiện khi có thay đổi ở cột 2 (Gõ Mức giảm) hoặc cột 3 (Tích Checkbox)
+            // Lắng nghe cột Mức giảm (2) và cột Thêm (3)
             if (row >= 0 && (col == 2 || col == 3) && e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
-                
                 int productId = Integer.parseInt(jTable1.getValueAt(row, 0).toString());
                 
-                // Tránh lỗi null khi ô bị rỗng
                 Object chkObj = jTable1.getValueAt(row, 3);
                 boolean isChecked = (chkObj != null && (boolean) chkObj);
                 
@@ -165,25 +159,20 @@ public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
                     try {
                         double val = Double.parseDouble(discountStr);
                         if (val <= 0) throw new NumberFormatException();
-                        
-                        // Đưa vào Map thành công
                         selectedProductsMap.put(productId, val);
                     } catch (NumberFormatException ex) {
-                        // Nếu tích vào ô Thêm mà chưa gõ số tiền, hoặc gõ sai -> Báo lỗi & Gỡ tích
                         if (col == 3) { 
-                            JOptionPane.showMessageDialog(this, "Vui lòng gõ Mức giảm hợp lệ (Số > 0) trước khi tích chọn!", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
-                            // Tắt event listener tạm thời để tránh bị lặp vô tận (Infinite loop) khi set lại giá trị False
+                            JOptionPane.showMessageDialog(this, "Vui lòng gõ Mức giảm hợp lệ trước khi tích!", "Lỗi", JOptionPane.WARNING_MESSAGE);
                             SwingUtilities.invokeLater(() -> jTable1.setValueAt(false, row, 3));
                         }
                         selectedProductsMap.remove(productId);
                     }
                 } else {
-                    // Nếu bỏ tích Checkbox -> Xóa ngay khỏi Map
-                    selectedProductsMap.remove(productId);
+                    selectedProductsMap.remove(productId); // Bỏ tích là tự động loại bỏ
                 }
             }
         });
-}
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -211,7 +200,7 @@ public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("TẠO MÃ CHƯƠNG TRÌNH MỚI");
+        jLabel1.setText("SỬA MÃ CHƯƠNG TRÌNH");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -252,7 +241,7 @@ public class panelFormKhuyenMaiPro extends javax.swing.JPanel {
         btnAdd.setBackground(new java.awt.Color(0, 51, 204));
         btnAdd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         btnAdd.setForeground(new java.awt.Color(255, 255, 255));
-        btnAdd.setText("Thêm");
+        btnAdd.setText("Sửa");
         btnAdd.addActionListener(this::btnAddActionPerformed);
 
         btnHuy.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N

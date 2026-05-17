@@ -15,61 +15,55 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author HUY0406
  */
-public class ChiTietDonHangDialog extends javax.swing.JDialog {
+public class ChiTietCtrinhKMDialog extends javax.swing.JDialog {
 
     private int idSP;
     private ProductDAO productDAO = new ProductDAO();
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ChiTietDonHangDialog.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ChiTietCtrinhKMDialog.class.getName());
 
     /**
      * Creates new form ChiTietSanPhamDialog
      */
-    public ChiTietDonHangDialog(java.awt.Frame parent, boolean modal) {
+    public ChiTietCtrinhKMDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setupTableColumns();
     }
 
-    public void fillData(String tenKhachHang, String email, String soDienThoai, String diaChi, String tongTien, List<Object[]> chiTietSanPham) {
-        // Đổ dữ liệu thông tin khách hàng và tổng tiền vào các TextField đã được đổi tên
-        txtName.setText(tenKhachHang);
-        txtMail.setText(email);
-        txtPhone.setText(soDienThoai);
-        txtAddress.setText(diaChi);
-        myTextField5.setText(tongTien);
+    public void fillData(String tenCT, String ngayBatDau, String ngayKetThuc, List<Object[]> danhSachSP) {
+        // Đổ dữ liệu thông tin Chương trình
+        txtName.setText(tenCT);
+        txtMail.setText(ngayBatDau);
+        txtPhone.setText(ngayKetThuc);
 
         // Đổ dữ liệu danh sách sản phẩm vào bảng tblDetail
         DefaultTableModel model = (DefaultTableModel) tblDetail.getModel();
-        model.setRowCount(0); // Xóa sạch dữ liệu cũ trên bảng
+        model.setRowCount(0); // Xóa sạch dữ liệu cũ
         
-        if (chiTietSanPham != null) {
-            for (Object[] row : chiTietSanPham) {
+        if (danhSachSP != null) {
+            for (Object[] row : danhSachSP) {
                 model.addRow(row);
             }
         }
     }
+
     private void setupTableColumns() {
-        // 1. Dùng Controller chung của bạn để set format cơ bản (Font, RowHeight, Căn giữa toàn bộ)
         Controller.adminPageController adminCtrl = new Controller.adminPageController();
-        adminCtrl.setUpTable(tblDetail, 0); // Gọi hàm từ package của bạn
+        adminCtrl.setUpTable(tblDetail, 0); 
 
-        // 2. Chỉnh lại độ rộng cột theo ý muốn
+        // Bảng chỉ có 3 cột: 0 (Mã), 1 (Tên), 2 (Mức giảm)
         javax.swing.table.TableColumnModel columnModel = tblDetail.getColumnModel();
-        columnModel.getColumn(0).setPreferredWidth(250); 
-        columnModel.getColumn(1).setPreferredWidth(100); 
-        columnModel.getColumn(2).setPreferredWidth(50);  
-        columnModel.getColumn(3).setPreferredWidth(120); 
+        columnModel.getColumn(0).setPreferredWidth(100); 
+        columnModel.getColumn(1).setPreferredWidth(250); 
+        columnModel.getColumn(2).setPreferredWidth(100);  
 
-        // 3. GHI ĐÈ căn phải cho 2 cột Tiền tệ (Bóp chết lệnh căn giữa của setUpTable tại 2 cột này)
+        // Căn phải cho cột Mức giảm
         javax.swing.table.DefaultTableCellRenderer rightRenderer = new javax.swing.table.DefaultTableCellRenderer();
         rightRenderer.setHorizontalAlignment(javax.swing.JLabel.RIGHT);
-        
-        columnModel.getColumn(1).setCellRenderer(rightRenderer); // Cột Đơn giá
-        columnModel.getColumn(3).setCellRenderer(rightRenderer); // Cột Thành tiền
+        columnModel.getColumn(2).setCellRenderer(rightRenderer); 
         
         tblDetail.getTableHeader().setReorderingAllowed(false);
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -79,15 +73,13 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlCustomer = new javax.swing.JPanel();
+        pnlPromotion = new javax.swing.JPanel();
         lblName = new javax.swing.JLabel();
         txtName = new Custom_Component.MyTextField();
         lblMail = new javax.swing.JLabel();
         txtMail = new Custom_Component.MyTextField();
         txtPhone = new Custom_Component.MyTextField();
         lblPhone = new javax.swing.JLabel();
-        txtAddress = new Custom_Component.MyTextField();
-        lblAddress = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         pnlInfo = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -95,18 +87,16 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnThoat = new Custom_Component.MyButton();
-        jLabel3 = new javax.swing.JLabel();
-        myTextField5 = new Custom_Component.MyTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thông tin chi tiết sản phẩm");
         setBackground(new java.awt.Color(255, 255, 255));
         setModal(true);
 
-        pnlCustomer.setPreferredSize(new java.awt.Dimension(300, 400));
+        pnlPromotion.setPreferredSize(new java.awt.Dimension(300, 400));
 
         lblName.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lblName.setText("Tên khách hàng");
+        lblName.setText("Tên chương trình");
 
         txtName.setBackground(new java.awt.Color(204, 204, 204));
         txtName.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -114,7 +104,7 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
         txtName.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 
         lblMail.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lblMail.setText("Email");
+        lblMail.setText("Ngày bắt đầu");
 
         txtMail.setBackground(new java.awt.Color(204, 204, 204));
         txtMail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
@@ -127,49 +117,39 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
         txtPhone.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 
         lblPhone.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lblPhone.setText("Số điện thoại");
-
-        txtAddress.setBackground(new java.awt.Color(204, 204, 204));
-        txtAddress.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtAddress.setEnabled(false);
-        txtAddress.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-
-        lblAddress.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lblAddress.setText("Địa chỉ giao hàng");
+        lblPhone.setText("Ngày kết thúc");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 102, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("THÔNG TIN KHÁCH HÀNG");
+        jLabel2.setText("THÔNG TIN KHUYẾN MÃI");
 
-        javax.swing.GroupLayout pnlCustomerLayout = new javax.swing.GroupLayout(pnlCustomer);
-        pnlCustomer.setLayout(pnlCustomerLayout);
-        pnlCustomerLayout.setHorizontalGroup(
-            pnlCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlCustomerLayout.createSequentialGroup()
+        javax.swing.GroupLayout pnlPromotionLayout = new javax.swing.GroupLayout(pnlPromotion);
+        pnlPromotion.setLayout(pnlPromotionLayout);
+        pnlPromotionLayout.setHorizontalGroup(
+            pnlPromotionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPromotionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlCustomerLayout.createSequentialGroup()
-                        .addGroup(pnlCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlPromotionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPromotionLayout.createSequentialGroup()
+                        .addGroup(pnlPromotionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblName)
                             .addComponent(lblMail)
-                            .addComponent(lblPhone)
-                            .addComponent(lblAddress))
+                            .addComponent(lblPhone))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlCustomerLayout.createSequentialGroup()
-                        .addGroup(pnlCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtAddress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlPromotionLayout.createSequentialGroup()
+                        .addGroup(pnlPromotionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtPhone, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtMail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap())))
         );
-        pnlCustomerLayout.setVerticalGroup(
-            pnlCustomerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCustomerLayout.createSequentialGroup()
+        pnlPromotionLayout.setVerticalGroup(
+            pnlPromotionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlPromotionLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(lblName)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -182,10 +162,7 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
                 .addComponent(lblPhone)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(lblAddress)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(95, 95, 95))
         );
 
         pnlInfo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -195,17 +172,37 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
 
         tblDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Tên sản phẩm", "Đơn giá", "Số lượng", "Thành tiền"
+                "Mã sản phẩm", "Tên sản phẩm", "Mức giảm"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tblDetail.setEnabled(false);
         jScrollPane1.setViewportView(tblDetail);
+        if (tblDetail.getColumnModel().getColumnCount() > 0) {
+            tblDetail.getColumnModel().getColumn(0).setResizable(false);
+            tblDetail.getColumnModel().getColumn(1).setResizable(false);
+            tblDetail.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         javax.swing.GroupLayout pnlInfoLayout = new javax.swing.GroupLayout(pnlInfo);
         pnlInfo.setLayout(pnlInfoLayout);
@@ -248,14 +245,6 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
         btnThoat.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnThoat.addActionListener(this::btnThoatActionPerformed);
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setText("TỔNG TIỀN ĐƠN HÀNG");
-
-        myTextField5.setBackground(new java.awt.Color(204, 204, 204));
-        myTextField5.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        myTextField5.setEnabled(false);
-        myTextField5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -268,14 +257,9 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pnlPromotion, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, 0)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(myTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                        .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 620, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -286,12 +270,8 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnlInfo, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
-                    .addComponent(pnlCustomer, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(myTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
-                .addGap(36, 36, 36)
+                    .addComponent(pnlPromotion, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 92, Short.MAX_VALUE)
                 .addComponent(btnThoat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -328,7 +308,7 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                ChiTietDonHangDialog dialog = new ChiTietDonHangDialog(new javax.swing.JFrame(), true);
+                ChiTietCtrinhKMDialog dialog = new ChiTietCtrinhKMDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -344,18 +324,14 @@ public class ChiTietDonHangDialog extends javax.swing.JDialog {
     private Custom_Component.MyButton btnThoat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblAddress;
     private javax.swing.JLabel lblMail;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblPhone;
-    private Custom_Component.MyTextField myTextField5;
-    private javax.swing.JPanel pnlCustomer;
     private javax.swing.JPanel pnlHeader;
     private javax.swing.JPanel pnlInfo;
+    private javax.swing.JPanel pnlPromotion;
     private javax.swing.JTable tblDetail;
-    private Custom_Component.MyTextField txtAddress;
     private Custom_Component.MyTextField txtMail;
     private Custom_Component.MyTextField txtName;
     private Custom_Component.MyTextField txtPhone;

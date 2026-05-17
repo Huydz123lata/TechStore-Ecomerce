@@ -18,15 +18,19 @@ public class DonHangDAO {
                 + "LEFT JOIN PAYMENT p ON o.ORDER_ID = p.ORDER_ID "
                 + "WHERE o.IS_DELETED = 0 ORDER BY o.CREATED_AT DESC";
 
-        try (Connection conn = ConnectionOracle.getOracleConnection()) {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection conn = ConnectionOracle.getOracleConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            
             while (rs.next()) {
+                // Áp dụng ép format trực tiếp tại đây
+                String tongTienStr = String.format("%,.0f VNĐ", rs.getDouble(4));
+                
                 list.add(new Object[]{
                     "ORD" + rs.getString(1),
                     rs.getString(2),
                     rs.getDate(3),
-                    rs.getDouble(4),
+                    tongTienStr, // Cột Tổng tiền đã gắn VNĐ
                     rs.getString(5), 
                     rs.getString(6) 
                 });
@@ -61,6 +65,7 @@ public class DonHangDAO {
 
         try (Connection conn = ConnectionOracle.getOracleConnection(); 
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
             int idx = 1;
             if (keyword != null && !keyword.isEmpty()) {
                 ps.setString(idx++, "%" + keyword + "%");
@@ -73,16 +78,20 @@ public class DonHangDAO {
                 ps.setString(idx++, payment);
             }
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                list.add(new Object[]{
-                    "ORD" + rs.getString(1), 
-                    rs.getString(2), 
-                    rs.getDate(3), 
-                    rs.getDouble(4), 
-                    rs.getString(5), 
-                    rs.getString(6)
-                });
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    // Dùng index 4 (cột o.TOTAL) thay vì "TOTAL_AMOUNT" để tránh lỗi SQL
+                    String tongTienStr = String.format("%,.0f VNĐ", rs.getDouble(4));
+                    
+                    list.add(new Object[]{
+                        "ORD" + rs.getString(1),
+                        rs.getString(2),
+                        rs.getDate(3),
+                        tongTienStr, // Đưa chuỗi VNĐ vào
+                        rs.getString(5),
+                        rs.getString(6)
+                    });
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

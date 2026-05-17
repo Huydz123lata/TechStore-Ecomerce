@@ -43,4 +43,17 @@ public class KhuyenMaiService {
     public boolean updateCouponData(String oldCode, String newCode, String name, String type, double value, double minOrder, double maxDiscount, java.util.Date startDate, java.util.Date endDate) {
         return dao.updateCoupon(oldCode, newCode, name, type, value, minOrder, maxDiscount, startDate, endDate);
     }
+    public void addPromotionWithProducts(String name, java.util.Date start, java.util.Date end, java.util.Map<Integer, Double> pDiscounts) throws Exception {
+        dao.insertPromotionWithProducts(name, start, end, pDiscounts);
+    }
+    public List<Object[]> getProductsInPromotion(int promoId) {
+        return dao.getProductsByPromotion(promoId);
+    }
+    public java.util.Map<Integer, Double> getRawProductsInPromotion(int promoId) {
+        return dao.getRawProductsByPromotion(promoId);
+    }
+
+    public void updatePromotionWithProducts(int promoId, String name, java.util.Date start, java.util.Date end, java.util.Map<Integer, Double> pDiscounts) throws Exception {
+        dao.updatePromotionWithProducts(promoId, name, start, end, pDiscounts);
+    }
 }

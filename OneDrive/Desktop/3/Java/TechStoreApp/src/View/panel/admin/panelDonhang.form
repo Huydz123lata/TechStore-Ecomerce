@@ -215,7 +215,7 @@
                 <Column editable="false" title="M&#xe3; &#x111;&#x1a1;n h&#xe0;ng" type="java.lang.String"/>
                 <Column editable="false" title="T&#xea;n kh&#xe1;ch h&#xe0;ng" type="java.lang.String"/>
                 <Column editable="false" title="Ng&#xe0;y &#x111;&#x1eb7;t" type="java.lang.String"/>
-                <Column editable="false" title="T&#x1ed5;ng ti&#x1ec1;n" type="java.lang.Double"/>
+                <Column editable="false" title="T&#x1ed5;ng ti&#x1ec1;n" type="java.lang.String"/>
                 <Column editable="true" title="Tr&#x1ea1;ng th&#xe1;i" type="java.lang.String"/>
                 <Column editable="false" title="Thanh to&#xe1;n" type="java.lang.String"/>
               </Table>
