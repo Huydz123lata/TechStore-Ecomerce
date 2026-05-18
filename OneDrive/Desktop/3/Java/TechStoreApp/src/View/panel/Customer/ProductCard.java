@@ -4,6 +4,12 @@
  */
 package View.panel.Customer;
 
+import Model.ProductModel;
+import Util.ImageHelper;
+import java.awt.Color;
+import java.awt.Font;
+import java.text.DecimalFormat;
+
 /**
  *
  * @author HUY0406
@@ -15,6 +21,65 @@ public class ProductCard extends javax.swing.JPanel {
      */
     public ProductCard() {
         initComponents();
+
+    }
+
+    public void setData(ProductModel sp) {
+        // 1. Gán Tên sản phẩm và Thương hiệu
+        lblTenSP.setText(sp.getName());
+        if (sp.getBrand() != null) {
+            lblThuongHieu.setText(sp.getBrand().getName());
+        }
+
+        // 2. Định dạng tiền tệ
+        DecimalFormat formatter = new DecimalFormat("###,###,###");
+        double giaGoc = sp.getPrice();
+        double tienGiam = sp.getDiscountAmount();
+
+        if (tienGiam > 0) {
+            // --- TRƯỜNG HỢP CÓ KHUYẾN MÃI ---
+            double giaGiam = giaGoc - tienGiam;
+            if (giaGiam < 0) {
+                giaGiam = 0;
+            }
+
+            // TÍNH PHẦN TRĂM GIẢM GIÁ VÀ LÀM TRÒN
+            int phanTram = (int) Math.round((tienGiam / giaGoc) * 100);
+
+            // Đổ dữ liệu cho Giá Gốc 
+            java.awt.Font baseFont = new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12);
+            java.util.Map<java.awt.font.TextAttribute, Object> attributes = new java.util.HashMap<>(baseFont.getAttributes());
+            attributes.put(java.awt.font.TextAttribute.STRIKETHROUGH, java.awt.font.TextAttribute.STRIKETHROUGH_ON);
+
+            lblGiaGoc.setFont(new java.awt.Font(attributes));
+            lblGiaGoc.setForeground(new java.awt.Color(153, 153, 153));
+            lblGiaGoc.setText(formatter.format(giaGoc) + "đ");
+
+            // Gán chữ vào nhãn nằm trong Panel 
+            lblPhanTramGiam.setText("-" + phanTram + "%");
+
+            // BẬT HIỂN THỊ CẢ CÁI PANEL CHỨA NÓ 
+            pnlPhanTramGiam.setVisible(true);
+
+            // Đổ dữ liệu cho Giá Giảm (Chữ màu cam to size 20)
+            lblGiaGiam.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 20));
+            lblGiaGiam.setForeground(new java.awt.Color(255, 102, 0));
+            lblGiaGiam.setText(formatter.format(giaGiam) + "đ");
+
+        } else {
+            // --- TRƯỜNG HỢP KHÔNG CÓ KHUYẾN MÃI ---
+            lblGiaGiam.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 20));
+            lblGiaGiam.setForeground(new java.awt.Color(255, 102, 0));
+            lblGiaGiam.setText(formatter.format(giaGoc) + "đ");
+
+            lblGiaGoc.setText(" ");
+            lblPhanTramGiam.setVisible(true);
+            lblPhanTramGiam.setIcon(null);
+            pnlPhanTramGiam.setBackground(Color.WHITE);
+        }
+
+        // 3. Load Ảnh
+        ImageHelper.setProductImage(lblImage, sp.getImage());
     }
 
     /**
@@ -26,18 +91,171 @@ public class ProductCard extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        roundPanel1 = new Custom_Component.RoundPanel();
+        lblImage = new javax.swing.JLabel();
+        lblThuongHieu = new javax.swing.JLabel();
+        lblTenSP = new javax.swing.JLabel();
+        lblGiaGiam = new javax.swing.JLabel();
+        myButton1 = new Custom_Component.MyButton();
+        myButton2 = new Custom_Component.MyButton();
+        jLabel1 = new javax.swing.JLabel();
+        lblThuongHieu1 = new javax.swing.JLabel();
+        lblGiaGoc = new javax.swing.JLabel();
+        pnlPhanTramGiam = new Custom_Component.RoundPanel();
+        lblPhanTramGiam = new javax.swing.JLabel();
+
+        setMaximumSize(new java.awt.Dimension(248, 373));
+        setMinimumSize(new java.awt.Dimension(248, 373));
+        setOpaque(false);
+
+        roundPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        lblImage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        lblThuongHieu.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblThuongHieu.setForeground(new java.awt.Color(255, 102, 0));
+        lblThuongHieu.setText("APPLE");
+
+        lblTenSP.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblTenSP.setText("MacBook AirM3 13''");
+
+        lblGiaGiam.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        lblGiaGiam.setForeground(new java.awt.Color(255, 102, 0));
+        lblGiaGiam.setText("28.990.000");
+
+        myButton1.setBackground(new java.awt.Color(0, 0, 0));
+        myButton1.setForeground(new java.awt.Color(255, 255, 255));
+        myButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-cart-26 (2).png"))); // NOI18N
+        myButton1.setText("Thêm giỏ");
+        myButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+
+        myButton2.setBackground(new java.awt.Color(255, 102, 0));
+        myButton2.setForeground(new java.awt.Color(255, 255, 255));
+        myButton2.setText("Mua ngay");
+        myButton2.setColorClick(new java.awt.Color(204, 82, 0));
+        myButton2.setColorHover(new java.awt.Color(255, 128, 51));
+        myButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-search-16.png"))); // NOI18N
+
+        lblThuongHieu1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lblThuongHieu1.setForeground(new java.awt.Color(255, 102, 0));
+        lblThuongHieu1.setText("Thương hiệu: ");
+
+        lblGiaGoc.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGiaGoc.setForeground(new java.awt.Color(153, 153, 153));
+        lblGiaGoc.setText("28.990.000");
+
+        pnlPhanTramGiam.setBackground(new java.awt.Color(255, 51, 51));
+
+        lblPhanTramGiam.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblPhanTramGiam.setForeground(new java.awt.Color(255, 255, 255));
+        lblPhanTramGiam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblPhanTramGiam.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-fire-16.png"))); // NOI18N
+        lblPhanTramGiam.setText("-17%");
+
+        javax.swing.GroupLayout pnlPhanTramGiamLayout = new javax.swing.GroupLayout(pnlPhanTramGiam);
+        pnlPhanTramGiam.setLayout(pnlPhanTramGiamLayout);
+        pnlPhanTramGiamLayout.setHorizontalGroup(
+            pnlPhanTramGiamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblPhanTramGiam, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+        );
+        pnlPhanTramGiamLayout.setVerticalGroup(
+            pnlPhanTramGiamLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPhanTramGiamLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblPhanTramGiam, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout roundPanel1Layout = new javax.swing.GroupLayout(roundPanel1);
+        roundPanel1.setLayout(roundPanel1Layout);
+        roundPanel1Layout.setHorizontalGroup(
+            roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(roundPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(lblTenSP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(46, 46, 46))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(myButton2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addComponent(lblThuongHieu1)
+                        .addGap(3, 3, 3)
+                        .addComponent(lblThuongHieu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(roundPanel1Layout.createSequentialGroup()
+                        .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(roundPanel1Layout.createSequentialGroup()
+                                .addComponent(lblGiaGiam)
+                                .addGap(18, 18, 18)
+                                .addComponent(lblGiaGoc))
+                            .addComponent(pnlPhanTramGiam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        roundPanel1Layout.setVerticalGroup(
+            roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(roundPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlPhanTramGiam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblImage, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblThuongHieu)
+                        .addComponent(lblThuongHieu1))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTenSP)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblGiaGiam)
+                    .addComponent(lblGiaGoc))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(roundPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(myButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(myButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 240, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(roundPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 380, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblGiaGiam;
+    private javax.swing.JLabel lblGiaGoc;
+    private javax.swing.JLabel lblImage;
+    private javax.swing.JLabel lblPhanTramGiam;
+    private javax.swing.JLabel lblTenSP;
+    private javax.swing.JLabel lblThuongHieu;
+    private javax.swing.JLabel lblThuongHieu1;
+    private Custom_Component.MyButton myButton1;
+    private Custom_Component.MyButton myButton2;
+    private Custom_Component.RoundPanel pnlPhanTramGiam;
+    private Custom_Component.RoundPanel roundPanel1;
     // End of variables declaration//GEN-END:variables
 }

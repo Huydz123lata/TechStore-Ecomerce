@@ -6,6 +6,7 @@ public class ProductModel {
     private String name;
     private String description;
     private double price;
+    private double discountAmount;
     private int stockQuantity;
     private int soldQuantity;
     private int status;
@@ -116,6 +117,14 @@ public class ProductModel {
 
     public void setSoldQuantity(int soldQuantity) {
         this.soldQuantity = soldQuantity;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
     }
 
     @Override

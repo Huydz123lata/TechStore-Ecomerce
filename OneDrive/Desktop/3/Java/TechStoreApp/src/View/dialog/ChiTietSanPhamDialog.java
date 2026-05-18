@@ -4,6 +4,7 @@
  */
 package View.dialog;
 
+import Controller.CustomerController;
 import DAO.ProductDAO;
 import Util.ImageHelper;
 import java.awt.Image;
@@ -17,6 +18,7 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
 
     private int idSP;
     private ProductDAO productDAO = new ProductDAO();
+    private CustomerController customerController = new CustomerController();
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ChiTietSanPhamDialog.class.getName());
 
     /**
@@ -159,6 +161,7 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
         cbxTrangThai.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cbxTrangThai.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Đang bán", "Ngừng kinh doanh" }));
         cbxTrangThai.setOpaque(true);
+        cbxTrangThai.addActionListener(this::cbxTrangThaiActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -359,6 +362,7 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
 
         if (isSuccess) {
             javax.swing.JOptionPane.showMessageDialog(this, "Đã cập nhật trạng thái mới!");
+
             this.dispose(); // Lưu xong thì đóng cửa sổ này lại
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "Lỗi khi lưu vào Database!");
@@ -368,6 +372,10 @@ public class ChiTietSanPhamDialog extends javax.swing.JDialog {
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnThoatActionPerformed
+
+    private void cbxTrangThaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTrangThaiActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxTrangThaiActionPerformed
 
     /**
      * @param args the command line arguments

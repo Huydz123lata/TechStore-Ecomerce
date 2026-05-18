@@ -4,6 +4,21 @@
  */
 package View.User;
 
+import Custom_Component.WrapLayout;
+import DAO.ProductDAO;
+import Model.ProductModel;
+import Util.TokenMonitorManager;
+import Util.UserSession;
+import View.auth.LoginForm;
+import View.panel.Customer.ProductCard;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import javax.swing.JLabel;
+import javax.swing.Timer;
+
 /**
  *
  * @author HUY0406
@@ -11,6 +26,11 @@ package View.User;
 public class CustomerForm extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CustomerForm.class.getName());
+    private int currentCategoryId = 0;
+
+    private JLabel currentSelectedLabel = null;
+    private final Color COLOR_NORMAL = Color.WHITE;
+    private final Color COLOR_ACTIVE = new Color(255, 220, 185);
 
     /**
      * Creates new form CustomerForm
@@ -18,6 +38,66 @@ public class CustomerForm extends javax.swing.JFrame {
     public CustomerForm() {
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        scrollPaneMain.getVerticalScrollBar().setUnitIncrement(20);
+        scrollPaneMain.getHorizontalScrollBar().setUnitIncrement(20);
+
+        loadDanhSachSanPham(0);
+        startAutoRefresh(5);
+
+    }
+
+    public void loadDanhSachSanPham(int categoryId) {
+        ProductDAO dao = new ProductDAO();
+        List<ProductModel> dsSanPham;
+
+        // 1. Kiểm tra tham số để quyết định lấy tất cả hay lọc theo danh mục
+        if (categoryId == 0) {
+            dsSanPham = dao.getAllProducts(); // Hàm lấy tất cả sản phẩm gốc của bạn
+        } else {
+            dsSanPham = dao.getProductsByCategory(categoryId); // Hàm lọc theo danh mục mới viết độc lập
+        }
+
+        // 2. Setup khung lưới tàng hình WrapLayout và dọn dẹp thẻ cũ
+        pnlGrid.setLayout(new WrapLayout(FlowLayout.LEFT, 20, 20));
+        pnlGrid.removeAll();
+
+        // 3. Đúc thẻ, bơm dữ liệu và ném vào lưới
+        for (ProductModel sp : dsSanPham) {
+            ProductCard card = new ProductCard();
+
+            // Gọi hàm setData để đổ tên, giá, ảnh và xử lý tag lửa tàng hình
+            card.setData(sp);
+
+            pnlGrid.add(card);
+        }
+
+        // 4. Ép giao diện load lại để hiển thị chính xác tăm tắp
+        pnlGrid.revalidate();
+        pnlGrid.repaint();
+    }
+
+    public void startAutoRefresh(int seconds) {
+        // Đổi số giây nhập vào thành mili-giây (1 giây = 1000ms)
+        int delay = seconds * 1000;
+
+        Timer refreshTimer = new Timer(delay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadDanhSachSanPham(0);
+            }
+        });
+        refreshTimer.start();
+    }
+
+    public void setActiveCategoryLabel(JLabel clickedLabel) {
+        if (currentSelectedLabel != null) {
+            currentSelectedLabel.setBackground(COLOR_NORMAL);
+        }
+        currentSelectedLabel = clickedLabel;
+        currentSelectedLabel.setOpaque(true);
+        currentSelectedLabel.setBackground(COLOR_ACTIVE);
+
+        currentSelectedLabel.repaint();
     }
 
     /**
@@ -29,6 +109,10 @@ public class CustomerForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        popMenuAvatar = new javax.swing.JPopupMenu();
+        menuAccountInf = new javax.swing.JMenuItem();
+        menuDonHang = new javax.swing.JMenuItem();
+        menuLoyaltyPoint = new javax.swing.JMenuItem();
         pnlHeader = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtSearch = new Custom_Component.MyTextField();
@@ -38,7 +122,9 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         btnSearch = new Custom_Component.MyButton();
-        btnPoint = new Custom_Component.MyButton();
+        roundPanel2 = new Custom_Component.RoundPanel();
+        lblSoLuongGioHang = new javax.swing.JLabel();
+        BtnLogout = new Custom_Component.MyButton();
         scrollPaneMain = new javax.swing.JScrollPane();
         pnlWrapper = new javax.swing.JPanel();
         pnlBanner = new javax.swing.JPanel();
@@ -75,32 +161,55 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         pnlShopContent = new javax.swing.JPanel();
+        pnlGrid = new javax.swing.JPanel();
+        productCard1 = new View.panel.Customer.ProductCard();
+        productCard2 = new View.panel.Customer.ProductCard();
+        productCard3 = new View.panel.Customer.ProductCard();
+        productCard4 = new View.panel.Customer.ProductCard();
+        productCard5 = new View.panel.Customer.ProductCard();
+        productCard6 = new View.panel.Customer.ProductCard();
+        productCard7 = new View.panel.Customer.ProductCard();
+        productCard8 = new View.panel.Customer.ProductCard();
+        productCard9 = new View.panel.Customer.ProductCard();
         pnlCategory = new Custom_Component.RoundPanel();
         all = new Custom_Component.RoundPanel();
-        jLabel23 = new javax.swing.JLabel();
+        AllCat = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
         Laptop = new Custom_Component.RoundPanel();
-        jLabel27 = new javax.swing.JLabel();
+        LaptopCat = new javax.swing.JLabel();
         jLabel28 = new javax.swing.JLabel();
         SmartPhone = new Custom_Component.RoundPanel();
-        jLabel29 = new javax.swing.JLabel();
+        SmartPhoneCat = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
         HeadPhone = new Custom_Component.RoundPanel();
-        jLabel31 = new javax.swing.JLabel();
+        HeadphoneCat = new javax.swing.JLabel();
         jLabel32 = new javax.swing.JLabel();
         Screen = new Custom_Component.RoundPanel();
-        jLabel33 = new javax.swing.JLabel();
+        ScreenCat = new javax.swing.JLabel();
         jLabel34 = new javax.swing.JLabel();
         SmartWatch = new Custom_Component.RoundPanel();
-        jLabel35 = new javax.swing.JLabel();
+        SmartWatchCat = new javax.swing.JLabel();
         jLabel36 = new javax.swing.JLabel();
         GamingHand = new Custom_Component.RoundPanel();
-        jLabel37 = new javax.swing.JLabel();
+        GamingCat = new javax.swing.JLabel();
         jLabel38 = new javax.swing.JLabel();
         PhuKien = new Custom_Component.RoundPanel();
-        jLabel39 = new javax.swing.JLabel();
+        PhuKienCat = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
         DanhMucText = new javax.swing.JLabel();
+
+        menuAccountInf.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
+        menuAccountInf.setText("Thông tin tài khoản");
+        menuAccountInf.addActionListener(this::menuAccountInfActionPerformed);
+        popMenuAvatar.add(menuAccountInf);
+
+        menuDonHang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-cart-16.png"))); // NOI18N
+        menuDonHang.setText("Đơn hàng của tôi");
+        popMenuAvatar.add(menuDonHang);
+
+        menuLoyaltyPoint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/7.png"))); // NOI18N
+        menuLoyaltyPoint.setText("Đổi điểm thưởng");
+        popMenuAvatar.add(menuLoyaltyPoint);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cửa Hàng Công Nghệ TechStore");
@@ -120,18 +229,27 @@ public class CustomerForm extends javax.swing.JFrame {
         Cart.setColorClick(new java.awt.Color(23, 37, 84));
         Cart.setColorHover(new java.awt.Color(23, 37, 84));
         Cart.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        Cart.addActionListener(this::CartActionPerformed);
 
         MyAccount.setBackground(new java.awt.Color(23, 37, 84));
         MyAccount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-user-32.png"))); // NOI18N
         MyAccount.setColorClick(new java.awt.Color(23, 37, 84));
         MyAccount.setColorHover(new java.awt.Color(23, 37, 84));
+        MyAccount.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MyAccountMouseClicked(evt);
+            }
+        });
+        MyAccount.addActionListener(this::MyAccountActionPerformed);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Giỏ hàng");
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Tài khoản");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -139,16 +257,40 @@ public class CustomerForm extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Hub");
 
-        btnSearch.setBackground(new java.awt.Color(255, 102, 0));
-        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-search-16.png"))); // NOI18N
+        btnSearch.setBackground(new java.awt.Color(255, 102, 51));
+        btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-search-18 (1).png"))); // NOI18N
 
-        btnPoint.setBackground(new java.awt.Color(255, 102, 0));
-        btnPoint.setForeground(new java.awt.Color(255, 255, 255));
-        btnPoint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-gift-26.png"))); // NOI18N
-        btnPoint.setText("Đổi điểm thưởng");
-        btnPoint.setColorClick(new java.awt.Color(204, 82, 0));
-        btnPoint.setColorHover(new java.awt.Color(255, 128, 51));
-        btnPoint.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        roundPanel2.setBackground(new java.awt.Color(255, 102, 0));
+
+        lblSoLuongGioHang.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblSoLuongGioHang.setForeground(new java.awt.Color(255, 255, 255));
+        lblSoLuongGioHang.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSoLuongGioHang.setText("0");
+
+        javax.swing.GroupLayout roundPanel2Layout = new javax.swing.GroupLayout(roundPanel2);
+        roundPanel2.setLayout(roundPanel2Layout);
+        roundPanel2Layout.setHorizontalGroup(
+            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(roundPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblSoLuongGioHang, javax.swing.GroupLayout.DEFAULT_SIZE, 19, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        roundPanel2Layout.setVerticalGroup(
+            roundPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblSoLuongGioHang, javax.swing.GroupLayout.PREFERRED_SIZE, 11, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        BtnLogout.setBackground(new java.awt.Color(231, 76, 60));
+        BtnLogout.setForeground(new java.awt.Color(255, 255, 255));
+        BtnLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-log-out-24.png"))); // NOI18N
+        BtnLogout.setText("Đăng xuất");
+        BtnLogout.setColorClick(new java.awt.Color(192, 57, 43));
+        BtnLogout.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        BtnLogout.addActionListener(this::BtnLogoutActionPerformed);
 
         javax.swing.GroupLayout pnlHeaderLayout = new javax.swing.GroupLayout(pnlHeader);
         pnlHeader.setLayout(pnlHeaderLayout);
@@ -163,25 +305,22 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 707, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE)
-                .addComponent(btnPoint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
                 .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlHeaderLayout.createSequentialGroup()
-                        .addComponent(Cart, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(MyAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(pnlHeaderLayout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3)
-                        .addGap(27, 27, 27))))
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(MyAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Cart, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0)
+                .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(BtnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         pnlHeaderLayout.setVerticalGroup(
             pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlHeaderLayout.createSequentialGroup()
+            .addGroup(pnlHeaderLayout.createSequentialGroup()
                 .addGap(7, 7, 7)
                 .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlHeaderLayout.createSequentialGroup()
@@ -195,17 +334,19 @@ public class CustomerForm extends javax.swing.JFrame {
                                 .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGap(16, 16, 16))
                     .addGroup(pnlHeaderLayout.createSequentialGroup()
-                        .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(MyAccount, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(Cart, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(MyAccount, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addComponent(Cart, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(roundPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(pnlHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
                         .addContainerGap())))
             .addGroup(pnlHeaderLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(btnPoint, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BtnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -215,7 +356,6 @@ public class CustomerForm extends javax.swing.JFrame {
         scrollPaneMain.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         pnlWrapper.setBackground(new java.awt.Color(255, 255, 255));
-        pnlWrapper.setPreferredSize(new java.awt.Dimension(1210, 2000));
         pnlWrapper.setLayout(new java.awt.BorderLayout());
 
         pnlBanner.setBackground(new java.awt.Color(23, 37, 84));
@@ -314,7 +454,7 @@ public class CustomerForm extends javax.swing.JFrame {
                         .addComponent(jLabel8))
                     .addComponent(jLabel6)
                     .addComponent(roundPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                 .addComponent(imagePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36))
         );
@@ -348,7 +488,6 @@ public class CustomerForm extends javax.swing.JFrame {
         pnlWrapper.add(pnlBanner, java.awt.BorderLayout.NORTH);
 
         pnlProductGrid.setBackground(new java.awt.Color(245, 247, 250));
-        pnlProductGrid.setPreferredSize(new java.awt.Dimension(1230, 475));
 
         pnlPolicies.setOpaque(false);
         pnlPolicies.setPreferredSize(new java.awt.Dimension(1494, 90));
@@ -393,7 +532,7 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addGroup(pnlPolices1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
                     .addComponent(jLabel13))
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         pnlPolices1Layout.setVerticalGroup(
             pnlPolices1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -449,7 +588,7 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addGroup(pnlPolicies2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel15)
                     .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         pnlPolicies2Layout.setVerticalGroup(
             pnlPolicies2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -505,7 +644,7 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addGroup(pnlPolicies3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         pnlPolicies3Layout.setVerticalGroup(
             pnlPolicies3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -548,7 +687,7 @@ public class CustomerForm extends javax.swing.JFrame {
 
         jLabel22.setBackground(new java.awt.Color(204, 204, 204));
         jLabel22.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel22.setText("Tiền mặt & thanh toán online");
+        jLabel22.setText("COD & thanh toán online");
 
         javax.swing.GroupLayout pnlPolicies5Layout = new javax.swing.GroupLayout(pnlPolicies5);
         pnlPolicies5.setLayout(pnlPolicies5Layout);
@@ -561,7 +700,7 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addGroup(pnlPolicies5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel21)
                     .addComponent(jLabel22))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
         pnlPolicies5Layout.setVerticalGroup(
             pnlPolicies5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -580,7 +719,21 @@ public class CustomerForm extends javax.swing.JFrame {
 
         pnlShopContent.setBackground(new java.awt.Color(245, 247, 250));
         pnlShopContent.setOpaque(false);
-        pnlShopContent.setLayout(new java.awt.GridLayout(0, 4, 20, 20));
+        pnlShopContent.setLayout(new java.awt.BorderLayout());
+
+        pnlGrid.setOpaque(false);
+        pnlGrid.setLayout(new java.awt.GridLayout(0, 4, 70, 20));
+        pnlGrid.add(productCard1);
+        pnlGrid.add(productCard2);
+        pnlGrid.add(productCard3);
+        pnlGrid.add(productCard4);
+        pnlGrid.add(productCard5);
+        pnlGrid.add(productCard6);
+        pnlGrid.add(productCard7);
+        pnlGrid.add(productCard8);
+        pnlGrid.add(productCard9);
+
+        pnlShopContent.add(pnlGrid, java.awt.BorderLayout.NORTH);
 
         pnlCategory.setBackground(new java.awt.Color(255, 255, 255));
         pnlCategory.setPreferredSize(new java.awt.Dimension(0, 100));
@@ -589,8 +742,14 @@ public class CustomerForm extends javax.swing.JFrame {
         all.setBackground(new java.awt.Color(255, 255, 255));
         all.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel23.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-opened-folder-36.png"))); // NOI18N
+        AllCat.setBackground(new java.awt.Color(51, 102, 255));
+        AllCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        AllCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-opened-folder-36.png"))); // NOI18N
+        AllCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AllCatMouseClicked(evt);
+            }
+        });
 
         jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel24.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -604,14 +763,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(allLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel24, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(AllCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         allLayout.setVerticalGroup(
             allLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(allLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(AllCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel24)
                 .addContainerGap())
@@ -622,8 +781,13 @@ public class CustomerForm extends javax.swing.JFrame {
         Laptop.setBackground(new java.awt.Color(255, 255, 255));
         Laptop.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-laptop-36.png"))); // NOI18N
+        LaptopCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LaptopCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-laptop-36.png"))); // NOI18N
+        LaptopCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LaptopCatMouseClicked(evt);
+            }
+        });
 
         jLabel28.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -637,14 +801,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(LaptopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel28, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel27, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(LaptopCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         LaptopLayout.setVerticalGroup(
             LaptopLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(LaptopLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(LaptopCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel28)
                 .addContainerGap())
@@ -655,8 +819,13 @@ public class CustomerForm extends javax.swing.JFrame {
         SmartPhone.setBackground(new java.awt.Color(255, 255, 255));
         SmartPhone.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-phone-36_1.png"))); // NOI18N
+        SmartPhoneCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SmartPhoneCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-phone-36_1.png"))); // NOI18N
+        SmartPhoneCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SmartPhoneCatMouseClicked(evt);
+            }
+        });
 
         jLabel30.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -670,14 +839,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(SmartPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel30, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel29, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(SmartPhoneCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         SmartPhoneLayout.setVerticalGroup(
             SmartPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SmartPhoneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(SmartPhoneCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel30)
                 .addContainerGap())
@@ -688,8 +857,13 @@ public class CustomerForm extends javax.swing.JFrame {
         HeadPhone.setBackground(new java.awt.Color(255, 255, 255));
         HeadPhone.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel31.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-headphone-36.png"))); // NOI18N
+        HeadphoneCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        HeadphoneCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-headphone-36.png"))); // NOI18N
+        HeadphoneCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                HeadphoneCatMouseClicked(evt);
+            }
+        });
 
         jLabel32.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel32.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -703,14 +877,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(HeadPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel31, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(HeadphoneCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         HeadPhoneLayout.setVerticalGroup(
             HeadPhoneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(HeadPhoneLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(HeadphoneCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel32)
                 .addContainerGap())
@@ -721,8 +895,13 @@ public class CustomerForm extends javax.swing.JFrame {
         Screen.setBackground(new java.awt.Color(255, 255, 255));
         Screen.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel33.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-screen-36.png"))); // NOI18N
+        ScreenCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ScreenCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-screen-36.png"))); // NOI18N
+        ScreenCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ScreenCatMouseClicked(evt);
+            }
+        });
 
         jLabel34.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel34.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -736,14 +915,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(ScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(ScreenCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         ScreenLayout.setVerticalGroup(
             ScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ScreenLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ScreenCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel34)
                 .addContainerGap())
@@ -754,8 +933,13 @@ public class CustomerForm extends javax.swing.JFrame {
         SmartWatch.setBackground(new java.awt.Color(255, 255, 255));
         SmartWatch.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel35.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel35.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-smart-watch-36.png"))); // NOI18N
+        SmartWatchCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        SmartWatchCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-smart-watch-36.png"))); // NOI18N
+        SmartWatchCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SmartWatchCatMouseClicked(evt);
+            }
+        });
 
         jLabel36.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel36.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -769,14 +953,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(SmartWatchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(SmartWatchCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         SmartWatchLayout.setVerticalGroup(
             SmartWatchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(SmartWatchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel35, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(SmartWatchCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel36)
                 .addContainerGap())
@@ -787,8 +971,13 @@ public class CustomerForm extends javax.swing.JFrame {
         GamingHand.setBackground(new java.awt.Color(255, 255, 255));
         GamingHand.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel37.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel37.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-gaming-hand-36.png"))); // NOI18N
+        GamingCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        GamingCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-gaming-hand-36.png"))); // NOI18N
+        GamingCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                GamingCatMouseClicked(evt);
+            }
+        });
 
         jLabel38.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel38.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -802,14 +991,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(GamingHandLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(GamingCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         GamingHandLayout.setVerticalGroup(
             GamingHandLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(GamingHandLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(GamingCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel38)
                 .addContainerGap())
@@ -820,8 +1009,13 @@ public class CustomerForm extends javax.swing.JFrame {
         PhuKien.setBackground(new java.awt.Color(255, 255, 255));
         PhuKien.setPreferredSize(new java.awt.Dimension(140, 80));
 
-        jLabel39.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel39.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-tech-36.png"))); // NOI18N
+        PhuKienCat.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        PhuKienCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/icons8-tech-36.png"))); // NOI18N
+        PhuKienCat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PhuKienCatMouseClicked(evt);
+            }
+        });
 
         jLabel40.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel40.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -835,14 +1029,14 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(PhuKienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel40, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
+                    .addComponent(PhuKienCat, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE))
                 .addContainerGap())
         );
         PhuKienLayout.setVerticalGroup(
             PhuKienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PhuKienLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(PhuKienCat, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel40)
                 .addContainerGap())
@@ -857,17 +1051,16 @@ public class CustomerForm extends javax.swing.JFrame {
         pnlProductGrid.setLayout(pnlProductGridLayout);
         pnlProductGridLayout.setHorizontalGroup(
             pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlProductGridLayout.createSequentialGroup()
+            .addGroup(pnlProductGridLayout.createSequentialGroup()
                 .addGap(85, 85, 85)
                 .addGroup(pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(DanhMucText)
-                    .addGroup(pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(pnlPolicies, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addComponent(pnlCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(87, 87, 87))
-            .addGroup(pnlProductGridLayout.createSequentialGroup()
-                .addComponent(pnlShopContent, javax.swing.GroupLayout.PREFERRED_SIZE, 1496, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(pnlShopContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlProductGridLayout.createSequentialGroup()
+                        .addComponent(DanhMucText)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(pnlPolicies, javax.swing.GroupLayout.DEFAULT_SIZE, 1343, Short.MAX_VALUE)
+                    .addComponent(pnlCategory, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(72, 72, 72))
         );
         pnlProductGridLayout.setVerticalGroup(
             pnlProductGridLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -878,9 +1071,9 @@ public class CustomerForm extends javax.swing.JFrame {
                 .addComponent(DanhMucText)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlCategory, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pnlShopContent, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(1043, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(pnlShopContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(3718, 3718, 3718))
         );
 
         pnlWrapper.add(pnlProductGrid, java.awt.BorderLayout.CENTER);
@@ -895,6 +1088,83 @@ public class CustomerForm extends javax.swing.JFrame {
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void MyAccountMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MyAccountMouseClicked
+        popMenuAvatar.show(MyAccount, 0, MyAccount.getHeight());
+    }//GEN-LAST:event_MyAccountMouseClicked
+
+    private void MyAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MyAccountActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MyAccountActionPerformed
+
+    private void CartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CartActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CartActionPerformed
+
+    private void menuAccountInfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAccountInfActionPerformed
+
+    }//GEN-LAST:event_menuAccountInfActionPerformed
+
+    private void AllCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AllCatMouseClicked
+        loadDanhSachSanPham(0);
+        setActiveCategoryLabel(AllCat);
+
+    }//GEN-LAST:event_AllCatMouseClicked
+
+    private void LaptopCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LaptopCatMouseClicked
+        loadDanhSachSanPham(1);
+        setActiveCategoryLabel(LaptopCat);
+    }//GEN-LAST:event_LaptopCatMouseClicked
+
+    private void SmartPhoneCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SmartPhoneCatMouseClicked
+        loadDanhSachSanPham(2);
+        setActiveCategoryLabel(SmartPhoneCat);
+    }//GEN-LAST:event_SmartPhoneCatMouseClicked
+
+    private void HeadphoneCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HeadphoneCatMouseClicked
+        loadDanhSachSanPham(3);
+        setActiveCategoryLabel(HeadphoneCat);
+    }//GEN-LAST:event_HeadphoneCatMouseClicked
+
+    private void ScreenCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ScreenCatMouseClicked
+        loadDanhSachSanPham(4);
+        setActiveCategoryLabel(ScreenCat);
+    }//GEN-LAST:event_ScreenCatMouseClicked
+
+    private void SmartWatchCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SmartWatchCatMouseClicked
+        loadDanhSachSanPham(5);
+        setActiveCategoryLabel(SmartWatchCat);
+    }//GEN-LAST:event_SmartWatchCatMouseClicked
+
+    private void GamingCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GamingCatMouseClicked
+        loadDanhSachSanPham(6);
+        setActiveCategoryLabel(GamingCat);
+    }//GEN-LAST:event_GamingCatMouseClicked
+
+    private void PhuKienCatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PhuKienCatMouseClicked
+        loadDanhSachSanPham(7);
+        setActiveCategoryLabel(PhuKienCat);
+    }//GEN-LAST:event_PhuKienCatMouseClicked
+
+    private void BtnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLogoutActionPerformed
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+                null,
+                "Bạn có chắc chắn muốn đăng xuất không?",
+                "Xác nhận đăng xuất",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            TokenMonitorManager.stop();
+            UserSession.clearSession();
+
+            LoginForm login = new LoginForm();
+            login.setVisible(true);
+            this.dispose();
+        }
+
+    }//GEN-LAST:event_BtnLogoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -917,18 +1187,26 @@ public class CustomerForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel AllCat;
+    private Custom_Component.MyButton BtnLogout;
     private Custom_Component.MyButton Cart;
     private javax.swing.JLabel DanhMucText;
+    private javax.swing.JLabel GamingCat;
     private Custom_Component.RoundPanel GamingHand;
     private Custom_Component.RoundPanel HeadPhone;
+    private javax.swing.JLabel HeadphoneCat;
     private Custom_Component.RoundPanel Laptop;
+    private javax.swing.JLabel LaptopCat;
     private Custom_Component.MyButton MyAccount;
     private Custom_Component.RoundPanel PhuKien;
+    private javax.swing.JLabel PhuKienCat;
     private Custom_Component.RoundPanel Screen;
+    private javax.swing.JLabel ScreenCat;
     private Custom_Component.RoundPanel SmartPhone;
+    private javax.swing.JLabel SmartPhoneCat;
     private Custom_Component.RoundPanel SmartWatch;
+    private javax.swing.JLabel SmartWatchCat;
     private Custom_Component.RoundPanel all;
-    private Custom_Component.MyButton btnPoint;
     private Custom_Component.MyButton btnSearch;
     private Custom_Component.ImagePanel imagePanel2;
     private javax.swing.JLabel jLabel1;
@@ -946,22 +1224,14 @@ public class CustomerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
-    private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
-    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
-    private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
-    private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel5;
@@ -969,10 +1239,15 @@ public class CustomerForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    public static javax.swing.JLabel lblSoLuongGioHang;
+    private javax.swing.JMenuItem menuAccountInf;
+    private javax.swing.JMenuItem menuDonHang;
+    private javax.swing.JMenuItem menuLoyaltyPoint;
     private Custom_Component.MyButton myButton4;
     private Custom_Component.MyButton myButton5;
     private javax.swing.JPanel pnlBanner;
     private Custom_Component.RoundPanel pnlCategory;
+    private javax.swing.JPanel pnlGrid;
     private javax.swing.JPanel pnlHeader;
     private Custom_Component.RoundPanel pnlPolices1;
     private javax.swing.JPanel pnlPolicies;
@@ -982,7 +1257,18 @@ public class CustomerForm extends javax.swing.JFrame {
     private javax.swing.JPanel pnlProductGrid;
     private javax.swing.JPanel pnlShopContent;
     private javax.swing.JPanel pnlWrapper;
+    private javax.swing.JPopupMenu popMenuAvatar;
+    private View.panel.Customer.ProductCard productCard1;
+    private View.panel.Customer.ProductCard productCard2;
+    private View.panel.Customer.ProductCard productCard3;
+    private View.panel.Customer.ProductCard productCard4;
+    private View.panel.Customer.ProductCard productCard5;
+    private View.panel.Customer.ProductCard productCard6;
+    private View.panel.Customer.ProductCard productCard7;
+    private View.panel.Customer.ProductCard productCard8;
+    private View.panel.Customer.ProductCard productCard9;
     private Custom_Component.RoundPanel roundPanel1;
+    private Custom_Component.RoundPanel roundPanel2;
     private Custom_Component.RoundPanel roundPanel6;
     private Custom_Component.RoundPanel roundPanel7;
     private Custom_Component.RoundPanel roundPanel8;

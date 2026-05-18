@@ -384,7 +384,7 @@ public class panelKhachHang extends javax.swing.JPanel {
     private javax.swing.JLabel lblTotalCustomers;
     private javax.swing.JPanel pnlCustomerAccount;
     private javax.swing.JPanel pnlcus;
-    private javax.swing.JTable tblCustomerAccount;
+    public static javax.swing.JTable tblCustomerAccount;
     private Custom_Component.MyTextField txtSearchCustomer;
     // End of variables declaration//GEN-END:variables
 }

@@ -20,7 +20,7 @@ public class ImageHelper {
         try {
             if (imageName == null || imageName.trim().isEmpty()) {
                 label.setIcon(null);
-                label.setText("No Image");
+                label.setText("");
                 return;
             }
 

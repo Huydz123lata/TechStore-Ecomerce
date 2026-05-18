@@ -21,6 +21,7 @@ import View.panel.admin.panelTaikhoan;
 import View.panel.admin.panelThongke;
 import View.panel.admin.panelTrangchu;
 import java.awt.Color;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -30,7 +31,7 @@ import javax.swing.JPanel;
 public class AdminForm extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AdminForm.class.getName());
-    private javax.swing.JLabel currentSelectedLabel = null;
+    private JLabel currentSelectedLabel = null;
 
     /**
      * Creates new form Main
@@ -142,7 +143,7 @@ public class AdminForm extends javax.swing.JFrame {
         panelView.setLayout(new java.awt.BorderLayout());
         Layout.add(panelView, java.awt.BorderLayout.CENTER);
 
-        Menu.setBackground(new java.awt.Color(0, 0, 51));
+        Menu.setBackground(new java.awt.Color(23, 37, 84));
         Menu.setPreferredSize(new java.awt.Dimension(300, 452));
 
         title.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
@@ -168,7 +169,7 @@ public class AdminForm extends javax.swing.JFrame {
         Title2.setForeground(new java.awt.Color(255, 255, 255));
         Title2.setText("   Quản lý");
 
-        btnTrangchu.setBackground(new java.awt.Color(0, 0, 51));
+        btnTrangchu.setBackground(new java.awt.Color(23, 37, 84));
         btnTrangchu.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnTrangchu.setForeground(new java.awt.Color(153, 153, 153));
         btnTrangchu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/1.png"))); // NOI18N
@@ -205,7 +206,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnBanhang.setBackground(new java.awt.Color(0, 0, 51));
+        btnBanhang.setBackground(new java.awt.Color(23, 37, 84));
         btnBanhang.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnBanhang.setForeground(new java.awt.Color(153, 153, 153));
         btnBanhang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/2.png"))); // NOI18N
@@ -226,7 +227,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnSanpham.setBackground(new java.awt.Color(0, 0, 51));
+        btnSanpham.setBackground(new java.awt.Color(23, 37, 84));
         btnSanpham.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnSanpham.setForeground(new java.awt.Color(153, 153, 153));
         btnSanpham.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/5.png"))); // NOI18N
@@ -247,7 +248,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnHoadon.setBackground(new java.awt.Color(0, 0, 51));
+        btnHoadon.setBackground(new java.awt.Color(23, 37, 84));
         btnHoadon.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnHoadon.setForeground(new java.awt.Color(153, 153, 153));
         btnHoadon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/7.png"))); // NOI18N
@@ -268,7 +269,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnKhuyenmai.setBackground(new java.awt.Color(0, 0, 51));
+        btnKhuyenmai.setBackground(new java.awt.Color(23, 37, 84));
         btnKhuyenmai.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKhuyenmai.setForeground(new java.awt.Color(153, 153, 153));
         btnKhuyenmai.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/3.png"))); // NOI18N
@@ -289,7 +290,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnTaikhoan.setBackground(new java.awt.Color(0, 0, 51));
+        btnTaikhoan.setBackground(new java.awt.Color(23, 37, 84));
         btnTaikhoan.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnTaikhoan.setForeground(new java.awt.Color(153, 153, 153));
         btnTaikhoan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
@@ -310,7 +311,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnDoanhSo.setBackground(new java.awt.Color(0, 0, 51));
+        btnDoanhSo.setBackground(new java.awt.Color(23, 37, 84));
         btnDoanhSo.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnDoanhSo.setForeground(new java.awt.Color(153, 153, 153));
         btnDoanhSo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/6.png"))); // NOI18N
@@ -353,7 +354,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnRole.setBackground(new java.awt.Color(0, 0, 51));
+        btnRole.setBackground(new java.awt.Color(23, 37, 84));
         btnRole.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnRole.setForeground(new java.awt.Color(153, 153, 153));
         btnRole.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/8.png"))); // NOI18N
@@ -374,7 +375,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnKhachHang.setBackground(new java.awt.Color(0, 0, 51));
+        btnKhachHang.setBackground(new java.awt.Color(23, 37, 84));
         btnKhachHang.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKhachHang.setForeground(new java.awt.Color(153, 153, 153));
         btnKhachHang.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/6.png"))); // NOI18N
@@ -395,7 +396,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        btnKho.setBackground(new java.awt.Color(0, 0, 51));
+        btnKho.setBackground(new java.awt.Color(23, 37, 84));
         btnKho.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnKho.setForeground(new java.awt.Color(153, 153, 153));
         btnKho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resource/stock.png"))); // NOI18N
@@ -416,7 +417,7 @@ public class AdminForm extends javax.swing.JFrame {
             }
         });
 
-        myButton1.setBackground(new java.awt.Color(0, 0, 51));
+        myButton1.setBackground(new java.awt.Color(23, 37, 84));
         myButton1.setForeground(new java.awt.Color(255, 0, 0));
         myButton1.setText("LOG OUT");
         myButton1.setToolTipText("");
@@ -750,12 +751,22 @@ public class AdminForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnKhoMouseExited
 
     private void myButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_myButton1ActionPerformed
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+                null,
+                "Bạn có chắc chắn muốn đăng xuất không?",
+                "Xác nhận đăng xuất",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.QUESTION_MESSAGE
+        );
 
-        TokenMonitorManager.stop();
-        UserSession.clearSession();
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            TokenMonitorManager.stop();
+            UserSession.clearSession();
 
-        this.dispose();
-        new View.auth.LoginForm().setVisible(true);
+            LoginForm login = new LoginForm();
+            login.setVisible(true);
+            this.dispose();
+        }
 
     }//GEN-LAST:event_myButton1ActionPerformed
 
