@@ -231,12 +231,10 @@ public class panelFormKhuyenMaiProChange extends javax.swing.JPanel {
         lvlEndDate.setPreferredSize(new java.awt.Dimension(100, 35));
 
         dateEnd.setDateFormatString("dd/MM/yyyy");
-        dateEnd.setFont(new java.awt.Font("Sans Serif Collection", 1, 12)); // NOI18N
-        dateEnd.setPreferredSize(new java.awt.Dimension(100, 25));
+        dateEnd.setPreferredSize(new java.awt.Dimension(120, 25));
 
         dateStart.setDateFormatString("dd/MM/yyyy");
-        dateStart.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        dateStart.setPreferredSize(new java.awt.Dimension(100, 25));
+        dateStart.setPreferredSize(new java.awt.Dimension(120, 25));
 
         btnAdd.setBackground(new java.awt.Color(0, 51, 204));
         btnAdd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
@@ -250,10 +248,7 @@ public class panelFormKhuyenMaiProChange extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Mã Sản phẩm", "Tên sản phẩm", "Mức giảm", "Thêm"
@@ -310,8 +305,8 @@ public class panelFormKhuyenMaiProChange extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(lvlEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(156, 156, 156))
+                                .addComponent(dateEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(139, 139, 139))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel12)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -330,7 +325,7 @@ public class panelFormKhuyenMaiProChange extends javax.swing.JPanel {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addContainerGap()
                 .addComponent(lblMaKM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPromoCode, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -366,7 +361,7 @@ public class panelFormKhuyenMaiProChange extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(0, 0, 0)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
