@@ -87,7 +87,7 @@ public class KhuyenMaiController {
 
     public void handleAdd() {
         javax.swing.JDialog dialog = new javax.swing.JDialog((java.awt.Frame) null, "Tạo Khuyến Mãi Mới", true);
-        View.panel.admin.panelFormKhuyenMai form = new View.panel.admin.panelFormKhuyenMai(this, dialog);
+        View.dialog.panelFormKhuyenMai form = new View.dialog.panelFormKhuyenMai(this, dialog);
         dialog.add(form);
         dialog.pack();
         dialog.setLocationRelativeTo(null);
@@ -237,10 +237,145 @@ public class KhuyenMaiController {
     }
 
     public void handleAddPro() {
-        javax.swing.JOptionPane.showMessageDialog(view, 
-            "Mở Form Tạo Chương Trình Mới (Gồm thông tin chương trình và danh sách Sản phẩm áp dụng)", 
-            "Thông báo", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-        // Ở bước tiếp theo, ta sẽ thay dòng này bằng lệnh bật Dialog chứa cái Form Master-Detail mà tôi đã tư vấn
+        javax.swing.JDialog dialog = new javax.swing.JDialog((java.awt.Frame) null, "Tạo Chương Trình Khuyến Mãi", true);
+        View.dialog.panelFormKhuyenMaiPro form = new View.dialog.panelFormKhuyenMaiPro(this, dialog);
+        dialog.add(form);
+        dialog.pack();
+        dialog.setLocationRelativeTo(view);
+        dialog.setVisible(true);
+    }
+    // 1. Hàm bật Form Sửa và đẩy dữ liệu lên
+    public void handleEdit() {
+        int selectedRow = view.tblCoupon.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(view, "Vui lòng click chọn một mã giảm giá trên bảng để sửa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Bóc tách dữ liệu từ giao diện bảng (JTable)
+        String code = view.tblCoupon.getValueAt(selectedRow, 0).toString();
+        String desc = view.tblCoupon.getValueAt(selectedRow, 1).toString();
+        String type = view.tblCoupon.getValueAt(selectedRow, 2).toString();
+
+        // Loại bỏ các ký tự thừa như " VNĐ", " %", dấu phẩy hàng nghìn
+        String valueStr = view.tblCoupon.getValueAt(selectedRow, 3).toString().replaceAll("[^\\d]", "");
+        String minStr = view.tblCoupon.getValueAt(selectedRow, 4).toString().replaceAll("[^\\d]", "");
+        String maxStr = view.tblCoupon.getValueAt(selectedRow, 5).toString().replaceAll("[^\\d]", "");
+
+        double value = valueStr.isEmpty() ? 0 : Double.parseDouble(valueStr);
+        double min = minStr.isEmpty() ? 0 : Double.parseDouble(minStr);
+        double max = maxStr.isEmpty() ? 0 : Double.parseDouble(maxStr);
+
+        java.util.Date start = (java.util.Date) view.tblCoupon.getValueAt(selectedRow, 6);
+        java.util.Date end = (java.util.Date) view.tblCoupon.getValueAt(selectedRow, 7);
+
+        // Khởi tạo Dialog và Form Sửa chuyên biệt
+        javax.swing.JDialog dialog = new javax.swing.JDialog((java.awt.Frame) null, "Cập Nhật Khuyến Mãi", true);
+        View.dialog.panelFormKhuyenMaiChange form = new View.dialog.panelFormKhuyenMaiChange(this, dialog);
+        
+        form.setEditData(code, desc, type, value, min, max, start, end); 
+        
+        dialog.add(form);
+        dialog.pack();
+        dialog.setLocationRelativeTo(view);
+        dialog.setVisible(true);
+    }
+    
+    // 2. Hàm xử lý trung gian đẩy lệnh Sửa xuống tầng Service/DAO
+    public boolean processUpdateCoupon(String oldCode, String newCode, String name, String type, double value, double minOrder, double maxDiscount, java.util.Date startDate, java.util.Date endDate) {
+        try {
+            boolean success = service.updateCouponData(oldCode, newCode, name, type, value, minOrder, maxDiscount, startDate, endDate);
+            if (success) {
+                refreshCurrentPage(); // Ép load lại bảng ngay lập tức
+            } else {
+                JOptionPane.showMessageDialog(null, "Không thể cập nhật! Có thể do Mã mới đã bị trùng với một Mã khác trong hệ thống.", "Lỗi Cập Nhật", JOptionPane.ERROR_MESSAGE);
+            }
+            return success;
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi kết nối cơ sở dữ liệu: " + e.getMessage(), "Lỗi Hệ Thống", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+    public boolean createNewPromotionPro(String name, java.util.Date start, java.util.Date end, java.util.Map<Integer, Double> pDiscounts) {
+        try {
+            service.addPromotionWithProducts(name, start, end, pDiscounts);
+            refreshCurrentPagePro(); 
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(view, "Lỗi khi tạo Promotion: " + e.getMessage(), "Lỗi Database", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
+    public void handleViewProDetails() {
+        int selectedRow = view.tblPromotion.getSelectedRow();
+        if (selectedRow == -1) return;
+
+        // Bóc tách dữ liệu có sẵn từ JTable
+        String proCode = view.tblPromotion.getValueAt(selectedRow, 0).toString();
+        String tenCT = view.tblPromotion.getValueAt(selectedRow, 1).toString();
+        String ngayBatDau = view.tblPromotion.getValueAt(selectedRow, 2).toString();
+        String ngayKetThuc = view.tblPromotion.getValueAt(selectedRow, 3).toString();
+
+        // Lấy ID gốc để query DB
+        int promoId = Integer.parseInt(proCode.replace("PRO", ""));
+
+        // Gọi service lấy danh sách sản phẩm
+        List<Object[]> danhSachSP = service.getProductsInPromotion(promoId);
+
+        // Tìm Frame cha và Khởi tạo Dialog
+        java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(view);
+        java.awt.Frame parentFrame = (window instanceof java.awt.Frame) ? (java.awt.Frame) window : null;
+
+        View.dialog.ChiTietCtrinhKMDialog dialog = new View.dialog.ChiTietCtrinhKMDialog(parentFrame, true);
+        
+        // Đổ dữ liệu vào Form
+        dialog.fillData(tenCT, ngayBatDau, ngayKetThuc, danhSachSP);
+        
+        dialog.setLocationRelativeTo(view);
+        dialog.setVisible(true);
+    }
+    public void handleEditPro() {
+        int selectedRow = view.tblPromotion.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(view, "Vui lòng chọn một chương trình trên bảng để sửa!", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String proCode = view.tblPromotion.getValueAt(selectedRow, 0).toString();
+        String name = view.tblPromotion.getValueAt(selectedRow, 1).toString();
+        java.util.Date start = (java.util.Date) view.tblPromotion.getValueAt(selectedRow, 2);
+        java.util.Date end = (java.util.Date) view.tblPromotion.getValueAt(selectedRow, 3);
+        int promoId = Integer.parseInt(proCode.replace("PRO", ""));
+
+        // Lấy danh sách sản phẩm gốc (dạng Map)
+        java.util.Map<Integer, Double> currentProducts = service.getRawProductsInPromotion(promoId);
+
+        java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(view);
+        java.awt.Frame parentFrame = (window instanceof java.awt.Frame) ? (java.awt.Frame) window : null;
+
+        javax.swing.JDialog dialog = new javax.swing.JDialog(parentFrame, "Cập Nhật Chương Trình Khuyến Mãi", true);
+        View.dialog.panelFormKhuyenMaiProChange form = new View.dialog.panelFormKhuyenMaiProChange(this, dialog);
+        
+        // Gọi hàm truyền dữ liệu vào Form
+        form.setEditData(promoId, name, start, end, currentProducts);
+        
+        dialog.add(form);
+        dialog.pack();
+        dialog.setLocationRelativeTo(view);
+        dialog.setVisible(true);
     }
 
+    public boolean updatePromotionPro(int promoId, String name, java.util.Date start, java.util.Date end, java.util.Map<Integer, Double> pDiscounts) {
+        try {
+            service.updatePromotionWithProducts(promoId, name, start, end, pDiscounts);
+            refreshCurrentPagePro(); 
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(view, "Lỗi khi cập nhật Promotion: " + e.getMessage(), "Lỗi Database", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+    }
 }

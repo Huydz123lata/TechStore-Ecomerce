@@ -55,8 +55,9 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
                         String orderIdStr = tblDonhang.getValueAt(row, 0).toString().replace("ORD", "");
                         
                         // Tạm thời hiển thị Dialog thông báo. Sau này sẽ thay bằng dòng mở Form.
-                        javax.swing.JOptionPane.showMessageDialog(panelDonhang.this, 
-                            "Chuẩn bị mở Form chi tiết cho Đơn hàng số: " + orderIdStr);
+                        if (controller != null) {
+                            controller.handleDoubleClick(Integer.parseInt(orderIdStr));
+                        }
                     }
                 }
             }
@@ -84,34 +85,38 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
     isRendering = false;
 }
     private void setupStatusCellEditor() {
-        // 1. Tạo ComboBox chứa các trạng thái chuẩn
-        javax.swing.JComboBox<String> cbxStatusEditor = new javax.swing.JComboBox<>(
-            new String[]{"PENDING", "CONFIRMED", "PROCESSING", "SHIPPING", "DELIVERED", "CANCELLED"}
-        );
-        cbxStatusEditor.setFont(tblDonhang.getFont());
-        // 2. Gắn ComboBox này vào cột số 4 (Cột Trạng thái)
-        javax.swing.table.TableColumn statusColumn = tblDonhang.getColumnModel().getColumn(4);
-        statusColumn.setCellEditor(new javax.swing.DefaultCellEditor(cbxStatusEditor));
-        
-        // 3. Lắng nghe sự thay đổi dữ liệu trên bảng
-        tblDonhang.getModel().addTableModelListener(e -> {
-            // Chỉ chạy lệnh Update nếu không phải do hàm renderPage đang đổ dữ liệu
-            if (!isRendering && e.getType() == javax.swing.event.TableModelEvent.UPDATE && e.getColumn() == 4) {
-                int row = e.getFirstRow();
-                javax.swing.table.TableModel model = (javax.swing.table.TableModel) e.getSource();
-                
-                // Lấy ID và Trạng thái mới
-                String orderIdStr = model.getValueAt(row, 0).toString().replace("ORD", "");
-                String newStatus = model.getValueAt(row, 4).toString();
-                
-                // Gửi qua Controller để gọi DB Update
-                // Bạn cần tự viết hàm updateOrderStatus trong Controller nhé
-                if(controller != null) {
-                    controller.updateOrderStatus(Integer.parseInt(orderIdStr), newStatus);
-                }
+    // 1. Tạo ComboBox chứa các trạng thái chuẩn
+    javax.swing.JComboBox<String> cbxStatusEditor = new javax.swing.JComboBox<>(
+        new String[]{"PENDING", "CONFIRMED", "PROCESSING", "SHIPPING", "DELIVERED", "CANCELLED"}
+    );
+    cbxStatusEditor.setFont(tblDonhang.getFont());
+    
+    // 2. Gắn ComboBox này vào cột số 4 (Cột Trạng thái)
+    javax.swing.table.TableColumn statusColumn = tblDonhang.getColumnModel().getColumn(4);
+    statusColumn.setCellEditor(new javax.swing.DefaultCellEditor(cbxStatusEditor));
+    
+    // 3. Lắng nghe sự thay đổi dữ liệu trên bảng
+    tblDonhang.getModel().addTableModelListener(e -> {
+        // Chỉ chạy lệnh Update nếu không phải do hàm renderPage đang đổ dữ liệu
+        if (!isRendering && e.getType() == javax.swing.event.TableModelEvent.UPDATE && e.getColumn() == 4) {
+            int row = e.getFirstRow();
+            javax.swing.table.TableModel model = (javax.swing.table.TableModel) e.getSource();
+            
+            // Lấy ID và Trạng thái MỚI (Vừa chọn trên ComboBox)
+            String orderIdStr = model.getValueAt(row, 0).toString().replace("ORD", "");
+            String newStatus = model.getValueAt(row, 4).toString();
+            
+            // Lấy Trạng thái CŨ (Trạng thái gốc lưu trong biến allData trước khi bị sửa)
+            int start = (currentPage - 1) * rowsPerPage;
+            String oldStatus = allData.get(start + row)[4].toString();
+            
+            // Gửi qua Controller gồm: ID, Trạng thái Mới, và Trạng thái Cũ
+            if(controller != null) {
+                controller.updateOrderStatus(Integer.parseInt(orderIdStr), newStatus, oldStatus);
             }
-        });
-    }
+        }
+    });
+}
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -133,7 +138,6 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
         jLabel7 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         ChuyenPageSp.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -155,7 +159,7 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
             .addGroup(ChuyenPageSpLayout.createSequentialGroup()
                 .addComponent(btnPrev)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblPage)
+                .addComponent(lblPage, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNext))
         );
@@ -170,7 +174,8 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 32)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 102, 0));
         jLabel1.setText("QUẢN LÝ ĐƠN HÀNG");
 
         myTextField1.addActionListener(this::myTextField1ActionPerformed);
@@ -196,10 +201,10 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, true
+                false, false, false, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -244,10 +249,7 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(ChuyenPageSp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(jLabel1)
@@ -267,11 +269,16 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cbxThanhtoan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnExcel))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnExcel)
+                        .addGap(8, 8, 8))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ChuyenPageSp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cbxDonhang, cbxThanhtoan});
@@ -298,7 +305,7 @@ if (tblDonhang.getParent() instanceof javax.swing.JViewport) {
                         .addComponent(cbxThanhtoan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnExcel)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ChuyenPageSp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())

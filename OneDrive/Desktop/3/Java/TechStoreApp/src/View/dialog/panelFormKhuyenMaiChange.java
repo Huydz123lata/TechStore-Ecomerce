@@ -2,23 +2,41 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package View.panel.admin;
+package View.dialog;
 
 import Controller.KhuyenMaiController;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-public class panelFormKhuyenMai extends javax.swing.JPanel {
-
-    private final KhuyenMaiController parentController;
+public class panelFormKhuyenMaiChange extends javax.swing.JPanel {
+private final KhuyenMaiController parentController;
     private final javax.swing.JDialog parentDialog;
+    
+    // Biến lưu trữ Mã giảm giá gốc trước khi bị sửa (Để làm điều kiện WHERE trong SQL)
+    private String originalCode = ""; 
 
-    public panelFormKhuyenMai(KhuyenMaiController controller, javax.swing.JDialog dialog) {
+    public panelFormKhuyenMaiChange(KhuyenMaiController controller, javax.swing.JDialog dialog) {
         initComponents();
         this.parentController = controller;
         this.parentDialog = dialog;
-        cbxType.setSelectedIndex(0);
+    }
+
+    // Hàm nhận dữ liệu từ Controller truyền vào để hiển thị lên Form
+    public void setEditData(String code, String name, String type, double value, double min, double max, Date start, Date end) {
+        this.originalCode = code; 
+        
+        txtPromoCode.setText(code);
+        txtPromoName.setText(name);
+        cbxType.setSelectedItem(type);
+        
+        txtDiscountValue.setText(String.format("%.0f", value));
+        txtMin.setText(String.format("%.0f", min));
+        txtMax.setText(String.format("%.0f", max));
+        
+        dateStart.setDate(start);
+        dateEnd.setDate(end);
+        
         handleTypeChange();
     }
 
@@ -30,38 +48,23 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         }
     }
 
-    private void handleInsert() {
-        String code = txtPromoCode.getText().trim().toUpperCase();
+    private void handleUpdate() {
+        String newCode = txtPromoCode.getText().trim().toUpperCase();
         String name = txtPromoName.getText().trim();
         int typeIndex = cbxType.getSelectedIndex();
         String valueStr = txtDiscountValue.getText().trim();
         String minStr = txtMin.getText().trim();
         String maxStr = txtMax.getText().trim();
-        // Bẫy lỗi chữ mờ (Placeholder)
-        if (code.equalsIgnoreCase("MÃ KHUYẾN MÃI") || code.equalsIgnoreCase("NHẬP MÃ...")) {
-            code = "";
-        }
-        if (name.equalsIgnoreCase("TÊN CHƯƠNG TRÌNH") || name.equalsIgnoreCase("NHẬP TÊN...")) {
-            name = "";
-        }
-        if (valueStr.equalsIgnoreCase("MỨC GIẢM") || valueStr.equalsIgnoreCase("NHẬP MỨC GIẢM...")) {
-            valueStr = "";
-        }
 
-        Date startDate = dateStart.getDate();
-        Date endDate = dateEnd.getDate();
-        if (code.isEmpty() && name.isEmpty() && valueStr.isEmpty() && typeIndex <= 0) {
-            closeForm();
-            return;
-        }
-
-        if (code.isEmpty() || name.isEmpty() || valueStr.isEmpty() || typeIndex <= 0 || startDate == null || endDate == null) {
+        if (newCode.isEmpty() || name.isEmpty() || valueStr.isEmpty() || typeIndex <= 0 || dateStart.getDate() == null || dateEnd.getDate() == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin (Mã, Tên, Loại, Mức giảm, Ngày tháng)!", "Lỗi nhập liệu", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        if (endDate.before(startDate)) {
-            JOptionPane.showMessageDialog(this, "Ngày kết thúc không được nhỏ hơn Ngày bắt đầu!", "Lỗi ngày tháng", JOptionPane.ERROR_MESSAGE);
+        Date startDate = dateStart.getDate();
+        Date endDate = dateEnd.getDate();
+        if (endDate.before(startDate) || endDate.equals(startDate)) {
+            JOptionPane.showMessageDialog(this, "Ngày kết thúc phải lớn hơn Ngày bắt đầu!", "Lỗi ngày tháng", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -71,54 +74,40 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
         try {
             discountValue = Double.parseDouble(valueStr);
-            if (discountValue <= 0) {
-                throw new NumberFormatException();
-            }
+            if (discountValue <= 0) throw new NumberFormatException();
 
-            // MIN (Đơn tối thiểu): Nếu bỏ trống thì gán = 0
             minOrder = minStr.isEmpty() ? 0 : Double.parseDouble(minStr);
-            if (minOrder < 0) {
-                throw new NumberFormatException();
-            }
+            if (minOrder < 0) throw new NumberFormatException();
 
             String typeStr = cbxType.getSelectedItem().toString();
 
-            if ("PERCENTAGE".equals(typeStr) || "PERCENT".equals(typeStr)) {
+            if ("PERCENTAGE".equals(typeStr)) {
                 if (discountValue > 100) {
-                    JOptionPane.showMessageDialog(this, "Mức giảm theo phần trăm không được vượt quá 100%!", "Lỗi giá trị", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Mức giảm phần trăm không được vượt quá 100%!", "Lỗi giá trị", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                // MAX (Giảm tối đa): Nếu bỏ trống thì gán = 0 (Tức là không giới hạn)
                 maxDiscount = maxStr.isEmpty() ? 0 : Double.parseDouble(maxStr);
-                if (maxDiscount < 0) {
-                    throw new NumberFormatException();
-                }
-
+                if (maxDiscount < 0) throw new NumberFormatException();
             } else {
-                // Nếu là AMOUNT (VNĐ) thì Giảm tối đa chính là giá trị giảm luôn
                 maxDiscount = discountValue;
             }
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Mức giảm, Đơn tối thiểu và Giảm tối đa phải là con số hợp lệ (> 0)!", "Lỗi giá trị", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Mức giảm, Đơn tối thiểu, Giảm tối đa phải là số hợp lệ (> 0)!", "Lỗi định dạng", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String typeStr = cbxType.getSelectedItem().toString();
-        String status = "UPCOMING";
 
-        boolean isSuccess = false;
         if (parentController != null) {
-            // Truyền tất cả các thông số (bao gồm min, max) qua Controller
-            isSuccess = parentController.createNewPromotion(code, name, typeStr, discountValue, minOrder, maxDiscount, startDate, endDate, status);
-        }
-
-        if (isSuccess) {
-            JOptionPane.showMessageDialog(this, "Tạo mã khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            if (parentController != null) {
-                parentController.refreshCurrentPage();
+            // Gọi lệnh Cập nhật từ Controller, truyền cả Mã gốc và Mã mới
+            boolean isSuccess = parentController.processUpdateCoupon(originalCode, newCode, name, typeStr, discountValue, minOrder, maxDiscount, startDate, endDate);
+            
+            if (isSuccess) {
+                JOptionPane.showMessageDialog(this, "Cập nhật Khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                closeForm();
             }
-            closeForm();
+            // (Nếu thất bại, thông báo lỗi đã được xử lý trong Controller/DAO)
         }
     }
 
@@ -130,21 +119,19 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         String selectedType = cbxType.getSelectedItem().toString();
 
         if ("PERCENTAGE".equals(selectedType)) {
-            // Nếu chọn % -> Hiện cả Label và Ô nhập Max
+            // Nếu chọn % -> Hiện Label và Ô nhập Max
             lvlValue2.setVisible(true);
             txtMax.setVisible(true);
         } else {
-            // Nếu là AMOUNT hoặc chưa chọn -> Cho tàng hình hoàn toàn
+            // Nếu là AMOUNT -> Chỉ ẩn đi thôi, KHÔNG XÓA TEXT bên trong để giữ lại lịch sử nhập
             lvlValue2.setVisible(false);
             txtMax.setVisible(false);
-            txtMax.setText(""); // Xóa trắng dữ liệu lỡ nhập dở
         }
 
-        // Refresh lại giao diện để không bị lưu bóng mờ (Glitch UI)
+        // Refresh lại giao diện để hệ thống vẽ lại ô
         this.revalidate();
         this.repaint();
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -177,7 +164,7 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("TẠO MÃ GIẢM GIÁ MỚI");
+        jLabel1.setText("CHỈNH SỬA MÃ GIẢM GIÁ");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -232,8 +219,8 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
 
         btnAdd.setBackground(new java.awt.Color(0, 51, 204));
         btnAdd.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        btnAdd.setForeground(new java.awt.Color(204, 204, 204));
-        btnAdd.setText("Thêm");
+        btnAdd.setForeground(new java.awt.Color(255, 255, 255));
+        btnAdd.setText("Sửa");
         btnAdd.addActionListener(this::btnAddActionPerformed);
 
         btnHuy.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
@@ -376,15 +363,11 @@ public class panelFormKhuyenMai extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
-        if (parentDialog != null) {
-            parentDialog.dispose();
-        } else {
-            SwingUtilities.getWindowAncestor(this).dispose();
-        }
+        closeForm();
     }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        handleInsert();
+       handleUpdate();
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void cbxTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxTypeActionPerformed
