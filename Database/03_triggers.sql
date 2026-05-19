@@ -129,7 +129,7 @@ END;
 
 
 
-
+--ĐEM VÀO BÁO CÁO CHÍNH
 /* =============================================================================
    TRIGGER 1: TRG_PREVENT_PRICE_CHANGE_ON_ACTIVE_ORDER
 
