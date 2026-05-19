@@ -1,16 +1,5 @@
 /* =============================================================================
    FUNCTION 1: fn_get_product_effective_price
-
-   Mô tả: Tính giá THỰC TẾ của một sản phẩm tại thời điểm hiện tại, có tính
-   đến khuyến mãi đang chạy (bảng PROMOTION_PRODUCT). Trả về:
-     - Giá sau khuyến mãi nếu sản phẩm đang trong chiến dịch khuyến mãi còn hạn.
-     - Giá gốc nếu không có khuyến mãi nào áp dụng.
-
-   Cách dùng:
-     SELECT fn_get_product_effective_price(1) FROM DUAL;
-     -- Hoặc dùng trong query để hiển thị giá khuyến mãi cho toàn danh mục:
-     SELECT NAME, PRICE, fn_get_product_effective_price(PRODUCT_ID) AS EFFECTIVE_PRICE
-     FROM PRODUCT WHERE IS_DELETED = 0;
    ============================================================================= */
 CREATE OR REPLACE FUNCTION fn_get_product_effective_price (
     p_product_id IN NUMBER
@@ -27,10 +16,9 @@ BEGIN
     WHERE  PRODUCT_ID = p_product_id
       AND  IS_DELETED = 0;
 
-    -- 2. Tìm khuyến mãi đang chạy có giảm giá cao nhất cho sản phẩm này
-    --    (một sản phẩm có thể thuộc nhiều chiến dịch → lấy mức giảm tốt nhất)
+    -- 2. Lấy giá trị giảm giá của khuyến mãi duy nhất đang áp dụng và còn hạn
     BEGIN
-        SELECT MAX(pp.DISCOUNT_VALUE)
+        SELECT pp.DISCOUNT_VALUE
         INTO   v_discount_value
         FROM   PROMOTION_PRODUCT pp
         JOIN   PROMOTION p ON pp.PROMOTION_ID = p.PROMOTION_ID
@@ -40,20 +28,18 @@ BEGIN
           AND  SYSDATE BETWEEN p.START_AT AND p.END_AT;
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
+            -- Nếu sản phẩm không nằm trong chương trình khuyến mãi nào, mặc định mức giảm bằng 0
             v_discount_value := 0;
     END;
 
-    -- 3. Tính giá hiệu lực (không để giá âm)
-    v_effective_price := GREATEST(
-                             v_original_price - NVL(v_discount_value, 0),
-                             0
-                         );
+    -- 3. Tính giá thực tế sau giảm giá (đảm bảo không bị âm giá)
+    v_effective_price := GREATEST(v_original_price - v_discount_value, 0);
 
     RETURN v_effective_price;
 
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
-        -- Sản phẩm không tồn tại → trả về NULL để caller tự xử lý
+        -- Trường hợp không tìm thấy sản phẩm tương ứng trong bảng PRODUCT
         RETURN NULL;
     WHEN OTHERS THEN
         RETURN NULL;
