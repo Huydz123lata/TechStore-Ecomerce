@@ -536,48 +536,6 @@ BEGIN
 END;
 /
 
-DROP PROCEDURE sp_PlaceOrder;
-
--- 1. Thêm Thương hiệu
-INSERT INTO BRAND (NAME) VALUES ('Apple');
-INSERT INTO BRAND (NAME) VALUES ('Samsung');
-
--- 2. Thêm Danh mục
-INSERT INTO CATEGORY (NAME) VALUES ('Điện thoại');
-INSERT INTO CATEGORY (NAME) VALUES ('Phụ kiện');
-
--- 3. Thêm Sản phẩm (Để ý ID thường sẽ là 1 và 2)
-INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
-VALUES ('iPhone 15 Pro', 'iphone15.jpg', 'Chính hãng VN/A', 28000000, 50, 12, 1, 1);
-
-INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
-VALUES ('Ốp lưng MagSafe', 'op-magsafe.jpg', 'Chống sốc tốt', 1500000, 100, 6, 2, 1);
-
--- 4. Thêm Người dùng
-INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, ADDRESS, GENDER)
-VALUES ('Nguyễn Văn A', '0901234567', 'TP. Hồ Chí Minh', 'Nam');
-
-COMMIT;
-
-BEGIN
-    -- Thêm 2 chiếc iPhone (ID = 1) cho người dùng (ID = 1)
-    AddToCart(
-        p_user_id    => 1,
-        p_product_id => 2,
-        p_quantity   => 2
-    );
-END;
-/
-select * from PRODUCT;
-select * from CART_ITEM;
-
-
-
-
-
-
-
-
 CREATE OR REPLACE PROCEDURE sp_delete_cart (
     p_cart_id IN NUMBER
 ) IS
@@ -707,10 +665,7 @@ BEGIN
 END;
 /
 
-BEGIN
-    sp_GetUserOrderHistory(1); -- Lấy lịch sử của User có ID là 1
-END;
-/
+
 
 
 

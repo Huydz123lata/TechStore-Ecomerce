@@ -260,12 +260,6 @@ CREATE TABLE LOYALTY_POINT (
     TOTAL_POINTS NUMBER(10) DEFAULT 0,
     UPDATED_AT   DATE DEFAULT SYSDATE
 );
-
-select * from PRODUCT;
-select * from PROMOTION;
-SELECT * FROM PROMOTION_PRODUCT WHERE PRODUCT_ID = 2;
-DELETE FROM PROMOTION_PRODUCT WHERE PRODUCT_ID = 2 AND PROMOTION_ID = 1; commit;
-
 --INSERT DỮ LIỆU
 INSERT INTO FUNCTION (NAME_FUNCTION) VALUES ('Dashboard');
 INSERT INTO FUNCTION (NAME_FUNCTION) VALUES ('Thống kê');
@@ -332,5 +326,75 @@ ON ROLE_GROUP (
 
 
 
+--Testing
+-- ===========================================================================
+-- 1. BRAND & CATEGORY
+-- ===========================================================================
+INSERT INTO BRAND (NAME) VALUES ('Apple');
+INSERT INTO BRAND (NAME) VALUES ('Samsung');
+INSERT INTO BRAND (NAME) VALUES ('Sony');
 
+INSERT INTO CATEGORY (NAME) VALUES ('Điện thoại');
+INSERT INTO CATEGORY (NAME) VALUES ('Laptop');
+INSERT INTO CATEGORY (NAME) VALUES ('Phụ kiện');
+
+COMMIT;
+
+-- ===========================================================================
+-- 2. SẢN PHẨM (PRODUCT)
+-- Giả sử BRAND_ID: Apple=1, Samsung=2, Sony=3
+--         CATEGORY_ID: Điện thoại=1, Laptop=2, Phụ kiện=3
+-- ===========================================================================
+INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
+VALUES ('iPhone 15 Pro', 'iphone15pro.jpg', 'Chip A17 Pro, camera 48MP', 28000000, 50, 12, 1, 1);
+
+INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
+VALUES ('Samsung Galaxy S24', 'galaxys24.jpg', 'Chip Snapdragon 8 Gen 3', 22000000, 30, 12, 1, 2);
+
+INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
+VALUES ('MacBook Pro M3', 'macbookm3.jpg', 'Chip M3, RAM 16GB', 45000000, 20, 12, 2, 1);
+
+INSERT INTO PRODUCT (NAME, IMAGE_NAME, DESCRIPTION, PRICE, STOCK_QUANTITY, WARRANTY_MONTH, CATEGORY_ID, BRAND_ID)
+VALUES ('Tai nghe Sony WH-1000XM5', 'sony-wh1000xm5.jpg', 'Chống ồn hàng đầu', 8000000, 100, 12, 3, 3);
+
+COMMIT;
+
+-- ===========================================================================
+-- 3. USERS
+--    User 1: Khách hàng mới (chưa có điểm tích lũy)
+--    User 2: Khách hàng thân thiết (có lịch sử mua hàng)
+--    User 3: Dùng để test fraud detection
+-- ===========================================================================
+INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, EMAIL, ADDRESS, GENDER, USER_TYPE)
+VALUES ('Nguyễn Văn An', '0901111111', 'an@email.com', 'Quận 1, HCM', 'Nam', 'CUSTOMER');
+
+INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, EMAIL, ADDRESS, GENDER, USER_TYPE)
+VALUES ('Trần Thị Bình', '0902222222', 'binh@email.com', 'Quận 3, HCM', 'Nữ', 'CUSTOMER');
+
+INSERT INTO APP_USER (FULL_NAME, PHONE_NUMBER, EMAIL, ADDRESS, GENDER, USER_TYPE)
+VALUES ('Lê Văn Cường', '0903333333', 'cuong@email.com', 'Quận 7, HCM', 'Nam', 'CUSTOMER');
+
+COMMIT;
+
+-- ===========================================================================
+-- 4. KHUYẾN MÃI (để test fn_get_product_effective_price)
+--    Tạo promotion giảm 2.000.000đ cho iPhone 15 Pro
+-- ===========================================================================
+INSERT INTO PROMOTION (PROMOTION_NAME, START_AT, END_AT, IS_ACTIVE)
+VALUES ('Sale Tháng 5', SYSDATE - 1, SYSDATE + 30, 1);
+
+-- Giả sử PROMOTION_ID = 1, PRODUCT_ID iPhone = 1
+INSERT INTO PROMOTION_PRODUCT (PROMOTION_ID, PRODUCT_ID, DISCOUNT_VALUE)
+VALUES (1, 1, 2000000);
+
+COMMIT;
+
+-- ===========================================================================
+-- 5. ĐIỂM TÍCH LŨY BAN ĐẦU cho User 2 (để test hệ số nhân hạng BẠC)
+--    Gán sẵn 600 điểm → hạng BẠC → hệ số x1.5
+-- ===========================================================================
+INSERT INTO LOYALTY_POINT (USER_ID, TOTAL_POINTS, UPDATED_AT)
+VALUES (2, 600, SYSDATE);
+
+COMMIT;
 
