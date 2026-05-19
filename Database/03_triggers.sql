@@ -16,26 +16,30 @@ END;
 /
 
 --Trigger 2 (chọn)
-CREATE OR REPLACE TRIGGER TRG_RECALCULATE_ORDER_TOTAL
-AFTER INSERT OR UPDATE OR DELETE ON ORDER_DETAIL
+CREATE OR REPLACE TRIGGER TRG_RECALCULATE_CART_TOTAL
+AFTER INSERT OR UPDATE OR DELETE ON CART_ITEM
 FOR EACH ROW
+DECLARE
+    v_cart_id        NUMBER;
+    v_sum_cart_total NUMBER(18,2);
 BEGIN
-    IF INSERTING THEN
-        UPDATE ORDERS
-        SET SUBTOTAL = SUBTOTAL + :NEW.LINE_TOTAL,
-            TOTAL = TOTAL + :NEW.LINE_TOTAL
-        WHERE ORDER_ID = :NEW.ORDER_ID;
-    ELSIF UPDATING THEN
-        UPDATE ORDERS
-        SET SUBTOTAL = SUBTOTAL - :OLD.LINE_TOTAL + :NEW.LINE_TOTAL,
-            TOTAL = TOTAL - :OLD.LINE_TOTAL + :NEW.LINE_TOTAL
-        WHERE ORDER_ID = :NEW.ORDER_ID;
-    ELSIF DELETING THEN
-        UPDATE ORDERS
-        SET SUBTOTAL = SUBTOTAL - :OLD.LINE_TOTAL,
-            TOTAL = TOTAL - :OLD.LINE_TOTAL
-        WHERE ORDER_ID = :OLD.ORDER_ID;
-    END IF;
+    -- 1. Xác định ID của giỏ hàng đang bị tác động
+    -- Dùng NVL phòng trường hợp xóa sản phẩm khỏi giỏ (khi DELETE thì :NEW sẽ bị rỗng)
+    v_cart_id := NVL(:NEW.CART_ID, :OLD.CART_ID);
+
+    -- 2. Dùng hàm SUM gom toàn bộ tiền của các sản phẩm hiện có trong giỏ hàng đó
+    SELECT SUM(TOTAL) INTO v_sum_cart_total
+    FROM CART_ITEM
+    WHERE CART_ID = v_cart_id;
+
+    -- Nếu giỏ hàng trống (khách xóa sạch đồ), gán tổng tiền bằng 0
+    v_sum_cart_total := NVL(v_sum_cart_total, 0);
+
+    -- 3. Cập nhật con số tổng mới này vào bảng lớn CART kèm theo thời gian chỉnh sửa
+    UPDATE CART
+    SET TOTAL = v_sum_cart_total,
+        UPDATED_AT = SYSDATE
+    WHERE CART_ID = v_cart_id;
 END;
 /
 
