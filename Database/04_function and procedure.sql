@@ -1,6 +1,4 @@
-/* =============================================================================
-   FUNCTION 1: fn_get_product_effective_price
-   ============================================================================= */
+--FUNCTION 1: fn_get_product_effective_price
 CREATE OR REPLACE FUNCTION fn_get_product_effective_price (
     p_product_id IN NUMBER
 ) RETURN NUMBER
@@ -46,24 +44,7 @@ EXCEPTION
 END fn_get_product_effective_price;
 /
 
-
-/* =============================================================================
-   FUNCTION 2: fn_get_user_loyalty_tier
-
-   Mô tả: Trả về thông tin đầy đủ về hạng thành viên của một user dưới dạng
-   VARCHAR2, bao gồm: tên hạng, tổng điểm hiện tại, và số điểm còn thiếu để
-   lên hạng tiếp theo. Hữu ích cho màn hình "Tài khoản của tôi" hoặc báo cáo.
-
-   Output format:
-     "VÀNG | 2350 điểm | Cần thêm 1650 điểm để đạt KIM CƯƠNG"
-     "KIM CƯƠNG | 6200 điểm | Hạng cao nhất"
-
-   Cách dùng:
-     SELECT fn_get_user_loyalty_tier(1) FROM DUAL;
-     -- Hoặc trong báo cáo:
-     SELECT u.FULL_NAME, fn_get_user_loyalty_tier(u.USER_ID) AS MEMBERSHIP_INFO
-     FROM APP_USER u WHERE u.IS_DELETED = 0;
-   ============================================================================= */
+--FUNCTION 2: fn_get_user_loyalty_tier
 CREATE OR REPLACE FUNCTION fn_get_user_loyalty_tier (
     p_user_id IN NUMBER
 ) RETURN VARCHAR2
@@ -121,13 +102,7 @@ EXCEPTION
 END fn_get_user_loyalty_tier;
 /
 
-
-
-
-
-
-
-
+--Function 3: fn_calculate_discount_amount
 CREATE OR REPLACE FUNCTION fn_calculate_discount_amount (
     p_subtotal IN NUMBER,
     p_coupon_id IN NUMBER
@@ -178,298 +153,121 @@ EXCEPTION
 END;
 
 
---HoaiBaoViet
-CREATE OR REPLACE PROCEDURE sp_print_order_info (p_order_id IN NUMBER)
+CREATE OR REPLACE PROCEDURE sp_get_product_detail  (
+    p_product_id IN NUMBER
+)
 IS
-    v_total ORDERS.TOTAL%TYPE;
-    v_status ORDERS.STATUS%TYPE;
+    v_product PRODUCT%ROWTYPE;
+BEGIN
+    SELECT *
+    INTO v_product
+    FROM PRODUCT
+    WHERE PRODUCT_ID = p_product_id
+      AND IS_DELETED = 0;
 
-    v_coupon_id ORDERS.COUPON_ID%TYPE;
-    v_coupon_code COUPON.CODE%TYPE;
-    v_discount_val COUPON.DISCOUNT_VALUE%TYPE;
+    DBMS_OUTPUT.PUT_LINE('Mã sản phẩm    : ' || v_product.PRODUCT_ID);
+    DBMS_OUTPUT.PUT_LINE('Tên sản phẩm   : ' || v_product.NAME);
+    DBMS_OUTPUT.PUT_LINE('Mô tả          : ' || NVL(v_product.DESCRIPTION, 'Không có mô tả'));
+    DBMS_OUTPUT.PUT_LINE('Giá bán        : ' || TO_CHAR(v_product.PRICE, '999,999,999.99') || ' VNĐ');
+    DBMS_OUTPUT.PUT_LINE('Thương hiệu    : ' || v_product.BRAND_ID);
+    DBMS_OUTPUT.PUT_LINE('Số lượng tồn   : ' || v_product.STOCK_QUANTITY);
+    DBMS_OUTPUT.PUT_LINE('Bảo hành       : ' || v_product.WARRANTY_MONTH || ' tháng');
+END;
+/
 
-    v_prod_name PRODUCT.NAME%TYPE;
-    v_qty ORDER_DETAIL.QUANTITY%TYPE;
-    v_price ORDER_DETAIL.PRICE%TYPE;
 
-    CURSOR cur_order_details IS
-        SELECT p.NAME, od.QUANTITY, od.PRICE
-        FROM ORDER_DETAIL od
-        JOIN PRODUCT p ON od.PRODUCT_ID = p.PRODUCT_ID
-        WHERE od.ORDER_ID = p_order_id;
-
+CREATE OR REPLACE PROCEDURE sp_clear_cart_item (
+    p_cart_id IN NUMBER
+)
+IS
 BEGIN
 
-    SELECT TOTAL, STATUS, COUPON_ID
-    INTO v_total, v_status, v_coupon_id
-    FROM ORDERS
-    WHERE ORDER_ID = p_order_id;
+    DELETE FROM CART_ITEM
+    WHERE CART_ID = p_cart_id;
 
-    DBMS_OUTPUT.PUT_LINE('=== THÔNG TIN ĐƠN HÀNG [' || p_order_id || '] ===');
-    DBMS_OUTPUT.PUT_LINE('Trạng thái : ' || v_status);
+    UPDATE CART
+    SET UPDATED_AT = SYSDATE
+    WHERE CART_ID = p_cart_id
+      AND IS_DELETED = 0;
 
+    COMMIT;
 
-    IF v_coupon_id IS NOT NULL THEN
-        SELECT CODE, DISCOUNT_VALUE INTO v_coupon_code, v_discount_val
-        FROM COUPON WHERE COUPON_ID = v_coupon_id;
-        DBMS_OUTPUT.PUT_LINE('Mã giảm giá: ' || v_coupon_code || ' (Mức giảm: ' || v_discount_val || ')');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('Mã giảm giá: Không áp dụng.');
-    END IF;
+    DBMS_OUTPUT.PUT_LINE('Đã làm trống giỏ hàng (Cart ID: ' || p_cart_id || ') thành công.');
 
-    DBMS_OUTPUT.PUT_LINE('--- DANH SÁCH SẢN PHẨM ---');
+END;
+/
 
 
-    OPEN cur_order_details;
-    LOOP
-        FETCH cur_order_details INTO v_prod_name, v_qty, v_price;
-        EXIT WHEN cur_order_details%NOTFOUND;
+CREATE OR REPLACE PROCEDURE sp_get_top_selling_product (
+    p_TopCount IN NUMBER
+)
+IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('==================================================');
+    DBMS_OUTPUT.PUT_LINE('      TOP ' || p_TopCount || ' SẢN PHẨM BÁN CHẠY NHẤT CỬA HÀNG');
+    DBMS_OUTPUT.PUT_LINE('==================================================');
 
-        DBMS_OUTPUT.PUT_LINE('- ' || v_prod_name || ' | SL: ' || v_qty || ' | Đơn giá: ' || v_price);
+    -- Bước 2 đến 6: Truy vấn, tính toán, giới hạn ROWNUM và lặp để hiển thị
+    FOR r IN (
+        SELECT * FROM (
+            SELECT
+                P.PRODUCT_ID,
+                P.NAME,
+                SUM(OD.QUANTITY) AS TOTAL_SOLD
+            FROM PRODUCT P
+            JOIN ORDER_DETAIL OD ON P.PRODUCT_ID = OD.PRODUCT_ID
+            JOIN ORDERS O ON OD.ORDER_ID = O.ORDER_ID
+            WHERE O.IS_DELETED = 0
+              AND O.STATUS != 'CANCELLED'
+            GROUP BY P.PRODUCT_ID, P.NAME
+            ORDER BY TOTAL_SOLD DESC
+        ) WHERE ROWNUM <= p_TopCount
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('Mã SP: ' || r.PRODUCT_ID
+                          || ' | Tên: ' || r.NAME
+                          || ' | Đã bán: ' || r.TOTAL_SOLD || ' sản phẩm');
     END LOOP;
-    CLOSE cur_order_details;
-
-    DBMS_OUTPUT.PUT_LINE('--------------------------');
-    DBMS_OUTPUT.PUT_LINE('TỔNG THANH TOÁN: ' || v_total);
-
-END;
-
-
-CREATE OR REPLACE PROCEDURE insert_product(
-    p_name        IN VARCHAR2,
-    p_image       IN VARCHAR2,
-    p_description IN VARCHAR2,
-    p_price       IN NUMBER,
-    p_brand_id    IN NUMBER,
-    p_category_id IN NUMBER,
-    p_warranty    IN NUMBER,
-    p_stock       IN NUMBER
-) IS
-BEGIN
-    INSERT INTO PRODUCT (
-        NAME, IMAGE_NAME, DESCRIPTION, PRICE,
-        BRAND_ID, CATEGORY_ID, WARRANTY_MONTH,
-        STATUS, STOCK_QUANTITY
-    )
-    VALUES (
-        p_name, p_image, p_description, p_price,
-        p_brand_id, p_category_id, p_warranty,
-        1, p_stock
-    );
-    COMMIT;
 END;
 /
 
-CREATE OR REPLACE PROCEDURE update_product (
-    prod_id       IN NUMBER,
-    p_name        IN VARCHAR2,
-    p_description IN VARCHAR2,
-    p_price       IN NUMBER,
-    p_brand_id    IN NUMBER,
-    p_cat_id      IN NUMBER,
-    p_warranty    IN NUMBER,
-    p_status      IN NUMBER,
-    p_stock       IN NUMBER
-) IS
-BEGIN
-    UPDATE PRODUCT
-    SET NAME            = p_name,
-        DESCRIPTION     = p_description,
-        PRICE           = p_price,
-        BRAND_ID        = p_brand_id,
-        CATEGORY_ID     = p_cat_id,
-        WARRANTY_MONTH  = p_warranty,
-        STATUS          = p_status,
-        STOCK_QUANTITY  = p_stock,
-        UPDATED_AT      = SYSDATE -- Cập nhật thời gian sửa đổi
-    WHERE PRODUCT_ID = prod_id;
 
-    COMMIT;
+CREATE OR REPLACE PROCEDURE sp_get_top_selling_product_by_month (
+    p_Month IN NUMBER,
+    p_Year IN NUMBER,
+    p_TopCount IN NUMBER
+)
+IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('==================================================');
+    DBMS_OUTPUT.PUT_LINE(' TOP ' || p_TopCount || ' SẢN PHẨM BÁN CHẠY NHẤT THÁNG ' || p_Month || '/' || p_Year);
+    DBMS_OUTPUT.PUT_LINE('==================================================');
+
+    -- Bước 2 đến 6: Truy vấn có kết hợp lọc thời gian, giới hạn ROWNUM và in kết quả
+    FOR r IN (
+        SELECT * FROM (
+            SELECT
+                P.PRODUCT_ID,
+                P.NAME,
+                SUM(OD.QUANTITY) AS TOTAL_SOLD
+            FROM PRODUCT P
+            JOIN ORDER_DETAIL OD ON P.PRODUCT_ID = OD.PRODUCT_ID
+            JOIN ORDERS O ON OD.ORDER_ID = O.ORDER_ID
+            WHERE O.IS_DELETED = 0
+              AND O.STATUS != 'CANCELLED'
+              AND EXTRACT(MONTH FROM O.CREATED_AT) = p_Month
+              AND EXTRACT(YEAR FROM O.CREATED_AT) = p_Year
+            GROUP BY P.PRODUCT_ID, P.NAME
+            ORDER BY TOTAL_SOLD DESC
+        ) WHERE ROWNUM <= p_TopCount
+    ) LOOP
+        DBMS_OUTPUT.PUT_LINE('Mã SP: ' || r.PRODUCT_ID
+                          || ' | Tên: ' || r.NAME
+                          || ' | Đã bán: ' || r.TOTAL_SOLD || ' sản phẩm');
+    END LOOP;
 END;
 /
 
-CREATE OR REPLACE PROCEDURE sp_delete_product (
-    prod_id IN NUMBER
-) IS
-BEGIN
-    UPDATE PRODUCT
-    SET IS_DELETED = 1, UPDATED_AT = SYSDATE
-    WHERE PRODUCT_ID = prod_id;
-
-    COMMIT;
-END;
-
-
-
-
---UPDATE KHI SỬA BẢNG [4]
-CREATE OR REPLACE PROCEDURE insert_coupon (
-    p_code_str    IN VARCHAR2,
-    p_disc_type   IN VARCHAR2,
-    p_disc_value  IN NUMBER,
-    p_min_order   IN NUMBER,
-    p_max_disc    IN NUMBER,
-    p_start_date  IN DATE,
-    p_end_date    IN DATE,
-    p_desc_info   IN VARCHAR2,
-    p_aff_id      IN NUMBER DEFAULT NULL
-) IS
-BEGIN
-    INSERT INTO COUPON (
-        CODE, DISCOUNT_TYPE, DISCOUNT_VALUE,
-        MIN_ORDER_VALUE, MAX_DISCOUNT, START_AT,
-        END_AT, IS_ACTIVE, DESCRIPTION, AFFILIATE_ID
-    )
-    VALUES (
-        p_code_str, p_disc_type, p_disc_value,
-        p_min_order, p_max_disc, p_start_date,
-        p_end_date, 1, p_desc_info, p_aff_id
-    );
-    COMMIT;
-END;
-
---UPDATE KHI SỬA BẢNG [5]
-CREATE OR REPLACE PROCEDURE update_coupon (
-    p_coupon_id   IN NUMBER,
-    p_code_str    IN VARCHAR2,
-    p_disc_type   IN VARCHAR2,
-    p_disc_value  IN NUMBER,
-    p_min_order   IN NUMBER,
-    p_max_disc    IN NUMBER,
-    p_start_date  IN DATE,
-    p_end_date    IN DATE,
-    p_is_active   IN NUMBER,
-    p_desc_info   IN VARCHAR2,
-    p_affiliate_id IN NUMBER
-) IS
-BEGIN
-    UPDATE COUPON
-    SET CODE            = p_code_str,
-        DISCOUNT_TYPE   = p_disc_type,
-        DISCOUNT_VALUE  = p_disc_value,
-        MIN_ORDER_VALUE = p_min_order,
-        MAX_DISCOUNT    = p_max_disc,
-        START_AT        = p_start_date,
-        END_AT          = p_end_date,
-        IS_ACTIVE       = p_is_active,
-        DESCRIPTION     = p_desc_info,
-        AFFILIATE_ID    = p_affiliate_id,
-        UPDATED_AT      = SYSDATE
-    WHERE COUPON_ID = p_coupon_id;
-
-    COMMIT;
-END;
-
---UPDATE KHI SỬA BẢNG [6]
-CREATE OR REPLACE PROCEDURE sp_delete_coupon (
-    p_coupon_id IN NUMBER
-) IS
-BEGIN
-    UPDATE COUPON
-    SET IS_DELETED = 1,
-        IS_ACTIVE  = 0,
-        UPDATED_AT = SYSDATE
-    WHERE COUPON_ID = p_coupon_id;
-
-    -- Kiểm tra xem có dòng nào được update không (Tránh xóa nhầm ID không tồn tại)
-    IF SQL%ROWCOUNT = 0 THEN
-        DBMS_OUTPUT.PUT_LINE('Cảnh báo: Không tìm thấy Coupon ID ' || p_coupon_id);
-    END IF;
-
-    COMMIT;
-END;
-
---UPDATE KHI SỬA BẢNG [1]
-CREATE OR REPLACE PROCEDURE update_order_status (
-    p_order_id IN NUMBER,
-    p_new_status IN VARCHAR2
-) IS
-    CURSOR cur_order_details IS
-        SELECT PRODUCT_ID, QUANTITY
-        FROM ORDER_DETAIL
-        WHERE ORDER_ID = p_order_id;
-
-    v_prod_id ORDER_DETAIL.PRODUCT_ID%TYPE;
-    v_qty     ORDER_DETAIL.QUANTITY%TYPE;
-BEGIN
-    -- 1. Cập nhật trạng thái đơn hàng
-    UPDATE ORDERS
-    SET STATUS = p_new_status,
-        UPDATED_AT = SYSDATE
-    WHERE ORDER_ID = p_order_id;
-
-    -- 2. Nếu đơn hàng bị Hủy (Sửa lại đúng 'CANCEL' theo CONSTRAINT của bạn)
-    IF p_new_status = 'CANCELLED' THEN
-        -- Hoàn tiền nếu đã thanh toán
-        UPDATE PAYMENT
-        SET PAYMENT_STATUS = 'REFUNDED'
-        WHERE ORDER_ID = p_order_id
-          AND PAYMENT_STATUS = 'COMPLETED';
-
-        -- HOÀN TRẢ SỐ LƯỢNG VÀO BẢNG PRODUCT
-        OPEN cur_order_details;
-        LOOP
-            FETCH cur_order_details INTO v_prod_id, v_qty;
-            EXIT WHEN cur_order_details%NOTFOUND;
-
-            UPDATE PRODUCT
-            SET STOCK_QUANTITY = STOCK_QUANTITY + v_qty,
-                UPDATED_AT = SYSDATE
-            WHERE PRODUCT_ID = v_prod_id;
-        END LOOP;
-        CLOSE cur_order_details;
-    END IF;
-
-    COMMIT;
-END;
-
-CREATE OR REPLACE PROCEDURE insert_promotion (
-    promo_name IN VARCHAR2,
-    start_date IN DATE,
-    end_date IN DATE
-) IS
-BEGIN
-    INSERT INTO PROMOTION (PROMOTION_NAME, START_AT, END_AT, IS_ACTIVE)
-    VALUES (promo_name, start_date, end_date,1);
-
-    COMMIT;
-END;
-
-
-CREATE OR REPLACE PROCEDURE update_promotion (
-    promo_id IN NUMBER,
-    promo_name IN VARCHAR2,
-    start_date IN DATE,
-    end_date IN DATE,
-    is_active_status IN NUMBER
-) IS
-BEGIN
-    UPDATE PROMOTION
-    SET PROMOTION_NAME = promo_name,
-        START_AT = start_date,
-        END_AT = end_date,
-        IS_ACTIVE = is_active_status,
-        UPDATED_AT = SYSDATE
-    WHERE PROMOTION_ID = promo_id;
-
-    COMMIT;
-END;
-
-
-CREATE OR REPLACE PROCEDURE sp_delete_promotion (
-    promo_id IN NUMBER
-) IS
-BEGIN
-    UPDATE PROMOTION
-    SET IS_DELETED = 1,
-        IS_ACTIVE = 0,
-        UPDATED_AT = SYSDATE
-    WHERE PROMOTION_ID = promo_id;
-
-    COMMIT;
-END;
-
-CREATE OR REPLACE PROCEDURE AddToCart (
+CREATE OR REPLACE PROCEDURE sp_add_to_cart (
     p_user_id    IN NUMBER,
     p_product_id IN NUMBER,
     p_quantity   IN NUMBER
@@ -520,30 +318,55 @@ BEGIN
 
     COMMIT;
 END;
-/
 
-CREATE OR REPLACE PROCEDURE sp_delete_cart (
-    p_cart_id IN NUMBER
-) IS
+
+
 BEGIN
-    -- Xóa toàn bộ các sản phẩm thuộc giỏ hàng này
-    DELETE FROM CART_ITEM
-    WHERE CART_ID = p_cart_id;
-
-    -- Cập nhật lại thời gian của giỏ hàng (tùy chọn)
-    UPDATE CART
-    SET UPDATED_AT = SYSDATE
-    WHERE CART_ID = p_cart_id;
-
-    DBMS_OUTPUT.PUT_LINE('Giỏ hàng ' || p_cart_id || ' đã được dọn dẹp.');
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Lỗi khi xóa giỏ hàng: ' || SQLERRM);
-        RAISE;
+    -- Gọi procedure: sp_add_to_cart(p_user_id, p_product_id, p_quantity)
+    sp_add_to_cart(10, 200, 2);
 END;
 /
 
-CREATE OR REPLACE PROCEDURE sp_PlaceOrder (
+
+CREATE OR REPLACE PROCEDURE sp_get_user_order_history (
+    p_user_id IN NUMBER
+) IS
+    -- Cursor lấy danh sách đơn hàng
+    CURSOR c_orders IS
+        SELECT ORDER_ID, TOTAL, STATUS, CREATED_AT
+        FROM ORDERS
+        WHERE USER_ID = p_user_id AND IS_DELETED = 0
+        ORDER BY CREATED_AT DESC;
+
+    -- Cursor lấy chi tiết từng món trong đơn hàng đó
+    CURSOR c_details(p_order_id NUMBER) IS
+        SELECT p.NAME, od.QUANTITY, od.PRICE, od.LINE_TOTAL
+        FROM ORDER_DETAIL od
+        JOIN PRODUCT p ON od.PRODUCT_ID = p.PRODUCT_ID
+        WHERE od.ORDER_ID = p_order_id;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('LỊCH SỬ ĐƠN HÀNG CỦA USER ID: ' || p_user_id);
+    DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+
+    FOR r_order IN c_orders LOOP
+        DBMS_OUTPUT.PUT_LINE('Đơn hàng: ' || r_order.ORDER_ID ||
+                             ' | Ngày: ' || TO_CHAR(r_order.CREATED_AT, 'DD/MM/YY') ||
+                             ' | Trạng thái: ' || r_order.STATUS);
+
+        -- Duyệt chi tiết sản phẩm của đơn hàng này
+        FOR r_detail IN c_details(r_order.ORDER_ID) LOOP
+            DBMS_OUTPUT.PUT_LINE('  + ' || r_detail.NAME ||
+                                 ' | SL: ' || r_detail.QUANTITY ||
+                                 ' | Thành tiền: ' || r_detail.LINE_TOTAL);
+        END LOOP;
+
+        DBMS_OUTPUT.PUT_LINE('=> TỔNG CỘNG ĐƠN HÀNG: ' || r_order.TOTAL);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+    END LOOP;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE sp_place_order (
     p_user_id        IN NUMBER,
     p_receiver_name  IN VARCHAR2,
     p_receiver_phone IN VARCHAR2,
@@ -599,7 +422,7 @@ BEGIN
     FROM CART_ITEM ci JOIN PRODUCT p ON ci.PRODUCT_ID = p.PRODUCT_ID
     WHERE ci.CART_ID = v_cart_id;
 
-    sp_delete_cart(v_cart_id);
+    sp_clear_cart_item(v_cart_id);
 
     -- In thông báo đầy đủ các con số
     DBMS_OUTPUT.PUT_LINE('------------------------------------');
@@ -613,41 +436,62 @@ BEGIN
     COMMIT;
 END;
 /
-CREATE OR REPLACE PROCEDURE sp_GetUserOrderHistory (
-    p_user_id IN NUMBER
-) IS
-    -- Cursor lấy danh sách đơn hàng
-    CURSOR c_orders IS
-        SELECT ORDER_ID, TOTAL, STATUS, CREATED_AT
-        FROM ORDERS
-        WHERE USER_ID = p_user_id AND IS_DELETED = 0
-        ORDER BY CREATED_AT DESC;
 
-    -- Cursor lấy chi tiết từng món trong đơn hàng đó
-    CURSOR c_details(p_order_id NUMBER) IS
-        SELECT p.NAME, od.QUANTITY, od.PRICE, od.LINE_TOTAL
+CREATE OR REPLACE PROCEDURE sp_print_order_info (
+    p_order_id IN NUMBER
+)
+IS
+    v_total        ORDERS.TOTAL%TYPE;
+    v_status       ORDERS.STATUS%TYPE;
+    v_coupon_id    ORDERS.COUPON_ID%TYPE;
+    v_coupon_code  COUPON.CODE%TYPE;
+    v_discount_val COUPON.DISCOUNT_VALUE%TYPE;
+
+    v_prod_name    PRODUCT.NAME%TYPE;
+    v_qty          ORDER_DETAIL.QUANTITY%TYPE;
+    v_price        ORDER_DETAIL.PRICE%TYPE;
+
+
+    CURSOR cur_order_details IS
+        SELECT p.NAME, od.QUANTITY, od.PRICE
         FROM ORDER_DETAIL od
         JOIN PRODUCT p ON od.PRODUCT_ID = p.PRODUCT_ID
         WHERE od.ORDER_ID = p_order_id;
+
 BEGIN
-    DBMS_OUTPUT.PUT_LINE('LỊCH SỬ ĐƠN HÀNG CỦA USER ID: ' || p_user_id);
-    DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
 
-    FOR r_order IN c_orders LOOP
-        DBMS_OUTPUT.PUT_LINE('Đơn hàng: ' || r_order.ORDER_ID ||
-                             ' | Ngày: ' || TO_CHAR(r_order.CREATED_AT, 'DD/MM/YY') ||
-                             ' | Trạng thái: ' || r_order.STATUS);
+    SELECT TOTAL, STATUS, COUPON_ID
+    INTO v_total, v_status, v_coupon_id
+    FROM ORDERS
+    WHERE ORDER_ID = p_order_id;
 
-        -- Duyệt chi tiết sản phẩm của đơn hàng này
-        FOR r_detail IN c_details(r_order.ORDER_ID) LOOP
-            DBMS_OUTPUT.PUT_LINE('  + ' || r_detail.NAME ||
-                                 ' | SL: ' || r_detail.QUANTITY ||
-                                 ' | Thành tiền: ' || r_detail.LINE_TOTAL);
-        END LOOP;
+    DBMS_OUTPUT.PUT_LINE('=== THÔNG TIN ĐƠN HÀNG [' || p_order_id || '] ===');
+    DBMS_OUTPUT.PUT_LINE('Trạng thái : ' || v_status);
 
-        DBMS_OUTPUT.PUT_LINE('=> TỔNG CỘNG ĐƠN HÀNG: ' || r_order.TOTAL);
-        DBMS_OUTPUT.PUT_LINE('-------------------------------------------');
+
+    IF v_coupon_id IS NOT NULL THEN
+        SELECT CODE, DISCOUNT_VALUE INTO v_coupon_code, v_discount_val
+        FROM COUPON WHERE COUPON_ID = v_coupon_id;
+        DBMS_OUTPUT.PUT_LINE('Mã giảm giá: ' || v_coupon_code || ' (Mức giảm: ' || v_discount_val || ')');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Mã giảm giá: Không áp dụng.');
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('--- DANH SÁCH SẢN PHẨM ---');
+
+
+    OPEN cur_order_details;
+    LOOP
+        FETCH cur_order_details INTO v_prod_name, v_qty, v_price;
+        EXIT WHEN cur_order_details%NOTFOUND;
+
+        DBMS_OUTPUT.PUT_LINE('- ' || v_prod_name || ' | SL: ' || v_qty || ' | Đơn giá: ' || v_price);
     END LOOP;
+    CLOSE cur_order_details;
+
+    DBMS_OUTPUT.PUT_LINE('--------------------------');
+    DBMS_OUTPUT.PUT_LINE('TỔNG THANH TOÁN: ' || v_total);
+
 END;
 /
 
