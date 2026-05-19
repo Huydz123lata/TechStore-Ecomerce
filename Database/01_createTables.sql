@@ -347,3 +347,5 @@ ON ROLE_GROUP (
 
 
 
+select * from CART_ITEM;
+commit;

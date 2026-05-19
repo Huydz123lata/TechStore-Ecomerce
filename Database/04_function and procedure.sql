@@ -1,4 +1,4 @@
---FUNCTION 1: fn_get_product_effective_price
+--FUNCTION 1: fn_get_product_effective_price (demo được)
 CREATE OR REPLACE FUNCTION fn_get_product_effective_price (
     p_product_id IN NUMBER
 ) RETURN NUMBER
@@ -102,7 +102,7 @@ EXCEPTION
 END fn_get_user_loyalty_tier;
 /
 
---Function 3: fn_calculate_discount_amount
+--Function 3: fn_calculate_discount_amount (demo được)
 CREATE OR REPLACE FUNCTION fn_calculate_discount_amount (
     p_subtotal IN NUMBER,
     p_coupon_id IN NUMBER
@@ -321,11 +321,6 @@ END;
 
 
 
-BEGIN
-    -- Gọi procedure: sp_add_to_cart(p_user_id, p_product_id, p_quantity)
-    sp_add_to_cart(10, 200, 2);
-END;
-/
 
 
 CREATE OR REPLACE PROCEDURE sp_get_user_order_history (
@@ -365,73 +360,77 @@ BEGIN
     END LOOP;
 END;
 /
-
+--thay đổi (ĐÃ DEMO ĐƯỢC)
 CREATE OR REPLACE PROCEDURE sp_place_order (
     p_user_id        IN NUMBER,
     p_receiver_name  IN VARCHAR2,
     p_receiver_phone IN VARCHAR2,
-    p_address        IN VARCHAR2,
-    p_payment_method IN VARCHAR2, -- 'COD' hoặc 'BANK'
-    p_coupon_code    IN VARCHAR2 DEFAULT NULL
+    p_address        IN NVARCHAR2,
+    p_payment_method IN VARCHAR2,
+    p_coupon_code    IN VARCHAR2 DEFAULT NULL,
+    p_out_order_id   OUT NUMBER,
+    p_out_total      OUT NUMBER
 ) IS
     v_cart_id         NUMBER(10);
-    v_order_id        NUMBER(10);
     v_subtotal        NUMBER(18,2) := 0;
     v_coupon_id       NUMBER := NULL;
     v_discount_amount NUMBER(18,2) := 0;
-    v_total           NUMBER(18,2) := 0;
     v_pay_status      VARCHAR2(20);
 BEGIN
-    -- 1. Tìm giỏ hàng & Tính tiền (Gọi Function giảm giá của bạn)
+    -- 1. Tìm giỏ hàng & Tính tiền
     SELECT CART_ID INTO v_cart_id FROM CART WHERE USER_ID = p_user_id AND IS_DELETED = 0;
     SELECT SUM(TOTAL) INTO v_subtotal FROM CART_ITEM WHERE CART_ID = v_cart_id;
 
-    IF p_coupon_code IS NOT NULL THEN
-        SELECT COUPON_ID INTO v_coupon_id FROM COUPON WHERE CODE = p_coupon_code;
-        v_discount_amount := fn_calculate_discount_amount(v_subtotal, v_coupon_id);
+    IF v_subtotal IS NULL OR v_subtotal = 0 THEN
+        raise_application_error(-20001, 'Giỏ hàng của người dùng trống hoặc không tồn tại sản phẩm.');
     END IF;
 
-    v_total := v_subtotal - v_discount_amount;
+    -- Bọc lỗi tìm Coupon an toàn
+    IF p_coupon_code IS NOT NULL AND TRIM(p_coupon_code) IS NOT NULL THEN
+        BEGIN
+            SELECT COUPON_ID INTO v_coupon_id FROM COUPON WHERE CODE = p_coupon_code;
+            v_discount_amount := fn_calculate_discount_amount(v_subtotal, v_coupon_id);
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                v_coupon_id := NULL;
+                v_discount_amount := 0;
+        END;
+    END IF;
 
-    -- 2. Logic xử lý trạng thái thanh toán
+    p_out_total := v_subtotal - v_discount_amount;
+
     IF p_payment_method = 'COD' THEN
-        v_pay_status := 'PENDING'; -- Khách chưa trả tiền
+        v_pay_status := 'PENDING';
     ELSE
-        v_pay_status := 'COMPLETED'; -- Giả sử thanh toán online đã xong
+        v_pay_status := 'PENDING';
     END IF;
 
-    -- 3. Tạo đơn hàng
+    -- 2. Tạo đơn hàng (ORDERS)
     INSERT INTO ORDERS (
         USER_ID, COUPON_ID, SUBTOTAL, DISCOUNT_AMOUNT, TOTAL,
         STATUS, RECEIVER_NAME, RECEIVER_PHONE, SHIPPING_ADDRESS
     ) VALUES (
-        p_user_id, v_coupon_id, v_subtotal, v_discount_amount, v_total,
-        'CONFIRMED', p_receiver_name, p_receiver_phone, p_address
-    ) RETURNING ORDER_ID INTO v_order_id;
+        p_user_id, v_coupon_id, v_subtotal, v_discount_amount, p_out_total,
+        'PENDING', p_receiver_name, p_receiver_phone, p_address
+    ) RETURNING ORDER_ID INTO p_out_order_id;
+
+    -- 3.  Chép chi tiết đơn hàng (ORDER_DETAIL) trước để thỏa mãn Trigger
+    INSERT INTO ORDER_DETAIL (ORDER_ID, PRODUCT_ID, QUANTITY, PRICE, LINE_TOTAL)
+    SELECT p_out_order_id, ci.PRODUCT_ID, ci.QUANTITY, p.PRICE, ci.TOTAL
+    FROM CART_ITEM ci JOIN PRODUCT p ON ci.PRODUCT_ID = p.PRODUCT_ID
+    WHERE ci.CART_ID = v_cart_id;
 
     -- 4. Tạo bản ghi Thanh toán (PAYMENT)
     INSERT INTO PAYMENT (
         ORDER_ID, PAYMENT_METHOD, AMOUNT, PAYMENT_STATUS, CREATED_AT
     ) VALUES (
-        v_order_id, p_payment_method, v_total, v_pay_status, SYSDATE
+        p_out_order_id, p_payment_method, p_out_total, v_pay_status, SYSDATE
     );
 
-    -- 5. Chép chi tiết & Xóa giỏ hàng (Gọi Proc của bạn)
-    INSERT INTO ORDER_DETAIL (ORDER_ID, PRODUCT_ID, QUANTITY, PRICE, LINE_TOTAL)
-    SELECT v_order_id, ci.PRODUCT_ID, ci.QUANTITY, p.PRICE, ci.TOTAL
-    FROM CART_ITEM ci JOIN PRODUCT p ON ci.PRODUCT_ID = p.PRODUCT_ID
-    WHERE ci.CART_ID = v_cart_id;
-
-    sp_clear_cart_item(v_cart_id);
-
-    -- In thông báo đầy đủ các con số
-    DBMS_OUTPUT.PUT_LINE('------------------------------------');
-    DBMS_OUTPUT.PUT_LINE('Đặt hàng thành công! (Hình thức: ' || p_payment_method || ')');
-    DBMS_OUTPUT.PUT_LINE('Trạng thái thanh toán: ' || v_pay_status);
-    DBMS_OUTPUT.PUT_LINE('Tạm tính: ' || TO_CHAR(v_subtotal, '999,999,999,999'));
-    DBMS_OUTPUT.PUT_LINE('Giảm giá: ' || TO_CHAR(v_discount_amount, '999,999,999,999'));
-    DBMS_OUTPUT.PUT_LINE('Tổng cộng: ' || TO_CHAR(v_total, '999,999,999,999'));
-    DBMS_OUTPUT.PUT_LINE('------------------------------------');
+    -- 5. Chỉ xóa giỏ hàng khi chọn Ship COD
+    IF p_payment_method = 'COD' THEN
+        sp_clear_cart_item(v_cart_id);
+    END IF;
 
     COMMIT;
 END;
