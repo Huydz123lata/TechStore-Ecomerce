@@ -1,3 +1,147 @@
+/* =============================================================================
+   FUNCTION 1: fn_get_product_effective_price
+
+   Mô tả: Tính giá THỰC TẾ của một sản phẩm tại thời điểm hiện tại, có tính
+   đến khuyến mãi đang chạy (bảng PROMOTION_PRODUCT). Trả về:
+     - Giá sau khuyến mãi nếu sản phẩm đang trong chiến dịch khuyến mãi còn hạn.
+     - Giá gốc nếu không có khuyến mãi nào áp dụng.
+
+   Cách dùng:
+     SELECT fn_get_product_effective_price(1) FROM DUAL;
+     -- Hoặc dùng trong query để hiển thị giá khuyến mãi cho toàn danh mục:
+     SELECT NAME, PRICE, fn_get_product_effective_price(PRODUCT_ID) AS EFFECTIVE_PRICE
+     FROM PRODUCT WHERE IS_DELETED = 0;
+   ============================================================================= */
+CREATE OR REPLACE FUNCTION fn_get_product_effective_price (
+    p_product_id IN NUMBER
+) RETURN NUMBER
+IS
+    v_original_price   NUMBER(18,2);
+    v_discount_value   NUMBER(18,2) := 0;
+    v_effective_price  NUMBER(18,2);
+BEGIN
+    -- 1. Lấy giá gốc của sản phẩm
+    SELECT PRICE
+    INTO   v_original_price
+    FROM   PRODUCT
+    WHERE  PRODUCT_ID = p_product_id
+      AND  IS_DELETED = 0;
+
+    -- 2. Tìm khuyến mãi đang chạy có giảm giá cao nhất cho sản phẩm này
+    --    (một sản phẩm có thể thuộc nhiều chiến dịch → lấy mức giảm tốt nhất)
+    BEGIN
+        SELECT MAX(pp.DISCOUNT_VALUE)
+        INTO   v_discount_value
+        FROM   PROMOTION_PRODUCT pp
+        JOIN   PROMOTION p ON pp.PROMOTION_ID = p.PROMOTION_ID
+        WHERE  pp.PRODUCT_ID = p_product_id
+          AND  p.IS_ACTIVE   = 1
+          AND  p.IS_DELETED  = 0
+          AND  SYSDATE BETWEEN p.START_AT AND p.END_AT;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            v_discount_value := 0;
+    END;
+
+    -- 3. Tính giá hiệu lực (không để giá âm)
+    v_effective_price := GREATEST(
+                             v_original_price - NVL(v_discount_value, 0),
+                             0
+                         );
+
+    RETURN v_effective_price;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- Sản phẩm không tồn tại → trả về NULL để caller tự xử lý
+        RETURN NULL;
+    WHEN OTHERS THEN
+        RETURN NULL;
+END fn_get_product_effective_price;
+/
+
+
+/* =============================================================================
+   FUNCTION 2: fn_get_user_loyalty_tier
+
+   Mô tả: Trả về thông tin đầy đủ về hạng thành viên của một user dưới dạng
+   VARCHAR2, bao gồm: tên hạng, tổng điểm hiện tại, và số điểm còn thiếu để
+   lên hạng tiếp theo. Hữu ích cho màn hình "Tài khoản của tôi" hoặc báo cáo.
+
+   Output format:
+     "VÀNG | 2350 điểm | Cần thêm 1650 điểm để đạt KIM CƯƠNG"
+     "KIM CƯƠNG | 6200 điểm | Hạng cao nhất"
+
+   Cách dùng:
+     SELECT fn_get_user_loyalty_tier(1) FROM DUAL;
+     -- Hoặc trong báo cáo:
+     SELECT u.FULL_NAME, fn_get_user_loyalty_tier(u.USER_ID) AS MEMBERSHIP_INFO
+     FROM APP_USER u WHERE u.IS_DELETED = 0;
+   ============================================================================= */
+CREATE OR REPLACE FUNCTION fn_get_user_loyalty_tier (
+    p_user_id IN NUMBER
+) RETURN VARCHAR2
+IS
+    v_points        NUMBER(10) := 0;
+    v_tier          VARCHAR2(20);
+    v_next_tier     VARCHAR2(20);
+    v_points_needed NUMBER(10);
+    v_result        VARCHAR2(200);
+BEGIN
+    -- 1. Lấy tổng điểm tích lũy (nếu chưa có bản ghi → 0 điểm)
+    BEGIN
+        SELECT TOTAL_POINTS
+        INTO   v_points
+        FROM   LOYALTY_POINT
+        WHERE  USER_ID = p_user_id;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            v_points := 0;
+    END;
+
+    -- 2. Xác định hạng hiện tại và hạng kế tiếp
+    IF v_points >= 5000 THEN
+        v_tier          := 'KIM CƯƠNG';
+        v_next_tier     := NULL;
+        v_points_needed := 0;
+    ELSIF v_points >= 2000 THEN
+        v_tier          := 'VÀNG';
+        v_next_tier     := 'KIM CƯƠNG';
+        v_points_needed := 5000 - v_points;
+    ELSIF v_points >= 500 THEN
+        v_tier          := 'BẠC';
+        v_next_tier     := 'VÀNG';
+        v_points_needed := 2000 - v_points;
+    ELSE
+        v_tier          := 'ĐỒNG';
+        v_next_tier     := 'BẠC';
+        v_points_needed := 500 - v_points;
+    END IF;
+
+    -- 3. Tạo chuỗi kết quả
+    IF v_next_tier IS NULL THEN
+        v_result := v_tier || ' | ' || v_points || ' điểm | Hạng cao nhất';
+    ELSE
+        v_result := v_tier || ' | ' || v_points || ' điểm | ' ||
+                    'Cần thêm ' || v_points_needed ||
+                    ' điểm để đạt ' || v_next_tier;
+    END IF;
+
+    RETURN v_result;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN 'Lỗi truy vấn: ' || SQLERRM;
+END fn_get_user_loyalty_tier;
+/
+
+
+
+
+
+
+
+
 CREATE OR REPLACE FUNCTION fn_calculate_discount_amount (
     p_subtotal IN NUMBER,
     p_coupon_id IN NUMBER
