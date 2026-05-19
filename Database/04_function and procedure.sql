@@ -152,7 +152,7 @@ EXCEPTION
         RETURN 0;
 END;
 
-
+--Procedure
 CREATE OR REPLACE PROCEDURE sp_get_product_detail  (
     p_product_id IN NUMBER
 )
