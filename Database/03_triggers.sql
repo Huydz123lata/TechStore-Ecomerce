@@ -15,7 +15,7 @@ BEGIN
 END;
 /
 
---Trigger 2
+--Trigger 2 (chọn)
 CREATE OR REPLACE TRIGGER TRG_RECALCULATE_ORDER_TOTAL
 AFTER INSERT OR UPDATE OR DELETE ON ORDER_DETAIL
 FOR EACH ROW
@@ -167,37 +167,53 @@ END;
 /
 
 
---Trigger 9
+--Trigger 9 (chọn)
 CREATE OR REPLACE TRIGGER TRG_SMART_LOYALTY_POINT_WITH_TIER
 AFTER UPDATE OF STATUS ON ORDERS
 FOR EACH ROW
 DECLARE
-    v_current_points NUMBER(10) := 0;
-    v_multiplier     NUMBER(5,2);
-    v_final_points   NUMBER(10);
+    v_current_points  NUMBER(10) := 0;
+    v_base_points     NUMBER(10);
+    v_multiplier      NUMBER(5,2);
+    v_final_points    NUMBER(10);
+    v_new_total       NUMBER(10);
+    v_tier_info       VARCHAR2(200);
 BEGIN
+    -- Chỉ kích hoạt khi đơn hàng chính thức chuyển sang trạng thái DELIVERED
     IF :NEW.STATUS = 'DELIVERED' AND :OLD.STATUS <> 'DELIVERED' THEN
 
+        -- 1. Lấy tổng điểm tích lũy hiện tại của khách hàng
         BEGIN
-            SELECT TOTAL_POINTS INTO v_current_points
+            SELECT TOTAL_POINTS
+            INTO   v_current_points
             FROM   LOYALTY_POINT
             WHERE  USER_ID = :NEW.USER_ID;
         EXCEPTION
-            WHEN NO_DATA_FOUND THEN v_current_points := 0;
+            WHEN NO_DATA_FOUND THEN
+                v_current_points := 0;
         END;
 
-        -- Hệ số nhân tính thẳng từ điểm hiện tại
+        -- 2. Tính điểm cơ bản (100,000 VND = 1 điểm cơ bản)
+        v_base_points := FLOOR(:NEW.TOTAL / 100000);
+
+        -- 3. Gọi Function của bạn để lấy chuỗi thông tin phân hạng hiện tại (TRƯỚC KHI CỘNG ĐIỂM)
+        v_tier_info := fn_get_user_loyalty_tier(:NEW.USER_ID);
+
+        -- 4. Xác định hệ số nhân dựa trên từ khóa hạng chứa trong chuỗi kết quả trả về
         v_multiplier := CASE
-                            WHEN v_current_points >= 5000 THEN 3.0
-                            WHEN v_current_points >= 2000 THEN 2.0
-                            WHEN v_current_points >= 500  THEN 1.5
-                            ELSE                               1.0
+                            WHEN v_tier_info LIKE 'KIM CƯƠNG%' THEN 3.0
+                            WHEN v_tier_info LIKE 'VÀNG%'      THEN 2.0
+                            WHEN v_tier_info LIKE 'BẠC%'       THEN 1.5
+                            ELSE                                    1.0
                         END;
 
-        v_final_points := FLOOR(FLOOR(:NEW.TOTAL / 100000) * v_multiplier);
+        -- 5. Tính toán số điểm thực tế nhận được sau khi nhân hệ số và tổng điểm mới
+        v_final_points := FLOOR(v_base_points * v_multiplier);
+        v_new_total    := v_current_points + v_final_points;
 
+        -- 6. Thực hiện cập nhật cộng dồn hoặc khởi tạo mới bản ghi điểm thưởng
         UPDATE LOYALTY_POINT
-        SET    TOTAL_POINTS = TOTAL_POINTS + v_final_points,
+        SET    TOTAL_POINTS = v_new_total,
                UPDATED_AT   = SYSDATE
         WHERE  USER_ID = :NEW.USER_ID;
 
