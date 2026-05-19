@@ -98,6 +98,38 @@ BEGIN
 END;
 /
 
+CREATE OR REPLACE TRIGGER TRG_CHECK_ORDER_DATE_VS_DOB
+BEFORE INSERT OR UPDATE ON ORDERS
+FOR EACH ROW
+DECLARE
+    v_birth_date DATE;
+BEGIN
+    -- Lấy ngày sinh của khách hàng từ bảng APP_USER
+    SELECT BIRTH INTO v_birth_date
+    FROM APP_USER
+    WHERE USER_ID = :NEW.USER_ID;
+
+    -- Kiểm tra: Nếu Ngày đặt hàng (CREATED_AT) LỚN HƠN HOẶC BẰNG Ngày sinh thì báo lỗi
+    -- Dùng TRUNC() để loại bỏ phần giờ/phút/giây, chỉ so sánh đúng ngày/tháng/năm
+    IF TRUNC(NVL(:NEW.CREATED_AT, SYSDATE)) >= TRUNC(v_birth_date) THEN
+        RAISE_APPLICATION_ERROR(-20015, 'Lỗi logic: Ngày đặt hàng bắt buộc phải BÉ HƠN ngày sinh của khách hàng!');
+    END IF;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        -- Nếu khách hàng chưa cập nhật ngày sinh thì bỏ qua
+        NULL;
+END;
+/
+
+
+
+
+
+
+
+
+
 /* =============================================================================
    TRIGGER 1: TRG_PREVENT_PRICE_CHANGE_ON_ACTIVE_ORDER
 
