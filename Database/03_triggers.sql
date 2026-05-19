@@ -266,3 +266,27 @@ BEGIN
 END;
 /
 
+--trigger 12
+-- Viết thêm một trigger xử lý hoàn kho khi hủy đơn (Nếu cần)
+CREATE OR REPLACE TRIGGER TRG_RESTORE_STOCK_ON_CANCEL
+AFTER UPDATE OF STATUS ON ORDERS
+FOR EACH ROW
+BEGIN
+    -- Nếu đơn hàng bị chuyển trạng thái thành CANCELLED
+    IF :NEW.STATUS = 'CANCELLED' AND :OLD.STATUS <> 'CANCELLED' THEN
+
+        -- Duyệt qua các món trong đơn và cộng trả lại kho
+        UPDATE PRODUCT p
+        SET p.STOCK_QUANTITY = p.STOCK_QUANTITY + (
+            SELECT od.QUANTITY
+            FROM ORDER_DETAIL od
+            WHERE od.PRODUCT_ID = p.PRODUCT_ID AND od.ORDER_ID = :NEW.ORDER_ID
+        )
+        WHERE p.PRODUCT_ID IN (
+            SELECT od.PRODUCT_ID FROM ORDER_DETAIL od WHERE od.ORDER_ID = :NEW.ORDER_ID
+        );
+
+    END IF;
+END;
+/
+
