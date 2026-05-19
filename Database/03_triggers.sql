@@ -117,9 +117,6 @@ BEFORE UPDATE OF PRICE ON PRODUCT
 FOR EACH ROW
 DECLARE
     v_active_order_count NUMBER;
-    v_active_statuses    SYS.ODCIVARCHAR2LIST := SYS.ODCIVARCHAR2LIST(
-                             'PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPING'
-                         );
 BEGIN
     -- Chỉ kiểm tra khi giá thực sự thay đổi
     IF :NEW.PRICE <> :OLD.PRICE THEN
