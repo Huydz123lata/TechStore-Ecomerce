@@ -254,4 +254,15 @@ BEGIN
 END;
 /
 
+--trigger 11
+CREATE OR REPLACE TRIGGER TRG_DEDUCT_STOCK_ON_ORDER
+AFTER INSERT ON ORDER_DETAIL
+FOR EACH ROW
+BEGIN
+    -- Cứ mỗi dòng sản phẩm được chèn vào hóa đơn, lập tức trừ số lượng tồn kho của sản phẩm đó
+    UPDATE PRODUCT
+    SET STOCK_QUANTITY = STOCK_QUANTITY - :NEW.QUANTITY
+    WHERE PRODUCT_ID = :NEW.PRODUCT_ID;
+END;
+/
 
